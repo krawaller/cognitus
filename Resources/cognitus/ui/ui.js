@@ -4,31 +4,74 @@
 		pb.pub("/"+ViewId+"/arrivedatchildrole/"+childRole);
 	};
 	
-	function createComposition(o){ // o contains array views
+	function createHeadedList(o){ // o contains array views, rowName function, table opts, backLabel
 		if (!o.views){
 			throw "No views array to create list from in "+o.ViewId+"!";
 		}
 		o.childrenByRoles = {};
+		var rows = [];
+		var backbtn = K.create({
+			//k_class: "NavButtonView",
+			k_type:"View",
+			backgroundColor: "#CCC",
+			top: -50,
+			right: 10,
+			height: 30,
+			width: 60,
+			borderColor: "#000",
+			borderWidth: 1,
+			opacity: 1,
+			k_children: [{
+				label: "NavButtonLabel",
+				text: "<---"
+			}],
+			k_click: function(){
+				pb.pub("/navto",o.views[0].ViewId);
+			}
+		});
 		o.views.forEach(function(e,i){
 			o.childrenByRoles[i] = e;
 			e.opacity = 0;
+			if (i){
+				rows.push(K.create(K.merge({
+					k_type:"TableViewRow",
+					title: "mooo"+i+e.ViewTitle,
+					targetViewId: e.ViewId
+				},(o.table||{}))));
+			}
 		});
+		var table = K.create(K.merge({
+			k_type: "TableView",
+			k_click: function(e){
+				pb.pub("/navto",e.row.targetViewId);
+			},
+			data: rows
+		},o.table||{}));
+		pb.sub("/"+o.ViewId+"/animateTo",function(role){
+			if (role!=0){
+				backbtn.animate({top:10});
+			}
+			else {
+				backbtn.animate({top:-50});
+			}
+		});
+		
+		o.views[0].add(table);
 		o.defaultChildRole = (o.defaultChildRole || 0);
 		o.animateToRole = function(me,role){
+			Ti.API.log("headed list animating to "+role);
 			for(var r in me.childrenByRoles){
+				Ti.API.log("---- "+r+" --- "+role,r==role);
 				var child = me.childrenByRoles[r];
 				if (r == role){
-					if (!child.opacity){
 						child.animate({opacity:1});
-					}
 				} else {
-					if (child.opacity){
 						child.animate({opacity:0});
-					}
 				}
 			}
 		};
 		var view = createContainer(o);
+		view.frame.add(backbtn);
 		return view;
 	};
 	
@@ -69,7 +112,6 @@
 		var view = K.create(K.merge({k_type: "View",width: $$.platformWidth},o)),
 			frame = K.create({k_type: "View"}),
 			descendants = {};
-		Ti.API.log(["Children in "+o.ViewId,o.childrenByRoles]);
 		for(var role in o.childrenByRoles){
 			var child = o.childrenByRoles[role];
 			Ti.API.log([child,role]);
@@ -135,7 +177,7 @@
 
 	// expose
 	C.ui = {
-		createComposition: createComposition,
+		createHeadedList: createHeadedList,
 		createContainer: createContainer,
 		createRoot: createRoot,
 		createPage: createPage,
@@ -151,3 +193,4 @@ Ti.include("/cognitus/ui/skillsView.js");
 Ti.include("/cognitus/ui/crisisView.js");
 Ti.include("/cognitus/ui/mindfulness.js");
 Ti.include("/cognitus/ui/distresstolerance.js");
+Ti.include("/cognitus/ui/skillmodules.js");

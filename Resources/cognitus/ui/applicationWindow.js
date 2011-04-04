@@ -57,10 +57,12 @@
 		}), titlelabel = titleview.k_children[0];
 		win.add(titleview);
 		pb.sub("/newtitle",function(title){
-			titleview.animate({transform:Ti.UI.create2DMatrix().scale(1,0.1)},function(){
-				titlelabel.text = title;
-				titleview.animate({transform:Ti.UI.create2DMatrix().scale(1,1)});
-			});
+			if (titlelabel.text !== title){
+				titleview.animate({transform:Ti.UI.create2DMatrix().scale(1,0.1)},function(){
+					titlelabel.text = title;
+					titleview.animate({transform:Ti.UI.create2DMatrix().scale(1,1)});
+				});
+			}
 		});
 		return win;
 	};
