@@ -40,7 +40,7 @@
 			});
 			win.add(btn);
 		});
-		pb.sub("/mainFilmStrip/animateTo",function(role){
+		pb.sub("/mainFilmStrip/switchTo",function(role,animated){
 			pointer.animate({left:role*60+30});
 		});
 		var titleview = K.create({
@@ -51,6 +51,7 @@
 			left: 10,
 			borderWidth: 1,
 			borderColor: "#000",
+			backgroundColor: "#CCC",
 			k_children: [{
 				k_class: "TitleLabel"
 			}]

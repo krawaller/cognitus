@@ -8,6 +8,6 @@ C.ui.createModulesView = function(o){
 		backgroundColor: "gold",
 		render: render
 	});
-	view.add( K.create({k_type:"Label",text:"All modules"}) );
+	view.add( K.create({k_type:"Label",text:"All modules",height:100,top:70}) );
 	return view;
 };

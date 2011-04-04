@@ -47,7 +47,7 @@
 			},
 			data: rows
 		},o.table||{}));
-		pb.sub("/"+o.ViewId+"/animateTo",function(role){
+		pb.sub("/"+o.ViewId+"/switchTo",function(role){
 			if (role!=0){
 				backbtn.animate({top:10});
 			}
@@ -58,15 +58,23 @@
 		
 		o.views[0].add(table);
 		o.defaultChildRole = (o.defaultChildRole || 0);
-		o.animateToRole = function(me,role){
-			Ti.API.log("headed list animating to "+role);
+		o.switchToRole = function(me,role,noanimation){
+			Ti.API.log("headed list switching to "+role+" with"+(noanimation?"out":"")+" animation");
 			for(var r in me.childrenByRoles){
 				Ti.API.log("---- "+r+" --- "+role,r==role);
 				var child = me.childrenByRoles[r];
 				if (r == role){
+					if (noanimation){
+						child.opacity = 1;
+					} else {
 						child.animate({opacity:1});
+					}
 				} else {
+					if (noanimation){
+						child.opacity = 0;
+					} else {
 						child.animate({opacity:0});
+					}
 				}
 			}
 		};
@@ -84,11 +92,15 @@
 			o.childrenByRoles[i] = e;
 			e.left = $$.platformWidth * i;
 		});
-		o.animateToRole = function(me,role){
-			me.frame.animate({
-				duration: $$.animationDuration,
-				left: $$.platformWidth * role * -1
-			},function(){containerAnimationCallback(me.ViewId,role);});
+		o.switchToRole = function(me,role,noanimation){
+			if (noanimation){
+				me.frame.left = $$.platformWidth * role * -1;
+			} else {
+				me.frame.animate({
+					duration: $$.animationDuration,
+					left: $$.platformWidth * role * -1
+				},function(){containerAnimationCallback(me.ViewId,role);});
+			}
 		};
 		var filmstrip = createContainer(K.merge({defaultChildRole: 0},o));
 		filmstrip.frame.width = $$.platformWidth*o.views.length;
@@ -100,8 +112,8 @@
 		if (!o.ViewId){
 			throw "No ViewId provided!";
 		}
-		if (!o.animateToRole){
-			throw "No animateToRole function provided in "+o.ViewId+"!";
+		if (!o.switchToRole){
+			throw "No switchToRole function provided in "+o.ViewId+"!";
 		}
 		if (!o.childrenByRoles){
 			throw "No childrenByRoles object provided in "+o.ViewId+"!";
@@ -131,13 +143,13 @@
 			if (roleInContainer === undefined){
 				throw "Couldn't find "+ViewId+" or default in container "+view.ViewId+"!";
 			}
-		//	if (!animated && roleInContainer !== view.currentChildRole){
-				pb.pub("/"+o.ViewId+"/animateTo",roleInContainer);
-				o.animateToRole(view,roleInContainer);
+			if (view.currentChildRole != roleInContainer ){
+				o.switchToRole(view,roleInContainer,animated);
+				pb.pub("/"+o.ViewId+"/switchTo",roleInContainer,true);
 				animated = true;
-		//	}
-			view.currentChildRole = roleInContainer;
-			Ti.API.log(["RENDER",view.ViewId,ViewId,roleInContainer,o.childrenByRoles[roleInContainer]]);
+				view.currentChildRole = roleInContainer;
+				Ti.API.log(["RENDER",view.ViewId,ViewId,roleInContainer,o.childrenByRoles[roleInContainer]]);
+			}
 			o.childrenByRoles[roleInContainer].render(ViewId,animated);
 		};
 		return view;
@@ -166,8 +178,8 @@
 		if (!view.render){
 			throw "What the heck, root view has no render!";
 		}
-		pb.sub("/navto",function(targetViewId){
-			view.render(targetViewId);
+		pb.sub("/navto",function(targetViewId,nobubble){
+			view.render(targetViewId,nobubble);
 		});
 		pb.sub("/appstart",function(){
 			view.render();
