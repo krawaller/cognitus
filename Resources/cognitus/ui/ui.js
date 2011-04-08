@@ -35,7 +35,7 @@
 			if (i){
 				rows.push(K.create(K.merge({
 					k_type:"TableViewRow",
-					title: "mooo"+i+e.ViewTitle,
+					title: C.getText(e.ViewId+"_title"),
 					targetViewId: e.ViewId
 				},(o.table||{}))));
 			}
@@ -166,10 +166,26 @@
 		view.render = function(){
 			C.state.currentPage = view;
 			Ti.API.log(["RENDER CALLED IN "+o.ViewId+" PAGE!",o.ViewTitle]);
-			o.render();
-			pb.pub("/newtitle",o.ViewTitle);
+			if (o.render){
+				o.render();
+			}
+			if (o.setText){
+				o.setText();
+			}
+			pb.pub("/newtitle",C.getText(o.ViewId+"_title"));
 		};
 		return view;
+	}
+	
+	function _updateLabel(label,id){
+		label.text = C.getText(id);
+	}
+	
+	function createLabel(id,o){
+		var label = K.create(K.merge({k_type:"Label"},o||{}));
+		pb.sub("/updatetext",_updateLabel,label,id);
+		_updateLabel(label,id);
+		return label;
 	}
 	
 	function createRoot(view){
@@ -193,7 +209,8 @@
 		createContainer: createContainer,
 		createRoot: createRoot,
 		createPage: createPage,
-		createFilmStrip: createFilmStrip
+		createFilmStrip: createFilmStrip,
+		createLabel: createLabel
 	};
 	
 })();

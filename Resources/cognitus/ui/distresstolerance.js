@@ -3,11 +3,11 @@ C.ui.createDistressToleranceView = function(o){
 		
 	};
 	var view = C.ui.createPage({
-		ViewId: "distresstoleranceview",
+		ViewId: "distresstolerance",
 		ViewTitle: "Distress Tolerance",
 		backgroundColor: "brown",
 		render: render
 	});
-	view.add( K.create({k_type:"Label",text:"Tolerate distress wooo!"}) );
+	view.add( C.ui.createLabel("distresstolerance_description") );
 	return view;
 };

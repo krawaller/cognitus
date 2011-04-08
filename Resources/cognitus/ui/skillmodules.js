@@ -3,11 +3,11 @@ C.ui.createModulesView = function(o){
 		
 	};
 	var view = C.ui.createPage({
-		ViewId: "modulesView",
+		ViewId: "modules",
 		ViewTitle: "Modules",
 		backgroundColor: "gold",
 		render: render
 	});
-	view.add( K.create({k_type:"Label",text:"All modules",height:100,top:70}) );
+	view.add( C.ui.createLabel("modules_description",{height:100,top:70}) );
 	return view;
 };

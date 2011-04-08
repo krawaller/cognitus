@@ -3,11 +3,11 @@ C.ui.createCrisisView = function(o){
 		
 	};
 	var view = C.ui.createPage({
-		ViewId: "crisisView",
+		ViewId: "crisis",
 		ViewTitle: "Crisis!",
 		backgroundColor: "blue",
 		render: render
 	});
-	view.add( K.create({k_type:"Label",text:"Ack, help me!"}) );
+	view.add( C.ui.createLabel("crisis_description") );
 	return view;
 };
