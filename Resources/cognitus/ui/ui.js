@@ -33,11 +33,12 @@
 			o.childrenByRoles[i] = e;
 			e.opacity = 0;
 			if (i){
-				rows.push(K.create(K.merge({
+				var row = K.create(K.merge({
 					k_type:"TableViewRow",
-					title: C.getText(e.ViewId+"_title"),
 					targetViewId: e.ViewId
-				},(o.table||{}))));
+				},(o.tablerow||{})));
+				C.text.setObjectText(row,e.ViewId+"_title","title");
+				rows.push(row);
 			}
 		});
 		var table = K.create(K.merge({
@@ -172,19 +173,14 @@
 			if (o.setText){
 				o.setText();
 			}
-			pb.pub("/newtitle",C.getText(o.ViewId+"_title"));
+			pb.pub("/newtitle",C.text.getText(o.ViewId+"_title"));
 		};
 		return view;
 	}
 	
-	function _updateLabel(label,id){
-		label.text = C.getText(id);
-	}
-	
 	function createLabel(id,o){
 		var label = K.create(K.merge({k_type:"Label"},o||{}));
-		pb.sub("/updatetext",_updateLabel,label,id);
-		_updateLabel(label,id);
+		C.text.setObjectText(label,id);
 		return label;
 	}
 	

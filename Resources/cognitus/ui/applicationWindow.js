@@ -65,6 +65,24 @@
 				});
 			}
 		});
+		pb.sub("/updatetext",function(){
+			titlelabel.text = C.text.getText(C.state.currentPage.ViewId+"_title");
+		});
+		var langtest = K.create({
+			k_class: "NavButtonView",
+			width: 50,
+			bottom:10,
+			right: 10,
+			k_children: [{
+				k_class: "NavButtonLabel",
+				text: "lang"
+			}],
+			k_click: function(e){
+				C.state.lang = (C.state.lang == "en" ? "sv" : "en");
+				pb.pub("/updatetext");
+			}
+		});
+		win.add(langtest);
 		return win;
 	};
 })();
