@@ -15,7 +15,23 @@ var apptabs = [{
 		},{
 			pageid: "modulelist",
 			navtextid: "modulelist_nav",
-			view: C.ui.createModuleListView()
+			view: C.ui.createModuleListView(),
+			sub: {
+				listid: "moduleinfo",
+				back: {
+					pageid: "modulelist",
+					navtextid: "backtomodulelist_nav"
+				},
+				pages: [{
+					pageid: "moduleexplanation",
+					navtextid: "moduleexplanation_nav",
+					view: C.ui.createModuleExplanationView()
+				},{
+					pageid: "moduleskillist",
+					navtextid: "moduleskillist_nav",
+					view: C.ui.createModuleSkillListView()
+				}]
+			}
 		}]
 	}
 },{

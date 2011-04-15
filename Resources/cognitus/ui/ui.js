@@ -301,7 +301,7 @@
                         navtextid: page.navtextid,
                         pageid: page.pageid
                     });
-                    processContent(page, tabnr, back, o.listid, i);
+                    processContent(page, tabnr, o.back, o.listid, i);
                 });
             } else {
                 // processing a Page
@@ -365,7 +365,7 @@
                     text: "FOO"
                 }],
                 k_click: function(e) {
-                    pb.pub("/navto", tab.rootpageid);
+					pb.pub("/navto", (tabs[i].lastpageid || tabs[i].rootpageid));
                 }
             });
             C.content.setObjectText(btn.k_children[0], tab.textid);
@@ -386,10 +386,15 @@
                 pb.pub("/navto", C.state.currentBack.pageid);
             }
         });
-        C.content.setObjectText(backbtn.k_children[0],
-        function() {
-            return (C.state.currentBack && C.state.currentBack.textid) || "FOOBAR";
-        });
+		var updatebackbtn = function(pageid,arg){
+			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
+				back = topage.back;
+			if (back){				
+				backbtn.k_children[0].text = C.content.getText(back.navtextid);
+			}
+		};
+		pb.sub("/navto",updatebackbtn);
+		pb.sub("/updatetext",updatebackbtn);
 
         win.add(backbtn);
 
@@ -418,9 +423,6 @@
                     k_click: function(e) {
                         pb.pub("/navto", C.state.currentList[i].pageid);
                     }
-                });
-                C.content.setObjectText(listbtns[i].k_children[0],function() {
-                    return (C.state.currentList && C.state.currentList[i] && C.state.currentList.textid) || "FOOBAR";
                 });
 				win.add(listbtns[i]);
             })(i);
@@ -505,18 +507,17 @@
 			}
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid];
-			Ti.API.log(["Navigation",lastpage,topage]);
+			Ti.API.log(["NAVIGATION!",args,C.state.currentPageId,lastpage,pageid,topage]);
 			// navigation controls
 			if (!topage.back){
 				if (lastpage && lastpage.back){ // left back, have to hide it
-					backbtn.animate({top: -10});
+					backbtn.animate({top: -50});
 				}
 			} else {
 				backbtn.animate({top: 10});
 				// TODO set the backbutton text too
 			}
 			if (!topage.listid){
-				Ti.API.log(["NO LIST HERE, DID LAST PAGE HAVE?",lastpage,lastpage && lastpage.listid]);
 				if (lastpage && lastpage.listid){ // left list, have to hide it
 					listbtns.forEach(function(l){
 						l.animate({right: -60});
@@ -526,7 +527,6 @@
 			} else {
 				listmarker.right = 0;
 				var list = lists[topage.listid];
-				Ti.API.log(["LIST!",topage.listplace,list]);
 				if (!lastpage || (lastpage.listid != topage.listid)){ // set the new list
 					listmarker.top = 60 + topage.listplace * 40;
 					listmarker.animate({right:0});
@@ -542,21 +542,26 @@
 					listmarker.animate({top:60+topage.listplace*40});
 				}
 			}
-			// animation stuff
+			// tab stuff
 			if (!lastpage || (lastpage && lastpage.tabnr != topage.tabnr)){
 				tabmarker.animate({left:30+topage.tabnr*60});
 			}
+			tabs[topage.tabnr].lastpageid = pageid;
+			// animation
 			if (lastpage){
 				lastpage.view.animate({opacity:0});
 			}
 			topage.view.animate({opacity:1});
 			// render stuff
+			var argstouse = K.merge(args || {},C.state.lastArgs || {});
+			Ti.API.log(["RENDERING!",topage.view.render,argstouse]);
 			if (topage.view.render){
-				topage.view.render(args);
+				topage.view.render(argstouse);
 			}
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.currentList = list;
+			C.state.lastArgs = argstouse;
 		});
 
 		// ******************** Start logic
@@ -591,8 +596,12 @@ Ti.include("/cognitus/ui/applicationWindow.js");
 Ti.include("/cognitus/ui/tab-skills.js");
 Ti.include("/cognitus/ui/aboutmodules.js");
 Ti.include("/cognitus/ui/modulelist.js");
+Ti.include("/cognitus/ui/moduleexplanation.js");
+Ti.include("/cognitus/ui/moduleskillist.js");
 
-Ti.include("/cognitus/ui/skillsView.js");
 Ti.include("/cognitus/ui/crisisView.js");
+/*
+Ti.include("/cognitus/ui/skillsView.js");
 Ti.include("/cognitus/ui/skillmodules.js");
 Ti.include("/cognitus/ui/skillmodule.js");
+*/
