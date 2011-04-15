@@ -4,7 +4,6 @@ C.ui.createModulesView = function(o){
 	};
 	var view = C.ui.createPage({
 		ViewId: "modules",
-		ViewTitle: "Modules",
 		backgroundColor: "gold",
 		render: render
 	});

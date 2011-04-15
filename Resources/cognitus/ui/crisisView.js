@@ -1,13 +1,8 @@
 C.ui.createCrisisView = function(o){
-	function render(){
-		
-	};
 	var view = C.ui.createPage({
 		ViewId: "crisis",
-		ViewTitle: "Crisis!",
-		backgroundColor: "blue",
-		render: render
+		backgroundColor: "blue"
 	});
-	view.add( C.ui.createLabel("crisis_description") );
+	view.add( C.ui.createLabel(function(){return "crisis_description";}) );
 	return view;
 };

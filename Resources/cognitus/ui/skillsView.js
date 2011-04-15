@@ -4,13 +4,12 @@ C.ui.createSkillsView = function(o){
 	};
 	var view = C.ui.createHeadedList({
 		ViewId: "skillsview",
-		ViewTitle: "All skills",
 		backgroundColor: "red",
 		table: {top:150},
 		views: [
 			C.ui.createModulesView(),
-			C.ui.createMindfulnessView(),
-			C.ui.createDistressToleranceView()
+			C.ui.createSkillModuleView({ModuleId:"mindfulness"}),
+			C.ui.createSkillModuleView({ModuleId:"distresstolerance"})
 		]
 	});
 	return view;
