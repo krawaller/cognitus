@@ -427,19 +427,21 @@
 				win.add(listbtns[i]);
             })(i);
         }
-		var updatelistbtns = function(pageid,arg){
+		var updatelistbtntexts = function(pageid){
 			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
 				list = lists[topage.listid];
 			if (list){
 				listbtns.forEach(function(b,i){
-					if (i<list.length){
-						b.k_children[0].text = C.content.getText(list[i].navtextid);
-					}
+					updatelistbtntext(b,list,i);
 				});
 			}
 		};
-		pb.sub("/navto",updatelistbtns);
-		pb.sub("/updatetext",updatelistbtns);
+		var updatelistbtntext = function(btn,list,pos){
+			if (pos<list.length){
+				btn.k_children[0].text = C.content.getText(list[pos].navtextid);
+			}
+		};
+		pb.sub("/updatetext",updatelistbtntexts);
 
         // ****************** Title bits
         var titleview = K.create({
@@ -517,6 +519,9 @@
 				backbtn.animate({top: 10});
 				// TODO set the backbutton text too
 			}
+			var setNewListItem = function(l){
+				
+			};
 			if (!topage.listid){
 				if (lastpage && lastpage.listid){ // left list, have to hide it
 					listbtns.forEach(function(l){
@@ -525,20 +530,34 @@
 					listmarker.animate({right:-80});
 				}
 			} else {
-				listmarker.right = 0;
 				var list = lists[topage.listid];
-				if (!lastpage || (lastpage.listid != topage.listid)){ // set the new list
+				if (!lastpage || !lastpage.listid){ // no previous list, just add the new one
 					listmarker.top = 60 + topage.listplace * 40;
 					listmarker.animate({right:0});
 					listbtns.forEach(function(btn,i){
 						if (i<list.length){
 							btn.animate({right: 10});
-							// TODO - set btn text too!
+							updatelistbtntext(btn,list,i);
+						} /* else {
+							btn.animate({right: -60});
+						}*/
+					});					
+				} else if (lastpage.listid != topage.listid){ // changing to a new list
+					listmarker.animate({right:-70},function(){
+						listmarker.top = 60 + topage.listplace * 40;
+						listmarker.animate({right:0});
+					});
+					listbtns.forEach(function(btn,i){
+						if (i<list.length){
+							btn.animate({right: -60},function(){
+								updatelistbtntext(btn,list,i);
+								btn.animate({right:10});
+							});
 						} else {
 							btn.animate({right: -60});
 						}
 					});
-				} else { // moving in same list
+				} else { // moving in same list, so just adjust the marker
 					listmarker.animate({top:60+topage.listplace*40});
 				}
 			}
