@@ -29,7 +29,27 @@ var apptabs = [{
 				},{
 					pageid: "moduleskillist",
 					navtextid: "moduleskillist_nav",
-					view: C.ui.createModuleSkillListView()
+					view: C.ui.createModuleSkillListView(),
+					sub: {
+						listid: "skillinfo",
+						back: {
+							pageid: "moduleskillist",
+							navtextid: "moduleskillist_nav"
+						},
+						pages: [{
+							pageid: "skillexplanation",
+							view: C.ui.createSkillExplanationView(),
+							navtextid: "skillexplanation_nav"
+						},{
+							pageid: "skillexercises",
+							navtextid: "skillexercises_nav",
+							view: C.ui.createSkillExercisesView()
+						},{
+							pageid: "skillexamples",
+							navtextid: "skillexamples_nav",
+							view: C.ui.createSkillExamplesView()
+						}]
+					}
 				}]
 			}
 		}]

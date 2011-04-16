@@ -1,5 +1,5 @@
 (function() {
-
+	/*
     function containerAnimationCallback(ViewId, childRole) {
         pb.pub("/" + ViewId + "/arrivedatchildrole/" + childRole);
     };
@@ -88,14 +88,6 @@
             data: rows
         },
         o.table || {}));
-        /*	pb.sub("/"+o.ViewId+"/switchTo",function(role){
-			if (role!=0){
-				backbtn.animate({top:10});
-			}
-			else {
-				backbtn.animate({top:-50});
-			}
-		});*/
 
         o.views[0].add(table);
         o.defaultChildRole = (o.defaultChildRole || 0);
@@ -230,27 +222,27 @@
             }
         };
         return view;
-    }
+    }*/
 
     function createPage(o) {
-        if (!o.ViewId) {
+       /* if (!o.ViewId) {
             throw "No ViewId provided!";
-        }
+        }*/
         var view = K.create(K.merge({
             k_type: "View",
             width: $$.platformWidth
         },
         o));
-        Ti.API.log("created page " + o.ViewId + ", subid: " + o.SubId);
-        view.render = function(arg) {
-            C.state.currentPage = view;
-            if (o.render) {
+//        Ti.API.log("created page " + o.ViewId + ", subid: " + o.SubId);
+  //      view.render = function(arg) {
+        //    C.state.currentPage = view;
+    /*        if (o.render) {
                 o.render();
-            }
-            C.state.currentTitle = C.content.getText(view.ViewId + "_title");
-            Ti.API.log(["RENDER CALLED IN " + o.ViewId + " PAGE with arg " + arg + "!", C.state.currentTitle]);
-            pb.pub("/newtitle");
-        };
+            }*/
+            //C.state.currentTitle = C.content.getText(view.ViewId + "_title");
+          //  Ti.API.log(["RENDER CALLED IN " + o.ViewId + " PAGE with arg " + arg + "!", C.state.currentTitle]);
+          //  pb.pub("/newtitle");
+       // };
         return view;
     }
 
@@ -263,7 +255,7 @@
         return label;
     }
 
-    function createRoot(view) {
+    /*function createRoot(view) {
         var root = K.create({
             k_type: "View"
         });
@@ -287,7 +279,7 @@
             });
         });
         return root;
-    }
+    }*/
 
     function createAppWindow(apptabs) {
 
@@ -377,7 +369,9 @@
             k_class: "NavButtonView",
             width: 50,
             top: -60, // will be animated to 10
-            right: 10,
+			hidetop: -60,
+			showtop: 0,
+            right: 0,
             k_children: [{
                 k_class: "NavButtonLabel",
                 text: "FOOBAR"
@@ -386,14 +380,13 @@
                 pb.pub("/navto", C.state.currentBack.pageid);
             }
         });
-		var updatebackbtn = function(pageid,arg){
+		var updatebackbtn = function(pageid){
 			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
 				back = topage.back;
 			if (back){				
 				backbtn.k_children[0].text = C.content.getText(back.navtextid);
 			}
 		};
-		pb.sub("/navto",updatebackbtn);
 		pb.sub("/updatetext",updatebackbtn);
 
         win.add(backbtn);
@@ -478,7 +471,7 @@
                 }
             }
         }
-        pb.sub("/newtitle", updateTitle);
+       // pb.sub("/newtitle", updateTitle);
         pb.sub("/updatetext", updateTitle, true);
 
 		// ********************* Language test
@@ -494,12 +487,19 @@
 			}],
 			k_click: function(e){
 				C.state.lang = (C.state.lang == "en" ? "sv" : "en");
-				C.state.currentTitle = C.content.getText(C.state.currentPage.ViewId+"_title");
+				C.state.currentTitle = C.content.getText(C.state.currentPageId+"_title");
 				pb.pub("/updatetext");
 			}
 		});
 		win.add(langtest);
 
+		// ******************* Stuff
+
+		pb.sub("/updatetext",function(){
+			if (C.state.currentPage.render){
+				C.state.currentPage.render(C.state.lastArgs);
+			}
+		});
 
 		// ******************* Navigation logic
 		
@@ -509,19 +509,20 @@
 			}
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid];
-			Ti.API.log(["NAVIGATION!",args,C.state.currentPageId,lastpage,pageid,topage]);
 			// navigation controls
 			if (!topage.back){
 				if (lastpage && lastpage.back){ // left back, have to hide it
-					backbtn.animate({top: -50});
+					backbtn.animate({top: backbtn.hidetop});
 				}
-			} else {
-				backbtn.animate({top: 10});
-				// TODO set the backbutton text too
+			} else if ((!lastpage) || (!lastpage.back)) { // no previous back, just show this one
+				updatebackbtn(pageid);
+				backbtn.animate({top: backbtn.showtop});
+			} else if (lastpage.back.pageid != topage.back.pageid) { // new back, have to hide change show
+				backbtn.animate({top: backbtn.hidetop},function(){
+					updatebackbtn(pageid);
+					backbtn.animate({top: backbtn.showtop});
+				});
 			}
-			var setNewListItem = function(l){
-				
-			};
 			if (!topage.listid){
 				if (lastpage && lastpage.listid){ // left list, have to hide it
 					listbtns.forEach(function(l){
@@ -573,10 +574,12 @@
 			topage.view.animate({opacity:1});
 			// render stuff
 			var argstouse = K.merge(args || {},C.state.lastArgs || {});
-			Ti.API.log(["RENDERING!",topage.view.render,argstouse]);
 			if (topage.view.render){
 				topage.view.render(argstouse);
 			}
+			C.state.currentPage = topage.view;
+			C.state.currentTitle = C.content.getText(pageid+"_title");
+			updateTitle();
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.currentList = list;
@@ -596,13 +599,13 @@
 
     // expose
     C.ui = {
-        createHeadedList: createHeadedList,
+       /* createHeadedList: createHeadedList,
         createContainer: createContainer,
-        createRoot: createRoot,
+        createRoot: createRoot,*/
         createPage: createPage,
-        createFilmStrip: createFilmStrip,
+       // createFilmStrip: createFilmStrip,
         createLabel: createLabel,
-        createList: createList,
+        //createList: createList,
 		createAppWindow: createAppWindow
     };
 
@@ -617,6 +620,9 @@ Ti.include("/cognitus/ui/aboutmodules.js");
 Ti.include("/cognitus/ui/modulelist.js");
 Ti.include("/cognitus/ui/moduleexplanation.js");
 Ti.include("/cognitus/ui/moduleskillist.js");
+Ti.include("/cognitus/ui/skillexplanation.js");
+Ti.include("/cognitus/ui/skillexercises.js");
+Ti.include("/cognitus/ui/skillexamples.js");
 
 Ti.include("/cognitus/ui/crisisView.js");
 /*
