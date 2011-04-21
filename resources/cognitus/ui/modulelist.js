@@ -1,6 +1,5 @@
 C.ui.createModuleListView = function(o){
 	var view = C.ui.createPage({
-		ViewId: "modulelist",
 		backgroundColor: "blue"
 	});
 	view.add( C.ui.createLabel(function(){return "modulelist_description";},{height:100,top:20}) );

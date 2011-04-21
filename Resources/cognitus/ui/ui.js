@@ -1,250 +1,22 @@
 (function() {
-	/*
-    function containerAnimationCallback(ViewId, childRole) {
-        pb.pub("/" + ViewId + "/arrivedatchildrole/" + childRole);
-    };
-
-    function createList(o) {
-        if (!o.views) {
-            throw "No views array to create list from in " + o.ViewId + "!";
-        }
-        o.childrenByRoles = {};
-        o.views.forEach(function(e, i) {
-            o.childrenByRoles[i] = e;
-            e.opacity = 0;
-        });
-        o.switchToRole = function(me, role, noanimation) {
-            for (var r in me.childrenByRoles) {
-                Ti.API.log("---- " + r + " --- " + role, r == role);
-                var child = me.childrenByRoles[r];
-                if (r == role) {
-                    if (noanimation) {
-                        child.opacity = 1;
-                    } else {
-                        child.animate({
-                            opacity: 1
-                        });
-                    }
-                } else {
-                    if (noanimation) {
-                        child.opacity = 0;
-                    } else {
-                        child.animate({
-                            opacity: 0
-                        });
-                    }
-                }
-            }
-        };
-        var view = createContainer(o);
-        return view;
-    }
-
-
-    function createHeadedList(o) {
-        // o contains array views, rowName function, table opts, backLabel
-        if (!o.views) {
-            throw "No views array to create list from in " + o.ViewId + "!";
-        }
-        o.childrenByRoles = {};
-        var rows = [];
-        var backbtn = K.create({
-            //k_class: "NavButtonView",
-            k_type: "View",
-            backgroundColor: "#CCC",
-            top: -50,
-            right: 10,
-            height: 30,
-            width: 60,
-            borderColor: "#000",
-            borderWidth: 1,
-            opacity: 1,
-            k_children: [{
-                label: "NavButtonLabel",
-                text: "<---"
-            }],
-            k_click: function() {
-                pb.pub("/navto", o.views[0].ViewId);
-            }
-        });
-        o.views.forEach(function(e, i) {
-            o.childrenByRoles[i] = e;
-            e.opacity = 0;
-            if (i) {
-                var row = K.create(K.merge({
-                    k_type: "TableViewRow",
-                    targetViewId: e.ViewId
-                },
-                (o.tablerow || {})));
-                C.content.setObjectText(row, e.ViewId + (e.SubId ? "_" + e.SubId: "") + "_title", "title");
-                rows.push(row);
-            }
-        });
-        var table = K.create(K.merge({
-            k_type: "TableView",
-            k_click: function(e) {
-                pb.pub("/navto", e.row.targetViewId, "FJU!");
-            },
-            data: rows
-        },
-        o.table || {}));
-
-        o.views[0].add(table);
-        o.defaultChildRole = (o.defaultChildRole || 0);
-        o.switchToRole = function(me, role, noanimation) {
-            Ti.API.log("headed list switching to " + role + " with" + (noanimation ? "out": "") + " animation");
-            if (role != 0) {
-                backbtn.animate({
-                    top: 10
-                });
-            }
-            else {
-                backbtn.animate({
-                    top: -50
-                });
-            }
-            for (var r in me.childrenByRoles) {
-                Ti.API.log("---- " + r + " --- " + role, r == role);
-                var child = me.childrenByRoles[r];
-                if (r == role) {
-                    if (noanimation) {
-                        child.opacity = 1;
-                    } else {
-                        child.animate({
-                            opacity: 1
-                        });
-                    }
-                } else {
-                    if (noanimation) {
-                        child.opacity = 0;
-                    } else {
-                        child.animate({
-                            opacity: 0
-                        });
-                    }
-                }
-            }
-        };
-        var view = createContainer(o);
-        view.frame.add(backbtn);
-        return view;
-    };
-
-    function createFilmStrip(o) {
-        // o contains array views
-        if (!o.views) {
-            throw "No views array to create film strip from in " + o.ViewId + "!";
-        }
-        o.childrenByRoles = {};
-        o.views.forEach(function(e, i) {
-            o.childrenByRoles[i] = e;
-            e.left = $$.platformWidth * i;
-        });
-        o.switchToRole = function(me, role, noanimation) {
-            if (noanimation) {
-                me.frame.left = $$.platformWidth * role * -1;
-            } else {
-                me.frame.animate({
-                    duration: $$.animationDuration,
-                    left: $$.platformWidth * role * -1
-                },
-                function() {
-                    containerAnimationCallback(me.ViewId, role);
-                });
-            }
-        };
-        var filmstrip = createContainer(K.merge({
-            defaultChildRole: 0
-        },
-        o));
-        filmstrip.frame.width = $$.platformWidth * o.views.length;
-        filmstrip.frame.left = 0;
-        return filmstrip;
-    };
-
-    function createContainer(o) {
-        // o contains childrenByRoles obj and animateToRole function
-        if (!o.ViewId) {
-            throw "No ViewId provided!";
-        }
-        if (!o.switchToRole) {
-            throw "No switchToRole function provided in " + o.ViewId + "!";
-        }
-        if (!o.childrenByRoles) {
-            throw "No childrenByRoles object provided in " + o.ViewId + "!";
-        }
-        if (o.defaultChildRole === undefined) {
-            throw "No defaultChildRole provided for " + o.ViewId + "!";
-        }
-        var view = K.create(K.merge({
-            k_type: "View",
-            width: $$.platformWidth
-        },
-        o)),
-        frame = K.create({
-            k_type: "View"
-        }),
-        descendants = {};
-        for (var role in o.childrenByRoles) {
-            var child = o.childrenByRoles[role];
-            Ti.API.log([child, role]);
-            descendants[child.ViewId] = role;
-            if (child.descendants) {
-                for (var descendantId in child.descendants) {
-                    descendants[descendants] = role;
-                }
-            }
-            frame.add(child);
-        }
-        view.add(frame);
-        view.frame = frame;
-        view.descendants = descendants;
-        view.isContainer = true;
-        view.render = function(rargs) {
-            // rargs contains ViewId,animated,arg,path
-            var roleInContainer = ((descendants[rargs.ViewId]) ||   (o.defaultChildRole));
-            rargs.path.push[o.ViewId];
-            if (roleInContainer === undefined) {
-                throw "Couldn't find " + rargs.ViewId + " or default in container " + view.ViewId + "!";
-            }
-            var child = o.childrenByRoles[roleInContainer];
-            if (view.currentChildRole != roleInContainer) {
-                o.switchToRole(view, roleInContainer, rargs.animated);
-                pb.pub("/" + o.ViewId + "/switchTo", roleInContainer, rargs.animated);
-                rargs.animated = true;
-                view.currentChildRole = roleInContainer;
-                Ti.API.log(["RENDER", view.ViewId, rargs.ViewId, roleInContainer, o.childrenByRoles[roleInContainer]]);
-            }
-            if (child.isContainer) {
-                child.render(rargs);
-            } else {
-                child.render(rargs.arg);
-            }
-        };
-        return view;
-    }*/
 
     function createPage(o) {
-       /* if (!o.ViewId) {
-            throw "No ViewId provided!";
-        }*/
         var view = K.create(K.merge({
             k_type: "View",
             width: $$.platformWidth
         },
         o));
-//        Ti.API.log("created page " + o.ViewId + ", subid: " + o.SubId);
-  //      view.render = function(arg) {
-        //    C.state.currentPage = view;
-    /*        if (o.render) {
-                o.render();
-            }*/
-            //C.state.currentTitle = C.content.getText(view.ViewId + "_title");
-          //  Ti.API.log(["RENDER CALLED IN " + o.ViewId + " PAGE with arg " + arg + "!", C.state.currentTitle]);
-          //  pb.pub("/newtitle");
-       // };
         return view;
     }
+	
+	var webviewmaster = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/master.html").read().text;
+	function updateWebView(w,html){
+		w.html = webviewmaster.replace(/XXXCONTENTXXX/,html);
+	}
+	function createWebView(){
+		var webview = Ti.UI.createWebView({});
+		return webview;
+	}
 
     function createLabel(id, o) {
         var label = K.create(K.merge({
@@ -254,32 +26,6 @@
         C.content.setObjectText(label, id);
         return label;
     }
-
-    /*function createRoot(view) {
-        var root = K.create({
-            k_type: "View"
-        });
-        root.add(view);
-        if (!view.render) {
-            throw "What the heck, root view has no render!";
-        }
-        pb.sub("/navto",
-        function(targetViewId, arg) {
-            view.render({
-                ViewId: targetViewId,
-                animated: false,
-                arg: arg,
-                path: []
-            });
-        });
-        pb.sub("/appstart",
-        function() {
-            view.render({
-                path: []
-            });
-        });
-        return root;
-    }*/
 
     function createAppWindow(apptabs) {
 
@@ -357,7 +103,7 @@
                     text: "FOO"
                 }],
                 k_click: function(e) {
-					pb.pub("/navto", (tabs[i].lastpageid || tabs[i].rootpageid));
+					pb.pub("/navto", !tabs[i].lastpageid || (C.state.currentPageId === tabs[i].lastpageid) ? tabs[i].rootpageid : tabs[i].lastpageid);
                 }
             });
             C.content.setObjectText(btn.k_children[0], tab.textid);
@@ -384,7 +130,7 @@
 			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
 				back = topage.back;
 			if (back){				
-				backbtn.k_children[0].text = C.content.getText(back.navtextid);
+				backbtn.k_children[0].text = C.content.getText(back.navtextid ? back.navtextid : back.pageid + "_backnav");
 			}
 		};
 		pb.sub("/updatetext",updatebackbtn);
@@ -430,8 +176,9 @@
 			}
 		};
 		var updatelistbtntext = function(btn,list,pos){
+			var def = list[pos];
 			if (pos<list.length){
-				btn.k_children[0].text = C.content.getText(list[pos].navtextid);
+				btn.k_children[0].text = C.content.getText(def.navtext ? def.navtext : def.pageid + "_nav");
 			}
 		};
 		pb.sub("/updatetext",updatelistbtntexts);
@@ -486,7 +233,8 @@
 				text: "lang"
 			}],
 			k_click: function(e){
-				C.state.lang = (C.state.lang == "en" ? "sv" : "en");
+				var lang = C.state.lang;
+				C.state.lang = (lang == "en" ? "sv" : lang == "sv" ? "textid" : "en");
 				C.state.currentTitle = C.content.getText(C.state.currentPageId+"_title");
 				pb.pub("/updatetext");
 			}
@@ -509,7 +257,7 @@
 			}
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid];
-			// navigation controls
+			// backbtn
 			if (!topage.back){
 				if (lastpage && lastpage.back){ // left back, have to hide it
 					backbtn.animate({top: backbtn.hidetop});
@@ -523,6 +271,7 @@
 					backbtn.animate({top: backbtn.showtop});
 				});
 			}
+			// list
 			if (!topage.listid){
 				if (lastpage && lastpage.listid){ // left list, have to hide it
 					listbtns.forEach(function(l){
@@ -599,13 +348,10 @@
 
     // expose
     C.ui = {
-       /* createHeadedList: createHeadedList,
-        createContainer: createContainer,
-        createRoot: createRoot,*/
+		createWebView: createWebView,
+		updateWebView: updateWebView,
         createPage: createPage,
-       // createFilmStrip: createFilmStrip,
         createLabel: createLabel,
-        //createList: createList,
 		createAppWindow: createAppWindow
     };
 
@@ -625,8 +371,3 @@ Ti.include("/cognitus/ui/skillexercises.js");
 Ti.include("/cognitus/ui/skillexamples.js");
 
 Ti.include("/cognitus/ui/crisisView.js");
-/*
-Ti.include("/cognitus/ui/skillsView.js");
-Ti.include("/cognitus/ui/skillmodules.js");
-Ti.include("/cognitus/ui/skillmodule.js");
-*/

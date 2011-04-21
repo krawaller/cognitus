@@ -1,6 +1,5 @@
 C.ui.createModuleSkillListView = function(o){
 	var view = C.ui.createPage({
-		ViewId: "moduleskillist",
 		backgroundColor: "yellow"
 	});
 	view.add( C.ui.createLabel(function(){return "moduleskillist_description";},{height:100,top:100}) );

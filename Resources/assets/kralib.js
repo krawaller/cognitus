@@ -132,7 +132,7 @@
         }
 		o.init && K.isFunc(o.init) && o.init.call(o);
 	
-        if (o.k_type == "WebView" && o.k_templatefile){
+        if (o.k_type == "WebView" && (o.k_templatefile || o.k_temlatehtml)){
             o = K.merge(o, {
                 url: "../views/"+ (o.k_masterpage || "_masterpage.html"),
                 k_templateview: true,
@@ -160,7 +160,7 @@
             e = Ti[o.k_module]["create"+o.k_type](o);
         e.k_def = o;
         if (o.k_templateview){
-            var template = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/views/"+o.k_templatefile).read().text,
+            var template = (o.k_templatefile ? Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/"+o.k_templatefile).read().text : o.k_templatehtml),
                 opts = { template: template, data: {data: o.k_templatedata} };
             e.addEventListener("load",function(){ e.evalJS("render("+JSON.stringify(opts)+")"); });
         }

@@ -1,6 +1,5 @@
 C.ui.createSkillExplanationView = function(o){
 	var view = C.ui.createPage({
-		ViewId: "moduleexplanation",
 		backgroundColor: "fuchsia"
 	});
 	var titlelabel = K.create({

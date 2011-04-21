@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<meta name="format-detection" content="telephone=no" />
+        <title>MasterPage</title>
+        <link rel="stylesheet" type="text/css" href="all.css" />
+        <script type="text/javascript" src="html.utils.js"></script>
+        <style type="text/css">
+* {
+	/*-webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+	-webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+	/*-webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+}
+        </style>
+    </head>
+    <body>
+        <div id="wrapper" class=""><div class="loading">Loading...</div></div>
+        <script type="text/javascript">
+function render(o){
+    var w = $('wrapper');
+    w.innerHTML = tmpl(o.template, o.data);
+    //document.body.className = "fadein";
+}
+
+    document.addEventListener('click', function(e){
+		var target = e.target;
+		do {
+		    if(target && target.nodeType == 1){
+			    var a = target.getAttribute("action");
+				if(target.getAttribute("action")){
+					e.preventDefault();
+					var datastr = target.getAttribute("data"), data;
+					if(/^%7B/.test(datastr)){
+						data = JSON.parse(unescape(datastr));
+					} else {
+					 	data = { datastr: datastr };
+					}
+				    Ti.API.log(["Click caught!!", target.getAttribute("action"), data]);
+				    Ti.App.fireEvent(target.getAttribute("action"), data);
+				} else {
+					if(target.nodeName == 'A'){
+						e.preventDefault();
+						Ti.App.fireEvent('openUrl', { data: { url: target.getAttribute('href'), title: target.textContent }});
+					}
+				}
+	    	}
+		} while ((target = target.parentNode))
+    }, false);
+
+	var fontSize = 1, scaleStart;
+	document.body.addEventListener('gesturestart', function(e){
+		scaleStart = fontSize;
+	}, false);
+
+	document.body.addEventListener('gesturechange', function(e){
+		fontSize = Math.round(Math.min(1.4, Math.max(1, (scaleStart * e.scale))) * 100)/100;
+		document.body.style.fontSize = fontSize + 'em';
+	}, false);
+        </script>
+    </body>
+</html>
