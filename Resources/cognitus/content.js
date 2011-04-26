@@ -1,29 +1,40 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'000003');
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'000004'),
+		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
+		skilltomodule = {},
+		allmodules = [],
+		moduleskills = {};
 	
 	function updateMe(o,textid,textpropname){
 		o[textpropname] = C.content.getText(K.isFunc(textid) ? textid() : textid);
 	}
-	var notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({}));
-	var skillmodules = {
-		mindfulness: ["observe","describe","participate"],
-		distresstolerance: ["distract","selfsoothe"],
-		emotionregulation: ["oppositeaction"],
-		interpersonal: ["describe"]
-	};
-	var skilltomodule = {},allmodules = [];
-	for(var m in skillmodules){
-		allmodules.push(m);
-		skillmodules[m].forEach(function(s){
-			skilltomodule[s] = m;
-		});
+	
+	function loadSkillsAndModules(){
+		rows = db.execute("SELECT skillid, moduleid FROM skills");
+		while (rows.isValidRow()){
+			var skill = rows.field(0), module = rows.field(1);
+			skilltomodule[skill] = module;
+			if (allmodules.indexOf(module)===-1){
+				allmodules.push(module);
+			}
+			if (!moduleskills[module]){
+				moduleskills[module] = [];
+			}
+			moduleskills[module].push(skill);
+			rows.next();
+		}
+		rows.close();
 	}
+
+	// initial loading of skills and modules from database
+	loadSkillsAndModules();
+
     C.content = {
 		getAllSkillModules: function(){
 			return allmodules;
 		},
 		getSkillsForModule: function(moduleid){
-			return skillmodules[moduleid];
+			return moduleskills[moduleid];
 		},
         setObjectText: function(object, textid, textpropname) {
 			textpropname = (textpropname) || ("text");
