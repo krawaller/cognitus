@@ -3,7 +3,7 @@
     function createPage(o) {
         var view = K.create(K.merge({
             k_type: "View",
-            width: $$.platformWidth
+            //width: $$.platformWidth
         },
         o));
         return view;
@@ -72,7 +72,12 @@
         var win = K.create({
             k_type: "Window",
             exitOnClose: true,
-            orientationModes: [Ti.UI.PORTRAIT],
+            orientationModes: [
+				Titanium.UI.PORTRAIT,
+				Titanium.UI.UPSIDE_PORTRAIT,
+				Titanium.UI.LANDSCAPE_LEFT,
+				Titanium.UI.LANDSCAPE_RIGHT
+			],
             fullscreen: true
         });
 
