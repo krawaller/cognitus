@@ -23,8 +23,8 @@
 		var target = e.target;
 		do {
 		    if(target && target.nodeType == 1){
-			    var a = target.getAttribute("action");
-				if(target.getAttribute("action")){
+			    var action = target.getAttribute("action");
+				if(action){
 					e.preventDefault();
 					var datastr = target.getAttribute("data"), data;
 					if(/^%7B/.test(datastr)){
@@ -32,8 +32,8 @@
 					} else {
 					 	data = { datastr: datastr };
 					}
-				    Ti.API.log(["Click caught!!", target.getAttribute("action"),target.getAttribute("data"), datastr]);
-				    Ti.App.fireEvent(target.getAttribute("action"), data);
+				    Ti.API.log(["Click caught!!", action,target.getAttribute("data"), datastr]);
+				    Ti.App.fireEvent(action, data);
 				} else {
 					if(target.nodeName == 'A'){
 						e.preventDefault();

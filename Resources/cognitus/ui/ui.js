@@ -2,8 +2,8 @@
 
     function createPage(o) {
         var view = K.create(K.merge({
-            k_type: "View",
-            //width: $$.platformWidth
+            k_type: "View"
+            //, width: $$.platformWidth
         },
         o));
         return view;
@@ -27,46 +27,48 @@
         return label;
     }
 
-    function createAppWindow(apptabs) {
+    function createAppWindow(appstructure) {
+		var newlistid = (function(){
+			var max = 0;
+			return function(){
+				return max++;
+			};
+		})();
 
         // ****************** Building the app structure from the tree
-        function processContent(o, tabnr, back, listid, listplace) {
-            if (o.listid) {
+        function processContent(o, lists, pages, listid, listhistory, listpositions, level) {
+            if (Array.isArray(o)) {
                 // processing a List
-                lists[o.listid] = [];
-                o.pages.forEach(function(page,i) {
-                    lists[o.listid].push({
-                        navtextid: page.navtextid,
-                        pageid: page.pageid
+                lists[listid] = [];
+                o.forEach(function(page,i) {
+                    lists[listid].push({
+                        navtextid: (page.navtextid) || (page.pageid),
+                        navto: (page.navto) || (page.pageid),
+						level: level
                     });
-                    processContent(page, tabnr, o.back, o.listid, i);
+					processContent(page, lists, pages, listid, [].concat(listhistory).concat(listid), [].concat(listpositions).concat([i]), level);
                 });
             } else {
                 // processing a Page
-                pages[o.pageid] = {
-                    view: o.view,
-                    tabnr: tabnr,
-                    back: (o.back) || (back),
-                    listid: listid,
-					listplace: listplace
-                };
-                if (!tabs[tabnr].rootpageid) {
-                    tabs[tabnr].rootpageid = o.pageid;
-                }
+				if (o.view){
+                	pages[o.pageid] = {
+                    	view: o.view,
+						listid: listid,
+                    	listhistory: [].concat(listhistory), // must be copy
+						listpositions: [].concat(listpositions), // copy
+						listhistorystring: [].concat(listhistory).join(","),
+						level: level
+                	};
+				}
                 if (o.sub) {
-                    processContent(o.sub, tabnr, back);
+                    processContent(o.sub, lists, pages, newlistid(), listhistory, listpositions, level+1);
                 }
             }
         }
-        var tabs = [],
-        lists = {},
-        pages = {};
-        apptabs.forEach(function(tab, i) {
-            tabs.push({
-                textid: tab.textid
-            });
-            processContent(tab.content, i);
-        });
+        var lists = {},
+        	pages = {};
+		processContent(appstructure,lists,pages,newlistid(),[], [], 1);
+
 
         // ***************** Creating the window object and adding the pages
         var win = K.create({
@@ -81,112 +83,81 @@
             fullscreen: true
         });
 
+Ti.API.log(lists);
+Ti.API.log(pages);
+
         for (var pid in pages) {
             var page = pages[pid];
             page.view.opacity = 0;
             win.add(page.view);
         }
 
-        // ****************** Adding the tabs
-        tabmarker = K.create({
-            k_type: "View",
-            width: 10,
-            backgroundColor: "#000",
-            bottom: 0,
-            height: 50,
-            left: 30
-        });
-        win.add(tabmarker);
-        tabs.forEach(function(tab, i) {
-            var btn = K.create({
-                k_class: "NavButtonView",
-                width: 50,
-                bottom: 10,
-                left: 10 + i * 60,
-                k_children: [{
-                    k_class: "NavButtonLabel",
-                    text: "FOO"
-                }],
-                k_click: function(e) {
-					pb.pub("/navto", !tabs[i].lastpageid || (C.state.currentPageId === tabs[i].lastpageid) ? tabs[i].rootpageid : tabs[i].lastpageid);
-                }
-            });
-            C.content.setObjectText(btn.k_children[0], tab.textid);
-            win.add(btn);
-        });
-
-        // ****************** Backbutton
-        var backbtn = K.create({
-            k_class: "NavButtonView",
-            width: 50,
-            top: -60, // will be animated to 10
-			hidetop: -60,
-			showtop: 0,
-            right: 0,
-            k_children: [{
-                k_class: "NavButtonLabel",
-                text: "FOOBAR"
-            }],
-            k_click: function(e) {
-                pb.pub("/navto", C.state.currentBack.pageid);
-            }
-        });
-		var updatebackbtn = function(pageid){
-			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
-				back = topage.back;
-			if (back){				
-				backbtn.k_children[0].text = C.content.getText(back.navtextid ? back.navtextid : back.pageid + "_backnav");
-			}
-		};
-		pb.sub("/updatetext",updatebackbtn);
-
-        win.add(backbtn);
-
-        // ****************** Listbuttons
-		var listmarker = K.create({
-			k_type: "View",
-			width: 70,
-			backgroundColor: "#000",
-			height: 10,
-			right: -80, // will be animated to 0
-			top: 60
-		});
-		win.add(listmarker);
-        var listbtns = [];
-        for (var i = 0; i < 5; i++) {
-            (function(i) {
-                listbtns[i] = K.create({
-                    k_class: "NavButtonView",
-                    width: 50,
-                    top: 50 + 40 * i,
-                    right: -60, // will be animated to 10
-                    k_children: [{
-                        k_class: "NavButtonLabel",
-                        text: "FOOBAR"
-                    }],
-                    k_click: function(e) {
-                        pb.pub("/navto", C.state.currentList[i].pageid);
-                    }
-                });
-				win.add(listbtns[i]);
-            })(i);
-        }
-		var updatelistbtntexts = function(pageid){
-			var topage = ((pages[((pageid) || (C.state.currentPageId))])||{}),
-				list = lists[topage.listid];
-			if (list){
-				listbtns.forEach(function(b,i){
-					updatelistbtntext(b,list,i);
+		var tabrows = [];
+		[0,1,2,3].forEach(function(row){
+			var tabrow = K.create({
+				k_type: "View",
+				height: 30,
+				backgroundColor: ["#AAA","#BBB","#CCC","#DDD"][row],
+				bottom: row*30
+			});
+			var buttons = [];
+			[0,1,2,3].forEach(function(col){
+				var btn = K.create({
+					k_type: "View",
+					k_style: "NavButtonView",
+					k_id: "button",
+					k_children: [{
+						k_style: "NavButtonLabel",
+						k_id: "label",
+						text: "FOO"
+					}],
+					height: 25,
+					width: 70,
+					left: 10+80*col,
+					k_click: function(e){
+						pb.pub("/navto", btn.navto );
+					}
 				});
-			}
-		};
-		var updatelistbtntext = function(btn,list,pos){
-			var def = list[pos];
-			if (pos<list.length){
-				btn.k_children[0].text = C.content.getText(def.navtext ? def.navtext : def.pageid + "_nav");
-			}
-		};
-		pb.sub("/updatetext",updatelistbtntexts);
+				buttons.push(btn);
+				tabrow.add(btn);
+			});
+			tabrow.buttons = buttons;
+			tabrows.push(tabrow);
+			win.add(tabrow);
+		});
+		
+		function updateTabs(page){
+			Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
+			tabrows.forEach(function(tabrow,i){
+				if (i < page.listhistory.length){ // this level is shown!
+					Ti.API.log("Tabrow "+i+" set to "+page.listhistory[i]);
+					var list = lists[page.listhistory[i]];
+					tabrow.listid = page.listhistory[i];
+					tabrow.opacity = 1;
+					tabrow.buttons.forEach(function(btn,j){
+						var label = btn.k_children.label;
+						if (j<list.length && list[j]){
+							label.text = list[j].navtextid;
+							btn.navto = list[j].navto;
+							if (j==page.listpositions[i]){
+								label.font = {
+									fontWeight: "bold"
+								};
+							} else {
+								label.font = {
+									fontWeight: "normal"
+								};
+							}
+						} else {
+							btn.opacity = 0;
+						}
+					});
+				} else { // hide the tabrow;
+					tabrow.listid = -1;
+					tabrow.opacity = 0;
+				}
+			});
+		}
 
         // ****************** Title bits
         var titleview = K.create({
@@ -249,8 +220,8 @@
 		// ******************* Stuff
 
 		pb.sub("/updatetext",function(){
-			if (C.state.currentPage.render){
-				C.state.currentPage.render(C.state.lastArgs);
+			if (C.state.currentPageView.render){
+				C.state.currentPageView.render(C.state.lastArgs);
 			}
 		});
 
@@ -262,65 +233,8 @@
 			}
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid];
-			// backbtn
-			if (!topage.back){
-				if (lastpage && lastpage.back){ // left back, have to hide it
-					backbtn.animate({top: backbtn.hidetop});
-				}
-			} else if ((!lastpage) || (!lastpage.back)) { // no previous back, just show this one
-				updatebackbtn(pageid);
-				backbtn.animate({top: backbtn.showtop});
-			} else if (lastpage.back.pageid != topage.back.pageid) { // new back, have to hide change show
-				backbtn.animate({top: backbtn.hidetop},function(){
-					updatebackbtn(pageid);
-					backbtn.animate({top: backbtn.showtop});
-				});
-			}
-			// list
-			if (!topage.listid){
-				if (lastpage && lastpage.listid){ // left list, have to hide it
-					listbtns.forEach(function(l){
-						l.animate({right: -60});
-					});
-					listmarker.animate({right:-80});
-				}
-			} else {
-				var list = lists[topage.listid];
-				if (!lastpage || !lastpage.listid){ // no previous list, just add the new one
-					listmarker.top = 60 + topage.listplace * 40;
-					listmarker.animate({right:0});
-					listbtns.forEach(function(btn,i){
-						if (i<list.length){
-							btn.animate({right: 10});
-							updatelistbtntext(btn,list,i);
-						} /* else {
-							btn.animate({right: -60});
-						}*/
-					});					
-				} else if (lastpage.listid != topage.listid){ // changing to a new list
-					listmarker.animate({right:-70},function(){
-						listmarker.top = 60 + topage.listplace * 40;
-						listmarker.animate({right:0});
-					});
-					listbtns.forEach(function(btn,i){
-						if (i<list.length){
-							btn.animate({right: -60},function(){
-								updatelistbtntext(btn,list,i);
-								btn.animate({right:10});
-							});
-						} else {
-							btn.animate({right: -60});
-						}
-					});
-				} else { // moving in same list, so just adjust the marker
-					listmarker.animate({top:60+topage.listplace*40});
-				}
-			}
-			// tab stuff
-			if (!lastpage || (lastpage && lastpage.tabnr != topage.tabnr)){
-				tabmarker.animate({left:30+topage.tabnr*60});
-			}
-			tabs[topage.tabnr].lastpageid = pageid;
+			updateTabs(topage);
+
 			// animation
 			if (lastpage){
 				lastpage.view.animate({opacity:0});
@@ -331,19 +245,19 @@
 			if (topage.view.render){
 				topage.view.render(argstouse);
 			}
-			C.state.currentPage = topage.view;
+			C.state.currentPageView = topage.view;
+			C.state.currentPage = topage;
 			C.state.currentTitle = C.content.getText(pageid+"_title");
 			updateTitle();
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
-			C.state.currentList = list;
 			C.state.lastArgs = argstouse;
 		});
 
 		// ******************** Start logic
 
 		pb.sub("/appstart",function(){
-			pb.pub("/navto",tabs[0].rootpageid);
+			pb.pub("/navto","aboutmodules"); // TODO - fix dynamically!
 		});
 
         // ******************* All done, returning the window!
