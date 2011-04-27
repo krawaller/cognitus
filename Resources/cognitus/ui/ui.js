@@ -81,16 +81,27 @@
 				Titanium.UI.LANDSCAPE_LEFT,
 				Titanium.UI.LANDSCAPE_RIGHT
 			],
-            fullscreen: true
+            fullscreen: true,
+			backgroundColor: "red"
         });
-
-Ti.API.log(lists);
-Ti.API.log(pages);
+		var frame = K.create({
+			k_type: "View",
+			top: 40,
+			bottom: 40,
+			backgroundColor: "#FFF",
+			k_children: [{
+				k_type: "View",
+				height: 1,
+				top: 0,
+				backgroundColor: "#000"
+			}]
+		});
+		win.add(frame);
 
         for (var pid in pages) {
             var page = pages[pid];
             page.view.opacity = 0;
-            win.add(page.view);
+            frame.add(page.view);
         }
 		
 		// tab stuff
@@ -143,7 +154,7 @@ Ti.API.log(pages);
 					height: rowheight - 5,
 					width: btnwidth,
 					top: 0,
-					left: btnspace+(btnwidth+btnspace)*col + 20*((row+1)%2),
+					left: btnspace+(btnwidth+btnspace)*col + 15*((row+1)%2),
 					k_click: function(e){
 						pb.pub("/navto", btn.navto );
 					}
@@ -164,8 +175,8 @@ Ti.API.log(pages);
 			backgroundColor: "#777",
 			height: 30,
 			width: 30,
-			left: 5,
-			bottom: 0,
+			right: 5,
+			top: 5,
 			k_children: [{
 				k_style: "NavButtonLabel",
 				k_id: "label",
@@ -183,43 +194,46 @@ Ti.API.log(pages);
 			var dur = 300, prev = showing;
 			showing = toggle? !showing : showing;
 			if (!showing){
-				anchor.animate({bottom: 0+5, duration: dur});
 				tabrows.forEach(function(tabrow){
 					tabrow.animate({bottom: -rowheight, duration: dur});
 				});
 				anchor.k_children.label.text = "↑";
+				backbtn.animate({top: -50});
+				langtest.animate({top:-50});
+				notesbtn.animate({top:-50});
+				frame.animate({top:0,bottom:0});
 			} else {
-				if (prev){
-					anchor.bottom = C.state.currentPage.level*rowheight + 5;
-				} else {
-					anchor.animate({bottom:C.state.currentPage.level*rowheight + 5, duration: dur});	
-				}
 				tabrows.forEach(function(tabrow,i){
 					if (tabrow.showing){
 						tabrow.animate({bottom: i*rowheight, duration: dur});
 					}
 				});
 				anchor.k_children.label.text = "↓";
+				backbtn.animate({top: 5});
+				langtest.animate({top:5});
+				notesbtn.animate({top:5});
+				frame.animate({top:40,bottom:40});
 			}
 		}
 		
 		function updateTabs(page){
 			var bgcolours = ["#777","#999","#BBB","#DDD","#FFF"],
 				numrows = page.listhistory.length;
-			Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
+			//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 			tabrows.forEach(function(tabrow,i){
 				if (i < page.listhistory.length){ // this level is shown!
-					Ti.API.log("Tabrow "+i+" set to "+page.listhistory[i]);
 					var list = lists[page.listhistory[i]];
+					//Ti.API.log("Tabrow "+i+" set to listid "+page.listhistory[i]+", which has "+list.length+" tabs");
 					tabrow.listid = page.listhistory[i];
 					if (showing){
 						tabrow.bottom = i*rowheight;
 					}
-					tabrow.backgroundColor = bgcolours[bgcolours.length - numrows - 1 + i];
+					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - numrows - 1 + i]);
 					tabrow.showing = 1;
 					tabrow.buttons.forEach(function(btn,j){
 						var label = btn.k_children.label;
 						if (j<list.length && list[j]){
+							btn.opacity = 1;
 							label.text = C.content.getText(list[j].navtextid);
 							btn.navto = list[j].navto;
 							if (j==page.listpositions[i]){
@@ -253,9 +267,9 @@ Ti.API.log(pages);
         var titleview = K.create({
             k_type: "View",
             height: 30,
-            top: 10,
+            top: 5,
             width: 200,
-            left: 10,
+            left: 50,
             borderWidth: 1,
             borderColor: "#000",
             backgroundColor: "#CCC",
@@ -264,7 +278,7 @@ Ti.API.log(pages);
             }]
         }),
         titlelabel = titleview.k_children[0];
-        win.add(titleview);
+        frame.add(titleview);
 
         function updateTitle(noanim) {
             var title = C.state.currentTitle;
@@ -287,13 +301,51 @@ Ti.API.log(pages);
        // pb.sub("/newtitle", updateTitle);
         pb.sub("/updatetext", updateTitle, true);
 
+		// ********************* Backbtn
+		var backbtn = K.create({
+            k_type: "View",
+            height: 30,
+            top: 5,
+            width: 30,
+            left: 5,
+            borderWidth: 1,
+            borderColor: "#000",
+            backgroundColor: "#CCC",
+            k_children: [{
+                k_class: "TitleLabel",
+				text: "←"
+            }],
+			k_click: function(e){
+				Ti.API.log(C.state.history);
+				if (C.state.history.length){
+					var to = C.state.history.pop();
+					pb.pub("/navto",to.pageid,K.merge({back:true},to.args));
+				}
+			}
+        });
+		win.add(backbtn);
+
+		// ********************* Notes btn
+		
+		var notesbtn = K.create({
+			k_class: "NavButtonView",
+			width: 50,
+			top: 5,
+			left: 95,
+			k_children: [{
+				k_class: "NavButtonLabel",
+				text: "notes"
+			}]
+		});
+		win.add(notesbtn);
+
 		// ********************* Language test
 
 		var langtest = K.create({
 			k_class: "NavButtonView",
 			width: 50,
-			bottom:10,
-			right: 10,
+			top: 5,
+			left: 40,
 			k_children: [{
 				k_class: "NavButtonLabel",
 				text: "lang"
@@ -319,11 +371,21 @@ Ti.API.log(pages);
 		// ******************* Navigation logic
 		
 		pb.sub("/navto",function(pageid,args){
+			args = args || {};
 			if (!pages[pageid]){
 				throw "WTF, couldn't find "+pageid+" in tree!";
 			}
 			var lastpage = pages[C.state.currentPageId],
-				topage = pages[pageid];
+				topage = pages[pageid],
+				historymax = 5;
+			if (C.state.currentPageId && !args.back){
+				C.state.history.push({pageid:C.state.currentPageId,args:C.state.lastArgs});
+				if (C.state.history.length > historymax){
+					//Ti.API.log("SHORTENING HISTORY! was "+C.state.history.length);
+					C.state.history = C.state.history.splice(C.state.history.length-historymax);
+					//Ti.API.log("SHORTENED HISTORY! Is now "+C.state.history.length);
+				}
+			}
 			updateTabs(topage);
 			// animation
 			if (lastpage){
@@ -332,6 +394,9 @@ Ti.API.log(pages);
 			topage.view.animate({opacity:1});
 			// render stuff
 			var argstouse = K.merge(args || {},C.state.lastArgs || {});
+			if (argstouse.SkillId && !argstouse.ModuleId){
+				argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
+			}
 			if (topage.view.render){
 				topage.view.render(argstouse);
 			}
@@ -377,5 +442,8 @@ Ti.include("/cognitus/ui/moduleskillist.js");
 Ti.include("/cognitus/ui/skillexplanation.js");
 Ti.include("/cognitus/ui/skillexercises.js");
 Ti.include("/cognitus/ui/skillexamples.js");
+Ti.include("/cognitus/ui/moduletraininstruction.js");
+Ti.include("/cognitus/ui/moduletrainsession.js");
+Ti.include("/cognitus/ui/moduletrainhistory.js");
 
-Ti.include("/cognitus/ui/crisisView.js");
+Ti.include("/cognitus/ui/mycrisisskillist.js");

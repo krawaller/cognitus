@@ -29,11 +29,28 @@ var appstructure = [{
 				pageid: "skillexamples",
 				view: C.ui.createSkillExamplesView()
 			}]
+		},{
+			navtextid: "moduletrain_nav",
+			navto: "moduletraininstruction",
+			sub: [{
+				pageid: "moduletraininstruction",
+				view: C.ui.createModuleTrainInstructionView()
+			},{
+				pageid: "moduletrainsession",
+				view: C.ui.createModuleTrainSessionView()
+			},{
+				pageid: "moduletrainhistory",
+				view: C.ui.createModuleTrainHistoryView()
+			}]
 		}]
 	}]
 },{
-	pageid: "crisis",
-	view: C.ui.createCrisisView()
+	navtextid: "crisistab",
+	navto: "mycrisisskillist",
+	sub: [{
+		pageid: "mycrisisskillist",
+		view: C.ui.createMyCrisisSkillListView()
+	}]
 }];
 
 C.state.mainWindow = C.ui.createAppWindow(appstructure);

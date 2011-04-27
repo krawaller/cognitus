@@ -1,7 +1,7 @@
 var C = {};
 
 (function() {
-	C.state = {lang:"sv"};
+	C.state = {lang:"sv",history:[]};
 })();
 
 
