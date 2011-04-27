@@ -6,6 +6,7 @@ C.ui.createSkillModuleView = function(o){
 		ViewId: "module_"+o.ModuleId,
 		backgroundColor: "yellow"
 	});
+	view.using = "ModuleId";
 	view.add( C.ui.createLabel("module_"+o.ModuleId+"_description",{height:100,top:70}) );
 	return view;
 };

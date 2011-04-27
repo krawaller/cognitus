@@ -1,6 +1,7 @@
 (function() {
 
     function createPage(o) {
+		delete o.backgroundColor; // TODO - remove in respective file!
         var view = K.create(K.merge({
             k_type: "View"
             //, width: $$.platformWidth
@@ -42,7 +43,7 @@
                 lists[listid] = [];
                 o.forEach(function(page,i) {
                     lists[listid].push({
-                        navtextid: (page.navtextid) || (page.pageid),
+                        navtextid: (page.navtextid) || (page.pageid+"_title"),
                         navto: (page.navto) || (page.pageid),
 						level: level
                     });
@@ -91,14 +92,22 @@ Ti.API.log(pages);
             page.view.opacity = 0;
             win.add(page.view);
         }
-
-		var tabrows = [];
+		
+		// tab stuff
+		
+		var tabrows = [], rowheight = 25, btnwidth = 90, btnspace = 10;
 		[0,1,2,3].forEach(function(row){
 			var tabrow = K.create({
 				k_type: "View",
-				height: 30,
+				height: rowheight,
 				backgroundColor: ["#AAA","#BBB","#CCC","#DDD"][row],
-				bottom: row*30
+				bottom: row*rowheight,
+				k_children: [{
+					k_type: "View",
+					height: 1,
+					top: 0,
+					backgroundColor: "#000"
+				}]
 			});
 			var buttons = [];
 			[0,1,2,3].forEach(function(col){
@@ -107,13 +116,34 @@ Ti.API.log(pages);
 					k_style: "NavButtonView",
 					k_id: "button",
 					k_children: [{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						width: 1,
+						left: 0
+					},{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						width: 1,
+						right: 0
+					},{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						height: 1,
+						bottom: 0
+					},{
 						k_style: "NavButtonLabel",
 						k_id: "label",
-						text: "FOO"
+						k_type: "Label",
+						height: rowheight - 5,
+						width: btnwidth
 					}],
-					height: 25,
-					width: 70,
-					left: 10+80*col,
+					height: rowheight - 5,
+					width: btnwidth,
+					top: 0,
+					left: btnspace+(btnwidth+btnspace)*col + 20*((row+1)%2),
 					k_click: function(e){
 						pb.pub("/navto", btn.navto );
 					}
@@ -126,27 +156,86 @@ Ti.API.log(pages);
 			win.add(tabrow);
 		});
 		
+		var anchor = K.create({
+			k_type: "View",
+			k_style: "NavButtonView",
+			borderSize: 1,
+			borderColor: "#000",
+			backgroundColor: "#777",
+			height: 30,
+			width: 30,
+			left: 5,
+			bottom: 0,
+			k_children: [{
+				k_style: "NavButtonLabel",
+				k_id: "label",
+				text: "↓"
+			}],
+			k_click: function(e){
+				updateAnchor(true);
+			}
+		});
+		
+		win.add(anchor);
+		
+		var showing = true;
+		function updateAnchor(toggle){
+			var dur = 300, prev = showing;
+			showing = toggle? !showing : showing;
+			if (!showing){
+				anchor.animate({bottom: 0+5, duration: dur});
+				tabrows.forEach(function(tabrow){
+					tabrow.animate({bottom: -rowheight, duration: dur});
+				});
+				anchor.k_children.label.text = "↑";
+			} else {
+				if (prev){
+					anchor.bottom = C.state.currentPage.level*rowheight + 5;
+				} else {
+					anchor.animate({bottom:C.state.currentPage.level*rowheight + 5, duration: dur});	
+				}
+				tabrows.forEach(function(tabrow,i){
+					if (tabrow.showing){
+						tabrow.animate({bottom: i*rowheight, duration: dur});
+					}
+				});
+				anchor.k_children.label.text = "↓";
+			}
+		}
+		
 		function updateTabs(page){
+			var bgcolours = ["#777","#999","#BBB","#DDD","#FFF"],
+				numrows = page.listhistory.length;
 			Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 			tabrows.forEach(function(tabrow,i){
 				if (i < page.listhistory.length){ // this level is shown!
 					Ti.API.log("Tabrow "+i+" set to "+page.listhistory[i]);
 					var list = lists[page.listhistory[i]];
 					tabrow.listid = page.listhistory[i];
-					tabrow.opacity = 1;
+					if (showing){
+						tabrow.bottom = i*rowheight;
+					}
+					tabrow.backgroundColor = bgcolours[bgcolours.length - numrows - 1 + i];
+					tabrow.showing = 1;
 					tabrow.buttons.forEach(function(btn,j){
 						var label = btn.k_children.label;
 						if (j<list.length && list[j]){
-							label.text = list[j].navtextid;
+							label.text = C.content.getText(list[j].navtextid);
 							btn.navto = list[j].navto;
 							if (j==page.listpositions[i]){
 								label.font = {
-									fontWeight: "bold"
+									fontWeight: "bold",
+									fontSize: 10
 								};
+								btn.backgroundColor = bgcolours[bgcolours.length - numrows + i];
+								btn.top = 0;
 							} else {
 								label.font = {
-									fontWeight: "normal"
+									fontWeight: "normal",
+									fontSize: 10
 								};
+								btn.top = 1;
+								btn.backgroundColor = bgcolours[bgcolours.length - numrows - 1 + i];
 							}
 						} else {
 							btn.opacity = 0;
@@ -154,7 +243,8 @@ Ti.API.log(pages);
 					});
 				} else { // hide the tabrow;
 					tabrow.listid = -1;
-					tabrow.opacity = 0;
+					tabrow.bottom = -rowheight;
+					tabrow.showing = 0;
 				}
 			});
 		}
@@ -223,6 +313,7 @@ Ti.API.log(pages);
 			if (C.state.currentPageView.render){
 				C.state.currentPageView.render(C.state.lastArgs);
 			}
+			updateTabs(C.state.currentPage);
 		});
 
 		// ******************* Navigation logic
@@ -234,7 +325,6 @@ Ti.API.log(pages);
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid];
 			updateTabs(topage);
-
 			// animation
 			if (lastpage){
 				lastpage.view.animate({opacity:0});
@@ -252,6 +342,7 @@ Ti.API.log(pages);
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
+			updateAnchor();
 		});
 
 		// ******************** Start logic
@@ -277,8 +368,6 @@ Ti.API.log(pages);
 })();
 
 Ti.include("/cognitus/ui/styles.js");
-
-Ti.include("/cognitus/ui/applicationWindow.js");
 
 Ti.include("/cognitus/ui/tab-skills.js");
 Ti.include("/cognitus/ui/aboutmodules.js");

@@ -11,6 +11,7 @@ C.ui.createSkillExercisesView = function(o){
 		left: 10
 	});
 	view.add(label);
+	view.using = "SkillId";
 	view.render = function(args){
 		label.text = "S:"+((args && args.SkillId) || "X");
 	};

@@ -14,5 +14,6 @@ C.ui.createModuleExplanationView = function(o){
 		titlelabel.text = C.content.getText("module_"+args.ModuleId+"_title");
 		C.ui.updateWebView(webview,C.content.getText("module_"+args.ModuleId+"_description"));
 	};
+	view.using = "ModuleId";
 	return view;
 };

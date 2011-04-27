@@ -15,6 +15,7 @@ C.ui.createSkillExamplesView = function(o){
 	});
 	view.add(titlelabel);
 	view.add(label);
+	view.using = "SkillId";
 	view.render = function(args){
 		titlelabel.text = C.content.getText("skill_"+args.SkillId+"_title");
 		label.text = C.content.getText("skill_"+args.SkillId+"_example");

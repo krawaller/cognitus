@@ -6,6 +6,7 @@ C.ui.createModuleListView = function(o){
 	var table = K.create({
 		k_type: "TableView",
 		top: 200,
+		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){
 			pb.pub("/navto","moduleexplanation",{ModuleId:e.row.ModuleId});
 		}

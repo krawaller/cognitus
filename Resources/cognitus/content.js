@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'000004'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'000005'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -10,16 +10,17 @@
 	}
 	
 	function loadSkillsAndModules(){
-		rows = db.execute("SELECT skillid, moduleid FROM skills");
+		rows = db.execute("SELECT moduleid FROM modules ORDER BY priority DESC");
+		while (rows.isValidRow()){
+			moduleskills[rows.field(0)] = [];
+			allmodules.push(rows.field(0));
+			rows.next();
+		}
+		rows.close();
+		rows = db.execute("SELECT skillid, moduleid FROM skills ORDER BY priority DESC");
 		while (rows.isValidRow()){
 			var skill = rows.field(0), module = rows.field(1);
 			skilltomodule[skill] = module;
-			if (allmodules.indexOf(module)===-1){
-				allmodules.push(module);
-			}
-			if (!moduleskills[module]){
-				moduleskills[module] = [];
-			}
 			moduleskills[module].push(skill);
 			rows.next();
 		}

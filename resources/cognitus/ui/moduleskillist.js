@@ -6,6 +6,7 @@ C.ui.createModuleSkillListView = function(o){
 	var table = K.create({
 		k_type: "TableView",
 		top: 200,
+		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){
 			pb.pub("/navto","skillexplanation",{SkillId:e.row.SkillId,ModuleId:e.row.ModuleId});
 		}
@@ -22,5 +23,6 @@ C.ui.createModuleSkillListView = function(o){
 		});
 		table.setData(rows);
 	};
+	view.using = "ModuleId";
 	return view;
 };
