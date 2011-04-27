@@ -1,6 +1,7 @@
 (function() {
 
     function createPage(o) {
+		delete o.backgroundColor;
         var view = K.create(K.merge({
             k_type: "View",
             //width: $$.platformWidth
@@ -105,7 +106,10 @@
                 left: 10 + i * 60,
                 k_children: [{
                     k_class: "NavButtonLabel",
-                    text: "FOO"
+                    text: "FOO",
+					font: {
+						fontSize: 10
+					}
                 }],
                 k_click: function(e) {
 					pb.pub("/navto", !tabs[i].lastpageid || (C.state.currentPageId === tabs[i].lastpageid) ? tabs[i].rootpageid : tabs[i].lastpageid);
@@ -125,7 +129,10 @@
             right: 0,
             k_children: [{
                 k_class: "NavButtonLabel",
-                text: "FOOBAR"
+                text: "FOOBAR",
+				font: {
+					fontSize: 10
+				}
             }],
             k_click: function(e) {
                 pb.pub("/navto", C.state.currentBack.pageid);
@@ -162,7 +169,10 @@
                     right: -60, // will be animated to 10
                     k_children: [{
                         k_class: "NavButtonLabel",
-                        text: "FOOBAR"
+                        text: "FOOBAR",
+						font: {
+							fontSize: 10
+						}
                     }],
                     k_click: function(e) {
                         pb.pub("/navto", C.state.currentList[i].pageid);
