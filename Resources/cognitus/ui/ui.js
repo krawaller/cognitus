@@ -88,6 +88,7 @@
             fullscreen: true,
 			backgroundColor: "red"
         });
+		var swipedir;
 		var frame = K.create({
 			k_type: "View",
 			top: 40,
@@ -104,7 +105,17 @@
 					updateAnchor(true);
 				},
 				swipe: function(e){
-					alert("Swiped! "+e.dir+","+e.direction);
+					swipedir = e.direction;
+				},
+				touchend: function(e){
+					if (swipedir){
+						if (swipedir === "left"){
+							goBack();
+						} else {
+							goForward();
+						}
+						swipedir = false;
+					}
 				}
 			}
 		});
@@ -185,6 +196,7 @@
 			borderSize: 1,
 			borderColor: "#000",
 			backgroundColor: "#777",
+			zIndex: 100,
 			height: 30,
 			width: 30,
 			right: 5,
@@ -210,9 +222,7 @@
 					tabrow.animate({bottom: -rowheight, duration: dur});
 				});
 				anchor.k_children.label.text = "↑";
-				backbtn.animate({top: -50});
-				langtest.animate({top:-50});
-				notesbtn.animate({top:-50});
+				controlpanel.animate({top: -50});
 				frame.animate({top:0,bottom:0});
 			} else {
 				tabrows.forEach(function(tabrow,i){
@@ -221,9 +231,7 @@
 					}
 				});
 				anchor.k_children.label.text = "↓";
-				backbtn.animate({top: 5});
-				langtest.animate({top:5});
-				notesbtn.animate({top:5});
+				controlpanel.animate({top: 0});
 				frame.animate({top:40,bottom:rowheight});
 			}
 		}
@@ -314,29 +322,56 @@
        // pb.sub("/newtitle", updateTitle);
         pb.sub("/updatetext", updateTitle, true);
 
+
+		var controlpanel = K.create({
+			k_type: "View",
+			top:0,
+			height:30
+			
+		});
+		win.add(controlpanel);
+
 		// ********************* Backbtn
+		function goBack(){
+			if (C.state.historyposition>0){
+				var to = C.state.history[--C.state.historyposition];
+				pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+			}
+		}
 		var backbtn = K.create({
-            k_type: "View",
+            k_class: "NavButtonView",
             height: 30,
             top: 5,
             width: 30,
             left: 5,
-            borderWidth: 1,
-            borderColor: "#000",
-            backgroundColor: "#CCC",
             k_children: [{
-                k_class: "TitleLabel",
+                k_class: "NavButtonLabel",
 				text: "←"
             }],
-			k_click: function(e){
-				Ti.API.log(C.state.history);
-				if (C.state.history.length){
-					var to = C.state.history.pop();
-					pb.pub("/navto",to.pageid,K.merge({back:true},to.args));
-				}
-			}
+			k_click: goBack
         });
-		win.add(backbtn);
+		controlpanel.add(backbtn);
+		
+		// ********************* Forwardbutton
+		function goForward(){
+			if (C.state.historyposition < C.state.history.length-1){
+				var to = C.state.history[++C.state.historyposition];
+				pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+			}
+		}
+		var forwardbtn = K.create({
+            k_class: "NavButtonView",
+            height: 30,
+            top: 5,
+            width: 30,
+            left: 40,
+            k_children: [{
+                k_class: "NavButtonLabel",
+				text: "→"
+            }],
+			k_click: goForward
+        });
+		controlpanel.add(forwardbtn);
 
 		// ********************* Notes btn
 		
@@ -350,7 +385,7 @@
 				text: "notes"
 			}]
 		});
-		win.add(notesbtn);
+		controlpanel.add(notesbtn);
 
 		// ********************* Language test
 
@@ -358,7 +393,7 @@
 			k_class: "NavButtonView",
 			width: 50,
 			top: 5,
-			left: 40,
+			left: 150,
 			k_children: [{
 				k_class: "NavButtonLabel",
 				text: "lang"
@@ -370,7 +405,7 @@
 				pb.pub("/updatetext");
 			}
 		});
-		win.add(langtest);
+		controlpanel.add(langtest);
 
 		// ******************* Stuff
 
@@ -391,15 +426,25 @@
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid],
 				historymax = 5;
-			if (C.state.currentPageId && !args.back){
-				C.state.history.push({pageid:C.state.currentPageId,args:C.state.lastArgs});
-				if (C.state.history.length > historymax){
-					//Ti.API.log("SHORTENING HISTORY! was "+C.state.history.length);
-					C.state.history = C.state.history.splice(C.state.history.length-historymax);
-					//Ti.API.log("SHORTENED HISTORY! Is now "+C.state.history.length);
-				}
+			// HISTORY
+			if (!args.dontadjusthistory){
+				C.state.historyposition++;
+				C.state.history.splice(C.state.historyposition);
+				C.state.history.push({pageid:pageid,args:args});
 			}
+			delete args.dontadjusthistory;
+			//Ti.API.log(["HISTORY","position="+C.state.historyposition+", size="+C.state.history.length,C.state.history]);
+			backbtn.opacity = C.state.historyposition ? 1 : 0.5; // TODO - nicer! // .k_children[0].text = C.state.historyposition ? "←" : "x";
+			forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
+			if (C.state.history.length>historymax){
+				C.state.history = C.state.history.splice(C.state.history.length-historymax);
+				C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
+				//Ti.API.log(["ADJUSTED HISTORY","position="+C.state.historyposition+", size="+C.state.history.length,C.state.history]);
+			}
+			
+			
 			updateTabs(topage);
+			
 			// animation
 			if (lastpage && topage.view !== lastpage.view){
 				topage.view.zIndex = 1;

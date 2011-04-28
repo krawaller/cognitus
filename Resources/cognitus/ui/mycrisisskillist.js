@@ -21,14 +21,6 @@ C.ui.createMyCrisisSkillListView = function(o){
 			},
 			move: function(e){
 				C.content.updateSkillPositionOnCrisisList(e.row.SkillId,e.index,e.fromIndex);
-				var rows = [];
-				C.content.getMyCrisisSkills().forEach(function(listobject){ // listobject has SkillId, priority and freetext props
-					rows.push({
-						SkillId: listobject.SkillId,
-						title: listobject.priority+" "+C.content.getText("skill_"+listobject.SkillId+"_title")
-					});
-				});
-				table.setData(rows);
 			}
 		}
 	});
