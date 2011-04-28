@@ -41,35 +41,66 @@ C.ui.createMyCrisisSkillListView = function(o){
 			width: 30,
 			top: 40,
 			right: 10,
-			borderSize: 1,
-			borderColor: "#000",
-			backgroundColor: "#CCC",
+			zIndex: 5,
 			k_children: [{
 				k_type: "Label",
 				k_class: "NavButtonLabel",
-				k_id: "label",
-				text: "edit"
+				k_id: "label"
 			}],
 			k_click: function(){
 				if (editing){
 					table.editing = false;
 					editing = false;
-					btn.k_children.label.text = "edit";
+					btn.k_children.label.text = C.content.getText("crisislist_button_edit");
 				} else {
 					editing = true;
 					table.editing = true;
-					btn.k_children.label.text = "done";
+					btn.k_children.label.text = C.content.getText("crisislist_button_done");
 				}
 			}
 	});
 	view.add(btn);
 	view.render = function(arg){
+		btn.k_children[0].text = C.content.getText("crisislist_button_"+(editing?"done":"edit"));
 		var rows = [];
 		C.content.getMyCrisisSkills().forEach(function(listobject){ // listobject has SkillId, priority and freetext props
-			rows.push({
+			rows.push(K.create({
+				k_type: "TableViewRow",
 				SkillId: listobject.SkillId,
-				title: listobject.priority+" "+C.content.getText("skill_"+listobject.SkillId+"_title")
-			});
+				height: 60,
+				k_children: [{
+					k_type: "Label",
+					top: 0,
+					left: 20,
+					textAlign: "left",
+					font: {
+						fontSize: 10
+					},
+					text: C.content.getText("module_"+C.content.getModuleForSkill(listobject.SkillId)+"_title")
+				},{
+					k_type: "Label",
+					top: 12,
+					left: 5,
+					textAlign: "left",
+					font: {
+						fontSize: 15,
+						fontWeight: "bold"
+					},
+					text: C.content.getText("skill_"+listobject.SkillId+"_title")
+				},{
+					k_type: "Label",
+					top: 28,
+					left: 40,
+					height: 30,
+					textAlign: "left",
+					width: $$.platformWidth,
+					font: {
+						fontSize: 12,
+						fontStyle: "italic"
+					},
+					text: listobject.freetext
+				}]
+			}));
 		});
 		table.setData(rows);
 	};

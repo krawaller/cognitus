@@ -42,7 +42,10 @@
 			backgroundColor: "#CCC"
 		},
 		NavButtonLabel: {
-			k_type: "Label"
+			k_type: "Label",
+			font: {
+				fontSize: 10
+			}
 		},
 		TitleView: {
 			height: 40,

@@ -521,9 +521,9 @@
 					k_type: "View",
 					k_class: "NavButtonView",
 					height: 30,
-					width: 30,
-					bottom: 10,
-					left: 5,
+					width: 100,
+					bottom: 50,
+					left: 10,
 					k_id: "deletebtn",
 					k_children: [{
 						k_class: "NavButtonLabel",
@@ -538,9 +538,9 @@
 					k_type: "View",
 					k_class: "NavButtonView",
 					height: 30,
-					width: 30,
+					width: 100,
 					bottom: 10,
-					left: 40,
+					right: 10,
 					k_id: "cancelbtn",
 					k_children: [{
 						k_class: "NavButtonLabel",
@@ -553,9 +553,9 @@
 					k_type: "View",
 					k_class: "NavButtonView",
 					height: 30,
-					width: 30,
+					width: 100,
 					bottom: 10,
-					left: 75,
+					left: 10,
 					k_id: "gotobtn",
 					k_children: [{
 						k_class: "NavButtonLabel",
@@ -573,9 +573,9 @@
 					k_type: "View",
 					k_class: "NavButtonView",
 					height: 30,
-					width: 30,
-					bottom: 10,
-					left: 110,
+					width: 100,
+					bottom: 50,
+					right: 10,
 					k_id: "addbtn",
 					k_children: [{
 						k_class: "NavButtonLabel"
@@ -593,9 +593,9 @@
 					k_type: "View",
 					k_class: "NavButtonView",
 					height: 30,
-					width: 30,
-					bottom: 10,
-					left: 110,
+					width: 100,
+					bottom: 50,
+					right: 10,
 					k_id: "updatebtn",
 					k_children: [{
 						k_class: "NavButtonLabel",
@@ -657,6 +657,7 @@
 			cip_addbtn.k_children[0].text = C.content.getText("crisislistitem_button_add");
 			cip_updatebtn.k_children[0].text = C.content.getText("crisislistitem_button_update");
 			cip_gotobtn.k_children[0].text = C.content.getText("crisislistitem_button_goto_"+(fromlist ? "skill" : "list"));
+			cip_closebtn.k_children[0].text = C.content.getText("crisislistitem_button_close");
 			if (cip_isonlist){
 				setCrisisListItemPanelToUpdate();
 			} else {
