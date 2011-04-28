@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00018'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00024'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -63,12 +63,21 @@
 				res.close();	
 			}
 		},
-		addSkillToCrisisList: function(skillid){
+		updateSkillUsageTextOnCrisisList: function(skillid,freetext){
+			db.execute("UPDATE crisislistobjects SET freetext = '"+freetext+"' WHERE skillid = '"+skillid+"'");
+		},
+		addSkillToCrisisList: function(skillid,freetext){
 			db.execute("UPDATE crisislistobjects SET priority = priority+1");
-			res = db.execute("INSERT INTO crisislistobjects (skillid,freetext,priority) VALUES ('"+skillid+"','',0)");
+			res = db.execute("INSERT INTO crisislistobjects (skillid,freetext,priority) VALUES ('"+skillid+"','"+(freetext||"")+"',0)");
 			if (res){
 				res.close();	
 			}
+		},
+		getCrisisListItemUsageText: function(skillid){
+			var res = db.execute("SELECT freetext FROM crisislistobjects WHERE skillid = '"+skillid+"'"),
+				text = res.field(0);
+			res.close();
+			return text;
 		},
 		updateSkillPositionOnCrisisList: function(skillid,newpriority,oldpriority){
 			if (newpriority > oldpriority){

@@ -12,7 +12,8 @@ C.ui.createMyCrisisSkillListView = function(o){
 		top: 150,
 		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){
-			pb.pub("/navto","skillexplanation",{SkillId:e.row.SkillId});
+			pb.pub("/showcrisislistitempanel",e.row.SkillId,true);
+			//pb.pub("/navto","skillexplanation",{SkillId:e.row.SkillId});
 		},
 		k_events: {
 			"delete": function(e){

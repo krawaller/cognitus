@@ -14,8 +14,8 @@
 	function updateWebView(w,html){
 		w.html = webviewmaster.replace(/XXXCONTENTXXX/,html);
 	}
-	function createWebView(){
-		var webview = Ti.UI.createWebView({});
+	function createWebView(o){
+		var webview = Ti.UI.createWebView(o||{});
 		return webview;
 	}
 
@@ -27,6 +27,10 @@
         C.content.setObjectText(label, id);
         return label;
     }
+
+	function showMessage(textid,type){
+		alert(C.content.getText(textid));
+	}
 
     function createAppWindow(appstructure) {
 		var newlistid = (function(){
@@ -43,7 +47,7 @@
                 lists[listid] = [];
                 o.forEach(function(page,i) {
                     lists[listid].push({
-                        navtextid: (page.navtextid) || (page.pageid+"_title"),
+                        navtextid: (page.navtextid) || (page.pageid+"_nav"),
                         navto: (page.navto) || (page.pageid),
 						level: level
                     });
@@ -94,7 +98,15 @@
 				height: 1,
 				top: 0,
 				backgroundColor: "#000"
-			}]
+			}],
+			k_events: {
+				doubletap: function(e){
+					updateAnchor(true);
+				},
+				swipe: function(e){
+					alert("Swiped! "+e.dir+","+e.direction);
+				}
+			}
 		});
 		win.add(frame);
 
@@ -212,7 +224,7 @@
 				backbtn.animate({top: 5});
 				langtest.animate({top:5});
 				notesbtn.animate({top:5});
-				frame.animate({top:40,bottom:40});
+				frame.animate({top:40,bottom:rowheight});
 			}
 		}
 		
@@ -271,6 +283,7 @@
             width: 200,
             left: 50,
             borderWidth: 1,
+			zIndex: 5,
             borderColor: "#000",
             backgroundColor: "#CCC",
             k_children: [{
@@ -388,10 +401,14 @@
 			}
 			updateTabs(topage);
 			// animation
-			if (lastpage){
-				lastpage.view.animate({opacity:0});
+			if (lastpage && topage.view !== lastpage.view){
+				topage.view.zIndex = 1;
+				topage.view.opacity = 1;
+				lastpage.zIndex = 2;
+				lastpage.view.animate({opacity:0},function(){lastpage.zIndex=1;});
+			} else {
+				topage.view.animate({opacity:1});
 			}
-			topage.view.animate({opacity:1});
 			// render stuff
 			var argstouse = K.merge(args || {},C.state.lastArgs || {});
 			if (argstouse.SkillId && !argstouse.ModuleId){
@@ -408,7 +425,249 @@
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
 			updateAnchor();
+			// skill crisis list btn
+			if (topage.view.showingskill && !crisislistitembutton.opacity){
+				crisislistitembutton.animate({opacity: 1});
+				crisislistitembutton.k_children.plusminuslabel.text = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
+			}
+			if (!topage.view.showingskill){
+				crisislistitembutton.animate({opacity: 0});
+			}
 		});
+
+		// ******************** Crisis list item button
+		var crisislistitembutton = K.create({
+			k_class: "NavButtonView",
+			top: 50,
+			right: 5,
+			height: 30,
+			width: 30,
+			opacity: 0,
+			zIndex: 5,
+			k_click: function(e){
+				showCrisisListItemPanel(C.state.lastArgs.SkillId,false);
+			},
+			k_children: [{
+				k_id: "plusminuslabel",
+				text: "+",
+				font: {
+					fontSize: 20
+				},
+				top: 0,
+				height: 20
+			},{
+				k_id: "crisislabel",
+				k_type: "Label",
+				font: {
+					fontSize: 8
+				},
+				bottom: 0,
+				height: 10
+			}]
+		});
+		C.content.setObjectText(crisislistitembutton.k_children.crisislabel,"crisislistitem_button_tag");
+		frame.add(crisislistitembutton);
+
+		// ******************** Crisis list item panel
+		var crisislistitempanel = K.create({
+			k_type: "View",
+			backgroundColor: "rgba(0,0,0,0.8)",
+			opacity: 0,
+			k_id: "modal",
+			k_click: function(e){
+				if (e.source.k_id === "modal"){
+					hideCrisisListItemPanel(cip_skillid,cip_fromlist);
+				}
+			},
+			k_children: [{
+				k_type: "View",
+				borderSize: 1,
+				borderColor: "#000",
+				backgroundColor: "#EEE",
+				top: 20,
+				left: 20,
+				right: 20,
+				bottom: 20,
+				k_id: "panel",
+				k_children: [{
+					k_type: "Label",
+					k_class: "sublabel",
+					top: 10,
+					height: 15,
+					k_id: "modulelabel"
+				},{
+					k_type: "Label",
+					k_class: "titlelabel",
+					top: 30,
+					height: 20,
+					k_id: "skillabel"
+				},{
+					k_type: "Label",
+					k_class: "instructionlabel",
+					top: 55,
+					height: 50,
+					k_id: "instructionlabel"
+				},{
+					k_type: "TextArea",
+					top: 110,
+					height: 80,
+					width: 200,
+					left: 20,
+					borderColor: "#CCC",
+					borderSize: 1,
+					value: "foo",
+					k_id:"textarea"
+				},{
+					k_type: "View",
+					k_class: "NavButtonView",
+					height: 30,
+					width: 30,
+					bottom: 10,
+					left: 5,
+					k_id: "deletebtn",
+					k_children: [{
+						k_class: "NavButtonLabel",
+						text: "del"
+					}],
+					k_click: function(e){
+						C.content.removeSkillFromCrisisList(cip_skillid);
+						showMessage("crisislistitem_message_deleted");
+						setCrisisListItemPanelToAdd();
+					}
+				},{
+					k_type: "View",
+					k_class: "NavButtonView",
+					height: 30,
+					width: 30,
+					bottom: 10,
+					left: 40,
+					k_id: "cancelbtn",
+					k_children: [{
+						k_class: "NavButtonLabel",
+						text: "canc"
+					}],
+					k_click: function(e){
+						hideCrisisListItemPanel(cip_skillid,cip_fromlist);
+					}
+				},{
+					k_type: "View",
+					k_class: "NavButtonView",
+					height: 30,
+					width: 30,
+					bottom: 10,
+					left: 75,
+					k_id: "gotobtn",
+					k_children: [{
+						k_class: "NavButtonLabel",
+						text: "goto"
+					}],
+					k_click: function(e){
+						if (cip_fromlist){
+							pb.pub("/navto","skillexplanation",{SkillId:cip_skillid});
+						} else {
+							pb.pub("/navto","mycrisisskillist");
+						}
+						hideCrisisListItemPanel(cip_skillid,cip_fromlist);
+					}
+				},{
+					k_type: "View",
+					k_class: "NavButtonView",
+					height: 30,
+					width: 30,
+					bottom: 10,
+					left: 110,
+					k_id: "addbtn",
+					k_children: [{
+						k_class: "NavButtonLabel"
+					}],
+					k_click: function(e){
+						if (cip_textarea.value && cip_textarea.value.length){
+							C.content.addSkillToCrisisList(cip_skillid,cip_textarea.value);
+							showMessage("crisislistitem_message_added");
+							setCrisisListItemPanelToUpdate();
+						} else {
+							showMessage("crisislistitem_message_textneeded","error");
+						}
+					}
+				},{
+					k_type: "View",
+					k_class: "NavButtonView",
+					height: 30,
+					width: 30,
+					bottom: 10,
+					left: 110,
+					k_id: "updatebtn",
+					k_children: [{
+						k_class: "NavButtonLabel",
+						text: "update"
+					}],
+					k_click: function(e){
+						if (cip_textarea.value && cip_textarea.value.length){
+							C.content.updateSkillUsageTextOnCrisisList(cip_skillid,cip_textarea.value);
+							showMessage("crisislistitem_message_updated");
+						} else {
+							showMessage("crisislistitem_message_textneeded","error");
+						}
+					}
+				}]
+			}]
+		});
+		win.add(crisislistitempanel);
+		var cip = crisislistitempanel.k_children.panel,
+			cip_modlabel = cip.k_children.modulelabel,
+			cip_skillabel = cip.k_children.skillabel,
+			cip_instrlabel = cip.k_children.instructionlabel,
+			cip_textarea = cip.k_children.textarea,
+			cip_delbtn = cip.k_children.deletebtn,
+			cip_closebtn = cip.k_children.cancelbtn,
+			cip_addbtn = cip.k_children.addbtn,
+			cip_updatebtn = cip.k_children.updatebtn,
+			cip_gotobtn = cip.k_children.gotobtn,
+			cip_fromlist,
+			cip_isonlist,
+			cip_skillid;
+		function hideCrisisListItemPanel(skillid,fromlist){
+			if (!fromlist){
+				crisislistitembutton.k_children.plusminuslabel.text = (C.content.testIfSkillOnCrisisList(skillid) ? "-" : "+");
+			}
+			crisislistitempanel.animate({opacity:0});
+		}
+		function setCrisisListItemPanelToAdd(){
+			cip_instrlabel.text = C.content.getText("crisislistitem_instruction_add");
+			cip_delbtn.opacity = 0;
+			cip_updatebtn.opacity = 0;
+			cip_addbtn.opacity = 1;
+			cip_textarea.value = "";
+		}
+		function setCrisisListItemPanelToUpdate(){
+			cip_instrlabel.text = C.content.getText("crisislistitem_instruction_update");
+			cip_textarea.value = C.content.getCrisisListItemUsageText(cip_skillid);
+			cip_delbtn.opacity = 1;
+			cip_addbtn.opacity = 0;
+			cip_updatebtn.opacity = 1;
+		}
+		function showCrisisListItemPanel(skillid,fromlist){
+			cip_fromlist = fromlist;
+			cip_skillid = skillid;
+			cip_isonlist = (fromlist) || (C.content.testIfSkillOnCrisisList(skillid));
+			cip_modlabel.text = C.content.getText("module_"+C.content.getModuleForSkill(skillid)+"_title");
+			cip_skillabel.text = C.content.getText("skill_"+skillid+"_title");
+			cip_textarea.hintText = "xxx"+C.content.getText("crisislistitem_instruction_hinttext");
+			cip_delbtn.k_children[0].text = C.content.getText("crisislistitem_button_delete");
+			cip_addbtn.k_children[0].text = C.content.getText("crisislistitem_button_add");
+			cip_updatebtn.k_children[0].text = C.content.getText("crisislistitem_button_update");
+			cip_gotobtn.k_children[0].text = C.content.getText("crisislistitem_button_goto_"+(fromlist ? "skill" : "list"));
+			if (cip_isonlist){
+				setCrisisListItemPanelToUpdate();
+			} else {
+				setCrisisListItemPanelToAdd();
+			}
+			crisislistitempanel.animate({opacity:1});
+		}
+		pb.sub("/showcrisislistitempanel",function(skillid,fromlist){
+			showCrisisListItemPanel(skillid,fromlist);
+		});
+		
 
 		// ******************** Start logic
 
@@ -423,6 +682,7 @@
 
     // expose
     C.ui = {
+		showMessage: showMessage,
 		createWebView: createWebView,
 		updateWebView: updateWebView,
         createPage: createPage,
