@@ -2,13 +2,13 @@ C.ui.createModuleSkillListView = function(o){
 	var view = C.ui.createPage({
 		backgroundColor: "yellow"
 	});
-	view.add( C.ui.createLabel(function(){return "moduleskillist_description";},{height:100,top:100}) );
+	view.add( C.ui.createLabel(function(){return "moduleskillist_description";},{height:100,top:20}) );
 	var table = K.create({
 		k_type: "TableView",
-		top: 200,
+		top: 100,
 		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){
-			pb.pub("/navto","skillexplanation",{SkillId:e.row.SkillId,ModuleId:e.row.ModuleId});
+			pb.pub("/navto","skillrational",{SkillId:e.row.SkillId,ModuleId:e.row.ModuleId});
 		}
 	});
 	view.add(table);

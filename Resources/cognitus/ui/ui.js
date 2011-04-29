@@ -15,15 +15,20 @@
 		w.html = webviewmaster.replace(/XXXCONTENTXXX/,html);
 	}
 	function createWebView(o){
-		var webview = Ti.UI.createWebView(o||{});
+		var webview = Ti.UI.createWebView(K.merge({
+			backgroundColor: "#FFF"
+		},o||{}));
 		return webview;
 	}
 
     function createLabel(id, o) {
-        var label = K.create(K.merge({
-            k_type: "Label"
-        },
-        o || {}));
+        var label = K.create(K.merge(o || {},{
+            k_type: "Label",
+			textAlign: "left",
+			verticalAlign: "top",
+			left: 10,
+			k_class: "textLabel"
+        }));
         C.content.setObjectText(label, id);
         return label;
     }
@@ -48,6 +53,7 @@
                 o.forEach(function(page,i) {
                     lists[listid].push({
                         navtextid: (page.navtextid) || (page.pageid+"_nav"),
+						suffix: page.sub ? !page.view ? " ↑" : " •" : "",
                         navto: (page.navto) || (page.pageid),
 						level: level
                     });
@@ -55,14 +61,17 @@
                 });
             } else {
                 // processing a Page
-				if (o.view){
+				if (!o.navto){
                 	pages[o.pageid] = {
                     	view: o.view,
 						listid: listid,
                     	listhistory: [].concat(listhistory), // must be copy
 						listpositions: [].concat(listpositions), // copy
 						listhistorystring: [].concat(listhistory).join(","),
-						level: level
+						level: level,
+						using: (o.using) || (""),
+						pageid: o.pageid,
+						basic: !o.view
                 	};
 				}
                 if (o.sub) {
@@ -123,8 +132,10 @@
 
         for (var pid in pages) {
             var page = pages[pid];
-            page.view.opacity = 0;
-            frame.add(page.view);
+			if (page.view){
+            	page.view.opacity = 0;
+            	frame.add(page.view);
+			}
         }
 		
 		// tab stuff
@@ -218,21 +229,39 @@
 			var dur = 300, prev = showing;
 			showing = toggle? !showing : showing;
 			if (!showing){
+				anchor.k_children.label.text = "↓";
+				/*
 				tabrows.forEach(function(tabrow){
 					tabrow.animate({bottom: -rowheight, duration: dur});
 				});
-				anchor.k_children.label.text = "↑";
 				controlpanel.animate({top: -50});
-				frame.animate({top:0,bottom:0});
+				frame.animate({top:0,bottom:0}); */
+				// NOANIM VERSION
+				tabrows.forEach(function(tabrow){
+					tabrow.bottom = -rowheight;
+				});
+				controlpanel.top = -50;
+				frame.top = 0;
+				frame.bottom = 0;
 			} else {
+				anchor.k_children.label.text = "↑";
+				/*
 				tabrows.forEach(function(tabrow,i){
 					if (tabrow.showing){
 						tabrow.animate({bottom: i*rowheight, duration: dur});
 					}
 				});
-				anchor.k_children.label.text = "↓";
 				controlpanel.animate({top: 0});
-				frame.animate({top:40,bottom:rowheight});
+				frame.animate({top:40,bottom:rowheight});*/
+				// NOANIM VERSION
+				tabrows.forEach(function(tabrow,i){
+					if (tabrow.showing){
+						tabrow.bottom = i*rowheight;
+					}
+				});
+				controlpanel.top = 0;
+				frame.top = 40;
+				frame.bottom = rowheight;
 			}
 		}
 		
@@ -254,7 +283,7 @@
 						var label = btn.k_children.label;
 						if (j<list.length && list[j]){
 							btn.opacity = 1;
-							label.text = C.content.getText(list[j].navtextid);
+							label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
 							btn.navto = list[j].navto;
 							if (j==page.listpositions[i]){
 								label.font = {
@@ -286,7 +315,7 @@
         // ****************** Title bits
         var titleview = K.create({
             k_type: "View",
-            height: 30,
+            height: 35,
             top: 5,
             width: 200,
             left: 50,
@@ -294,33 +323,35 @@
 			zIndex: 5,
             borderColor: "#000",
             backgroundColor: "#CCC",
-            k_children: [{
-                k_class: "TitleLabel"
+            k_children: [,{
+				k_id: "supertitle",
+				k_type: "Label",
+				font: {fontSize:10},
+				top: 0
+			},{
+				top: 12,
+				k_type: "Label",
+				k_id: "maintitle",
+                font: {fontSize:14,fontWeight:"bold"}
             }]
-        }),
-        titlelabel = titleview.k_children[0];
+        });
         frame.add(titleview);
 
-        function updateTitle(noanim) {
-            var title = C.state.currentTitle;
-            if (titlelabel.text !== title) {
-                if (noanim === true) {
-                    titlelabel.text = title;
-                } else {
-                    titleview.animate({
-                        transform: Ti.UI.create2DMatrix().scale(1, 0.1)
-                    },
-                    function() {
-                        titlelabel.text = title;
-                        titleview.animate({
-                            transform: Ti.UI.create2DMatrix().scale(1, 1)
-                        });
-                    });
-                }
-            }
+        function updateTitle(pagedef,args) {
+			if (!pagedef){
+				pagedef = C.state.currentPage;
+				args = C.state.lastArgs;
+			}
+			titleview.k_children.maintitle.text = C.content.getText(  pagedef.pageid +"_title");
+			if (pagedef.using){
+				titleview.k_children.supertitle.text =  C.content.getText((pagedef.using === "module" ? "module_"+args.ModuleId : "skill_"+args.SkillId ) +"_title");
+				titleview.k_children.maintitle.top = 12;
+			} else {
+				titleview.k_children.supertitle.text = "";
+				titleview.k_children.maintitle.top = 7;
+			}
         }
-       // pb.sub("/newtitle", updateTitle);
-        pb.sub("/updatetext", updateTitle, true);
+        pb.sub("/updatetext", updateTitle);
 
 
 		var controlpanel = K.create({
@@ -407,6 +438,25 @@
 		});
 		controlpanel.add(langtest);
 
+		// ******************* Basic text view
+		
+		var textview = (function(){
+			var view = C.ui.createPage({
+				backgroundColor: "red",
+				opacity: 0
+			});
+			var webview = C.ui.createWebView({top:30});
+			view.add(webview);
+			view.render = function(argstouse,topage){
+				Ti.API.log(["Updating web view",argstouse,topage]);
+				var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
+						  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : topage.pageid) + "_html";
+				C.ui.updateWebView(webview,C.content.getText(id));
+			};
+			return view;
+		})();
+		frame.add(textview);
+
 		// ******************* Stuff
 
 		pb.sub("/updatetext",function(){
@@ -425,9 +475,9 @@
 			}
 			var lastpage = pages[C.state.currentPageId],
 				topage = pages[pageid],
-				historymax = 5;
+				historymax = 25;
 			// HISTORY
-			if (!args.dontadjusthistory){
+			if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)){
 				C.state.historyposition++;
 				C.state.history.splice(C.state.historyposition);
 				C.state.history.push({pageid:pageid,args:args});
@@ -445,14 +495,23 @@
 			
 			updateTabs(topage);
 			
+			// textview
+			if (topage.basic){
+				topage.view = textview;
+			}
+			
 			// animation
 			if (lastpage && topage.view !== lastpage.view){
-				topage.view.zIndex = 1;
+				/*topage.view.zIndex = 1;
 				topage.view.opacity = 1;
 				lastpage.zIndex = 2;
-				lastpage.view.animate({opacity:0},function(){lastpage.zIndex=1;});
+				lastpage.view.animate({opacity:0},function(){lastpage.zIndex=1;}); */
+				// NOANIM VERSION
+				lastpage.view.opacity = 0;
+				topage.view.opacity = 1;
 			} else {
-				topage.view.animate({opacity:1});
+				//topage.view.animate({opacity:1}); // NOANIM
+				topage.view.opacity = 1;
 			}
 			// render stuff
 			var argstouse = K.merge(args || {},C.state.lastArgs || {});
@@ -460,12 +519,12 @@
 				argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
 			}
 			if (topage.view.render){
-				topage.view.render(argstouse);
+				topage.view.render(argstouse,topage);
 			}
 			C.state.currentPageView = topage.view;
 			C.state.currentPage = topage;
 			C.state.currentTitle = C.content.getText(pageid+"_title");
-			updateTitle();
+			updateTitle(topage,args);
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
@@ -518,6 +577,7 @@
 			k_type: "View",
 			backgroundColor: "rgba(0,0,0,0.8)",
 			opacity: 0,
+			zIndex: 150,
 			k_id: "modal",
 			k_click: function(e){
 				if (e.source.k_id === "modal"){
@@ -675,7 +735,9 @@
 			if (!fromlist){
 				crisislistitembutton.k_children.plusminuslabel.text = (C.content.testIfSkillOnCrisisList(skillid) ? "-" : "+");
 			}
-			crisislistitempanel.animate({opacity:0});
+			//crisislistitempanel.animate({opacity:0});
+			// NOANIM
+			crisislistitempanel.opacity = 0;
 		}
 		function setCrisisListItemPanelToAdd(){
 			cip_instrlabel.text = C.content.getText("crisislistitem_instruction_add");
@@ -708,7 +770,9 @@
 			} else {
 				setCrisisListItemPanelToAdd();
 			}
-			crisislistitempanel.animate({opacity:1});
+			//crisislistitempanel.animate({opacity:1});
+			// NOANIM
+			crisislistitempanel.opacity = 1;
 		}
 		pb.sub("/showcrisislistitempanel",function(skillid,fromlist){
 			showCrisisListItemPanel(skillid,fromlist);
@@ -741,14 +805,14 @@
 Ti.include("/cognitus/ui/styles.js");
 
 Ti.include("/cognitus/ui/tab-skills.js");
-Ti.include("/cognitus/ui/aboutmodules.js");
+//Ti.include("/cognitus/ui/aboutmodules.js");
 Ti.include("/cognitus/ui/modulelist.js");
-Ti.include("/cognitus/ui/moduleexplanation.js");
+//Ti.include("/cognitus/ui/moduleexplanation.js");
 Ti.include("/cognitus/ui/moduleskillist.js");
-Ti.include("/cognitus/ui/skillexplanation.js");
-Ti.include("/cognitus/ui/skillexercises.js");
-Ti.include("/cognitus/ui/skillexamples.js");
-Ti.include("/cognitus/ui/moduletraininstruction.js");
+//Ti.include("/cognitus/ui/skillexplanation.js");
+//Ti.include("/cognitus/ui/skillexercises.js");
+//Ti.include("/cognitus/ui/skillexamples.js");
+//Ti.include("/cognitus/ui/moduletraininstruction.js");
 Ti.include("/cognitus/ui/moduletrainsession.js");
 Ti.include("/cognitus/ui/moduletrainhistory.js");
 

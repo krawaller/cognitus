@@ -9,7 +9,7 @@ C.ui.createMyCrisisSkillListView = function(o){
 		k_type: "TableView",
 		editable:true,
 		moveable:true,
-		top: 150,
+		top: 100,
 		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){
 			pb.pub("/showcrisislistitempanel",e.row.SkillId,true);

@@ -60,17 +60,16 @@
 			shadowColor:'#CCC',
 		    shadowOffset:{x:0,y:1}
 		},
-		InfoLabel: {
-			
-		},
 		Label: {
 			color:theme.textColor,
 			font: {
 				fontFamily:theme.fontFamily,
 				fontSize:15
 			},
+			height: "auto",
 			textAlign: "center",
-			height:'auto'
+			verticalAlign: "top",
+			verticalTextAlign: "top"
 		},
 		TextField: {
 			height:55,
@@ -81,6 +80,19 @@
 		HeaderView: {
 			backgroundColor:'#CCC',
 			height:40
+		},
+		// my label styles FFS!
+		textLabel: {
+			k_type: "Label",
+			font: {
+				fontSize: 14
+			}
+		},
+		subLabel: {
+			k_type: "Label",
+			font: {
+				fontSize: 10
+			}
 		}
 	};
 })();

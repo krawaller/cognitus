@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00026'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00027'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
