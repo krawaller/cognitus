@@ -140,7 +140,7 @@
 		
 		// tab stuff
 		
-		var tabrows = [], rowheight = 25, btnwidth = 90, btnspace = 10;
+		var tabrows = [], rowheight = 25, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
 		[0,1,2,3].forEach(function(row){
 			var tabrow = K.create({
 				k_type: "View",
@@ -179,16 +179,15 @@
 						height: 1,
 						bottom: 0
 					},{
-						k_style: "NavButtonLabel",
 						k_id: "label",
 						k_type: "Label",
 						height: rowheight - 5,
-						width: btnwidth
+						width: row ? btnwidth : firstrowbtnwidth
 					}],
 					height: rowheight - 5,
-					width: btnwidth,
+					width: row ? btnwidth : firstrowbtnwidth,
 					top: 0,
-					left: btnspace+(btnwidth+btnspace)*col + 15*((row+1)%2),
+					left: btnspace+((row ? btnwidth : firstrowbtnwidth)+btnspace)*col + 15*((row)%2),
 					k_click: function(e){
 						pb.pub("/navto", btn.navto );
 					}
@@ -342,9 +341,13 @@
 				pagedef = C.state.currentPage;
 				args = C.state.lastArgs;
 			}
-			titleview.k_children.maintitle.text = C.content.getText(  pagedef.pageid +"_title");
+			if (pagedef.using !== "news"){
+				titleview.k_children.maintitle.text = C.content.getText(  pagedef.pageid +"_title");
+			} else {
+				titleview.k_children.maintitle.text = C.content.getText(  args.NewsId +"_headline");
+			}
 			if (pagedef.using){
-				titleview.k_children.supertitle.text =  C.content.getText((pagedef.using === "module" ? "module_"+args.ModuleId : "skill_"+args.SkillId ) +"_title");
+				titleview.k_children.supertitle.text = (pagedef.using === "news" ? C.content.getNewsItem(args.NewsId).date : (C.content.getText(pagedef.using === "module" ? "module_"+args.ModuleId : "skill_"+args.SkillId ) +"_title"));
 				titleview.k_children.maintitle.top = 12;
 			} else {
 				titleview.k_children.supertitle.text = "";
@@ -461,7 +464,7 @@
 
 		pb.sub("/updatetext",function(){
 			if (C.state.currentPageView.render){
-				C.state.currentPageView.render(C.state.lastArgs);
+				C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
 			}
 			updateTabs(C.state.currentPage);
 		});
@@ -530,12 +533,12 @@
 			C.state.lastArgs = argstouse;
 			updateAnchor();
 			// skill crisis list btn
-			if (topage.view.showingskill && !crisislistitembutton.opacity){
-				crisislistitembutton.animate({opacity: 1});
+			if (topage.using === "skill"){
+				crisislistitembutton.opacity = 1;
 				crisislistitembutton.k_children.plusminuslabel.text = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
 			}
-			if (!topage.view.showingskill){
-				crisislistitembutton.animate({opacity: 0});
+			if (topage.using !== "skill"){
+				crisislistitembutton.opacity = 0;
 			}
 		});
 
@@ -668,7 +671,7 @@
 					}],
 					k_click: function(e){
 						if (cip_fromlist){
-							pb.pub("/navto","skillexplanation",{SkillId:cip_skillid});
+							pb.pub("/navto","skillrational",{SkillId:cip_skillid});
 						} else {
 							pb.pub("/navto","mycrisisskillist");
 						}
@@ -782,7 +785,7 @@
 		// ******************** Start logic
 
 		pb.sub("/appstart",function(){
-			pb.pub("/navto","aboutmodules"); // TODO - fix dynamically!
+			pb.pub("/navto","home"); // TODO - fix dynamically!
 		});
 
         // ******************* All done, returning the window!
@@ -817,3 +820,6 @@ Ti.include("/cognitus/ui/moduletrainsession.js");
 Ti.include("/cognitus/ui/moduletrainhistory.js");
 
 Ti.include("/cognitus/ui/mycrisisskillist.js");
+
+Ti.include("/cognitus/ui/newslist.js");
+Ti.include("/cognitus/ui/newsitem.js");

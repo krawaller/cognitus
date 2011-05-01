@@ -5,18 +5,18 @@ Ti.include("/cognitus/cognitus.js");
 Titanium.UI.setBackgroundColor('#FFF');
 
 var appstructure = [{
+	pageid: "home"
+},{
 	navtextid: "skilltab",
 	navto: "aboutmodules",
 	sub: [{
 		pageid: "aboutmodules"
-//		,view: C.ui.createAboutModulesView()
 	},{
 		pageid: "modulelist",
 		view: C.ui.createModuleListView(),
 		sub: [{
 			pageid: "moduleexplanation",
 			using: "module"
-		//	,view: C.ui.createModuleExplanationView()
 		},{
 			pageid: "moduleskillist",
 			using: "module",
@@ -24,15 +24,12 @@ var appstructure = [{
 			sub: [{
 				using: "skill",
 				pageid: "skillrational"
-				//view: C.ui.createSkillExplanationView()
 			},{
 				using: "skill",
 				pageid: "skilldescription"
-				//view: C.ui.createSkillExercisesView()
 			},{
 				using: "skill",
 				pageid: "skillpractice"
-				//view: C.ui.createSkillExamplesView()
 			}]
 		},{
 			navtextid: "moduletrain_nav",
@@ -40,7 +37,6 @@ var appstructure = [{
 			sub: [{
 				using: "module",
 				pageid: "moduletraininstruction"
-				//view: C.ui.createModuleTrainInstructionView()
 			},{
 				using: "module",
 				pageid: "moduletrainsession",
@@ -58,6 +54,20 @@ var appstructure = [{
 	sub: [{
 		pageid: "mycrisisskillist",
 		view: C.ui.createMyCrisisSkillListView()
+	}]
+},{
+	navtextid: "abouttab",
+	navto: "about",
+	sub: [{
+		pageid: "about"
+	},{
+		pageid: "newslist",
+		view: C.ui.createNewsListView(),
+		sub: [{
+			using: "news",
+			pageid: "newsitem",
+			view: C.ui.createNewsItemView()
+		}]
 	}]
 }];
 

@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00027'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00034'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -30,7 +30,30 @@
 	// initial loading of skills and modules from database
 	loadSkillsAndModules();
 
+	var newsitems = [{
+		newsid: "news00001",
+		date: "2011-04-01"
+	},{
+		newsid: "news00002",
+		date: "2011-04-12"
+	}];
+
     C.content = {
+		getNewsItem: function(newsid){
+			var item;
+			newsitems.forEach(function(n){if (n.newsid === newsid){item = n;}});
+			if (!item){
+				throw "No find news! "+newsid;
+			}
+			return K.merge(item,{headline: C.content.getText(item.newsid+"_headline"), content: C.content.getText(item.newsid+"_content")});
+		},
+		getNewsList: function(){
+			return newsitems.map(function(n){
+				return K.merge(n,{
+					headline: C.content.getText(n.newsid+"_headline")
+				});
+			});
+		},
 		getMyCrisisSkills: function(){
 			var rows = db.execute("SELECT skillid, freetext, priority FROM crisislistobjects ORDER BY priority ASC"),
 				ret = [];
