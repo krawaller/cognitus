@@ -140,7 +140,9 @@
 		
 		// tab stuff
 		
-		var tabrows = [], rowheight = 25, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
+		var tabrows = [], rowbigheight = 40, rowdefaultheight = 25, rowheight, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
+		Ti.App.Properties.setInt("tabrowheight",Ti.App.Properties.getInt("tabrowheight") || rowbigheight);
+		rowheight = Ti.App.Properties.getInt("tabrowheight");
 		[0,1,2,3].forEach(function(row){
 			var tabrow = K.create({
 				k_type: "View",
@@ -223,11 +225,11 @@
 		
 		win.add(anchor);
 		
-		var showing = true;
+		var showingtabs = true;
 		function updateAnchor(toggle){
-			var dur = 300, prev = showing;
-			showing = toggle? !showing : showing;
-			if (!showing){
+			var dur = 300, prev = showingtabs;
+			showingtabs = toggle? !showingtabs : showingtabs;
+			if (!showingtabs){
 				anchor.k_children.label.text = "↓";
 				/*
 				tabrows.forEach(function(tabrow){
@@ -237,7 +239,7 @@
 				frame.animate({top:0,bottom:0}); */
 				// NOANIM VERSION
 				tabrows.forEach(function(tabrow){
-					tabrow.bottom = -rowheight;
+					tabrow.bottom = -Ti.App.Properties.getInt("tabrowheight");
 				});
 				controlpanel.top = -50;
 				frame.top = 0;
@@ -255,12 +257,12 @@
 				// NOANIM VERSION
 				tabrows.forEach(function(tabrow,i){
 					if (tabrow.showing){
-						tabrow.bottom = i*rowheight;
+						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
 					}
 				});
 				controlpanel.top = 0;
 				frame.top = 40;
-				frame.bottom = rowheight;
+				frame.bottom = Ti.App.Properties.getInt("tabrowheight");
 			}
 		}
 		
@@ -273,8 +275,8 @@
 					var list = lists[page.listhistory[i]];
 					//Ti.API.log("Tabrow "+i+" set to listid "+page.listhistory[i]+", which has "+list.length+" tabs");
 					tabrow.listid = page.listhistory[i];
-					if (showing){
-						tabrow.bottom = i*rowheight;
+					if (tabrow.showing){
+						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
 					}
 					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - numrows - 1 + i]);
 					tabrow.showing = 1;
@@ -305,7 +307,7 @@
 					});
 				} else { // hide the tabrow;
 					tabrow.listid = -1;
-					tabrow.bottom = -rowheight;
+					tabrow.bottom = -rowbigheight;
 					tabrow.showing = 0;
 				}
 			});
@@ -416,8 +418,25 @@
 			left: 95,
 			k_children: [{
 				k_class: "NavButtonLabel",
-				text: "notes"
-			}]
+				text: "size"
+			}],
+			k_click: function(){
+				var currenth = Ti.App.Properties.getInt("tabrowheight"),
+					newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
+				Ti.API.log("going from rowheight "+currenth+" to "+newh);
+				Ti.App.Properties.setInt("tabrowheight",newh);
+				frame.bottom = newh;
+				tabrows.forEach(function(r,i){
+					if (r.showing){
+						r.bottom = i * newh;
+					}
+					r.height = newh;
+					r.buttons.forEach(function(b,j){
+						b.height = newh - 5;
+						b.k_children.label.height = newh - 5;
+					});
+				});
+			}
 		});
 		controlpanel.add(notesbtn);
 
