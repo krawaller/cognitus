@@ -6,6 +6,10 @@
 		moduleskills = {};
 	
 	function updateMe(o,textid,textpropname){
+		if (!o){
+			Ti.API.log(["ERROR ERROR!",textid,textpropname]);
+			throw "DLSADKSLÖADSAÖD";
+		}
 		o[textpropname] = C.content.getText(K.isFunc(textid) ? textid() : textid);
 	}
 	

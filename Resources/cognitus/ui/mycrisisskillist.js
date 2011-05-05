@@ -26,34 +26,27 @@ C.ui.createMyCrisisSkillListView = function(o){
 	});
 	view.add(table);
 	var editing = false;
-	var btn = K.create({
-			k_type: "View",
-			k_class: "NavButtonView",
+	var btn = C.ui.createButton({
 			height: 30,
 			width: 30,
 			top: 40,
 			right: 10,
 			zIndex: 5,
-			k_children: [{
-				k_type: "Label",
-				k_class: "NavButtonLabel",
-				k_id: "label"
-			}],
 			k_click: function(){
 				if (editing){
 					table.editing = false;
 					editing = false;
-					btn.k_children.label.text = C.content.getText("crisislist_button_edit");
+					btn.title = C.content.getText("crisislist_button_edit");
 				} else {
 					editing = true;
 					table.editing = true;
-					btn.k_children.label.text = C.content.getText("crisislist_button_done");
+					btn.title = C.content.getText("crisislist_button_done");
 				}
 			}
 	});
 	view.add(btn);
 	view.render = function(arg){
-		btn.k_children[0].text = C.content.getText("crisislist_button_"+(editing?"done":"edit"));
+		btn.title = C.content.getText("crisislist_button_"+(editing?"done":"edit"));
 		var rows = [];
 		C.content.getMyCrisisSkills().forEach(function(listobject){ // listobject has SkillId, priority and freetext props
 			rows.push(K.create({
