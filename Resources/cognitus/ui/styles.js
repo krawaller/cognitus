@@ -18,48 +18,6 @@
 		platformHeight: Ti.Platform.displayCaps.platformHeight,
 		animationDuration: 300,
 		//we use these for default components
-		Window: {
-			
-		},
-		View: {
-			show: function(){}
-		},
-		Button: {
-			height:50,
-			width:250,
-			color:'#000',
-			font: {
-				fontSize:18,
-				fontWeight:'bold'
-			}
-		},
-		NavButtonView: {
-			k_type: "View",
-			height: 30,
-			width: 100,
-			borderColor: "#000",
-			borderWidth: 1,
-			backgroundColor: "#CCC"
-		},
-		NavButtonLabel: {
-			k_type: "Label",
-			font: {
-				fontSize: 10
-			}
-		},
-		TitleView: {
-			height: 40,
-			k_type: "View"
-		},
-		TitleLabel: {
-			k_type: "Label",
-			font: {
-				fontWeight: "bold",
-				fontSize: 20
-			},
-			shadowColor:'#CCC',
-		    shadowOffset:{x:0,y:1}
-		},
 		Label: {
 			color:theme.textColor,
 			font: {
@@ -70,29 +28,6 @@
 			textAlign: "center",
 			verticalAlign: "top",
 			verticalTextAlign: "top"
-		},
-		TextField: {
-			height:55,
-			borderStyle:Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-			color:'#000000',
-			clearButtonMode: Titanium.UI.INPUT_BUTTONMODE_ALWAYS
-		},
-		HeaderView: {
-			backgroundColor:'#CCC',
-			height:40
-		},
-		// my label styles FFS!
-		textLabel: {
-			k_type: "Label",
-			font: {
-				fontSize: 14
-			}
-		},
-		subLabel: {
-			k_type: "Label",
-			font: {
-				fontSize: 10
-			}
 		}
 	};
 })();

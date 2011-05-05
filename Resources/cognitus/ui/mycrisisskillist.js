@@ -45,6 +45,7 @@ C.ui.createMyCrisisSkillListView = function(o){
 			}
 	});
 	view.add(btn);
+	
 	view.render = function(arg){
 		btn.title = C.content.getText("crisislist_button_"+(editing?"done":"edit"));
 		var rows = [];
@@ -89,5 +90,11 @@ C.ui.createMyCrisisSkillListView = function(o){
 		});
 		table.setData(rows);
 	};
+	
+	pb.sub("/hidcrisislistitempanel",function(){
+		Ti.API.log("RENDERING TABLE!");
+		view.render();
+	});
+	
 	return view;
 };

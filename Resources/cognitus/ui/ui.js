@@ -41,9 +41,6 @@
 		var btn = K.create(K.merge(o||{},{
 			k_type: "Button",
 			height: 30
-		/*	,borderSize: 1,
-			borderColor: "#000",
-			backgroundColor: "#CCC" */
 		}));
 		if (o.textid){
 			C.content.setObjectText(btn,o.textid,"title");
@@ -482,13 +479,11 @@
 				C.state.history.push({pageid:pageid,args:args});
 			}
 			delete args.dontadjusthistory;
-			//Ti.API.log(["HISTORY","position="+C.state.historyposition+", size="+C.state.history.length,C.state.history]);
-			backbtn.opacity = C.state.historyposition ? 1 : 0.5; // TODO - nicer! // .k_children[0].text = C.state.historyposition ? "←" : "x";
+			backbtn.opacity = C.state.historyposition ? 1 : 0.5;
 			forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
 			if (C.state.history.length>historymax){
 				C.state.history = C.state.history.splice(C.state.history.length-historymax);
 				C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
-				//Ti.API.log(["ADJUSTED HISTORY","position="+C.state.historyposition+", size="+C.state.history.length,C.state.history]);
 			}
 			
 			
@@ -501,15 +496,9 @@
 			
 			// animation
 			if (lastpage && topage.view !== lastpage.view){
-				/*topage.view.zIndex = 1;
-				topage.view.opacity = 1;
-				lastpage.zIndex = 2;
-				lastpage.view.animate({opacity:0},function(){lastpage.zIndex=1;}); */
-				// NOANIM VERSION
 				lastpage.view.visible = false;
 				topage.view.visible = true;
 			} else {
-				//topage.view.animate({opacity:1}); // NOANIM
 				topage.view.visible = true;
 			}
 			// render stuff
@@ -547,185 +536,19 @@
 			visible: 0,
 			zIndex: 5,
 			k_click: function(e){
-				showCrisisListItemPanel(C.state.lastArgs.SkillId,false);
+				//showCrisisListItemPanel(C.state.lastArgs.SkillId,false);
+				pb.pub("/showcrisislistitempanel",C.state.lastArgs.SkillId,false);
 			},
 			title: "+"
 		});
 		frame.add(crisislistitembutton);
-
-		// ******************** Crisis list item panel
-		var crisislistitempanel = K.create({
-			k_type: "View",
-			backgroundColor: "rgba(0,0,0,0.8)",
-			visible: false,
-			zIndex: 150,
-			k_id: "modal",
-			k_click: function(e){
-				if (e.source.k_id === "modal"){
-					hideCrisisListItemPanel(cip_skillid,cip_fromlist);
-				}
-			},
-			k_children: [{
-				k_type: "View",
-				borderSize: 1,
-				borderColor: "#000",
-				backgroundColor: "#EEE",
-				top: 20,
-				left: 20,
-				right: 20,
-				bottom: 20,
-				k_id: "panel",
-				k_children: [{
-					k_type: "Label",
-					k_class: "sublabel",
-					top: 10,
-					height: 15,
-					k_id: "modulelabel"
-				},{
-					k_type: "Label",
-					k_class: "titlelabel",
-					top: 30,
-					height: 20,
-					k_id: "skillabel"
-				},{
-					k_type: "Label",
-					k_class: "instructionlabel",
-					top: 55,
-					height: 50,
-					k_id: "instructionlabel"
-				},{
-					k_type: "TextArea",
-					top: 110,
-					height: 80,
-					width: 200,
-					left: 20,
-					borderColor: "#CCC",
-					borderSize: 1,
-					value: "foo",
-					k_id:"textarea"
-				}]
-			}]
+		pb.sub("/hidcrisislistitempanel",function(){
+			crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(C.state.lastArgs.SkillId) ? "-" : "+");
 		});
-		var cip = crisislistitempanel.k_children.panel,
-			cip_modlabel = cip.k_children.modulelabel,
-			cip_skillabel = cip.k_children.skillabel,
-			cip_instrlabel = cip.k_children.instructionlabel,
-			cip_textarea = cip.k_children.textarea,
-			cip_delbtn = createButton({
-				width: 100,
-				bottom: 50,
-				left: 10,
-				k_click: function(e){
-					C.content.removeSkillFromCrisisList(cip_skillid);
-					showMessage("crisislistitem_message_deleted");
-					setCrisisListItemPanelToAdd();
-				}
-			}),
-			cip_closebtn = createButton({
-				width: 100,
-				bottom: 10,
-				right: 10,
-				k_click: function(e){
-					hideCrisisListItemPanel(cip_skillid,cip_fromlist);
-				}
-			}),
-			cip_addbtn = createButton({
-				width: 100,
-				bottom: 50,
-				right: 10,
-				k_click: function(e){
-					if (cip_textarea.value && cip_textarea.value.length){
-						C.content.addSkillToCrisisList(cip_skillid,cip_textarea.value);
-						showMessage("crisislistitem_message_added");
-						setCrisisListItemPanelToUpdate();
-					} else {
-						showMessage("crisislistitem_message_textneeded","error");
-					}
-				}
-			}),
-			cip_updatebtn = createButton({
-				width: 100,
-				bottom: 50,
-				right: 10,
-				k_click: function(e){
-					if (cip_textarea.value && cip_textarea.value.length){
-						C.content.updateSkillUsageTextOnCrisisList(cip_skillid,cip_textarea.value);
-						showMessage("crisislistitem_message_updated");
-					} else {
-						showMessage("crisislistitem_message_textneeded","error");
-					}
-				}
-			}),
-			cip_gotobtn = createButton({
-				height: 30,
-				width: 100,
-				bottom: 10,
-				left: 10,
-				k_click: function(e){
-					if (cip_fromlist){
-						pb.pub("/navto","skillrational",{SkillId:cip_skillid});
-					} else {
-						pb.pub("/navto","mycrisisskillist");
-					}
-					hideCrisisListItemPanel(cip_skillid,cip_fromlist);
-				}
-			}),
-			cip_fromlist,
-			cip_isonlist,
-			cip_skillid;
-		cip.add(cip_gotobtn);
-		cip.add(cip_closebtn);
-		cip.add(cip_updatebtn);
-		cip.add(cip_addbtn);
-		cip.add(cip_delbtn);
-		win.add(crisislistitempanel);
 		
-		function hideCrisisListItemPanel(skillid,fromlist){
-			if (!fromlist){
-				crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(skillid) ? "-" : "+");
-			}
-			//crisislistitempanel.animate({opacity:0});
-			// NOANIM
-			crisislistitempanel.visible = false;
-		}
-		function setCrisisListItemPanelToAdd(){
-			cip_instrlabel.text = C.content.getText("crisislistitem_instruction_add");
-			cip_delbtn.visible = false;
-			cip_updatebtn.visible = false;
-			cip_addbtn.visible = true;
-			cip_textarea.value = "";
-		}
-		function setCrisisListItemPanelToUpdate(){
-			cip_instrlabel.text = C.content.getText("crisislistitem_instruction_update");
-			cip_textarea.value = C.content.getCrisisListItemUsageText(cip_skillid);
-			cip_delbtn.visible = true;
-			cip_addbtn.visible = false;
-			cip_updatebtn.visible = true;
-		}
-		function showCrisisListItemPanel(skillid,fromlist){
-			cip_fromlist = fromlist;
-			cip_skillid = skillid;
-			cip_isonlist = (fromlist) || (C.content.testIfSkillOnCrisisList(skillid));
-			cip_modlabel.text = C.content.getText("module_"+C.content.getModuleForSkill(skillid)+"_title");
-			cip_skillabel.text = C.content.getText("skill_"+skillid+"_title");
-			cip_textarea.hintText = "xxx"+C.content.getText("crisislistitem_instruction_hinttext");
-			cip_delbtn.title = C.content.getText("crisislistitem_button_delete");
-			cip_addbtn.title = C.content.getText("crisislistitem_button_add");
-			cip_updatebtn.title = C.content.getText("crisislistitem_button_update");
-			cip_gotobtn.title = C.content.getText("crisislistitem_button_goto_"+(fromlist ? "skill" : "list"));
-			cip_closebtn.title = C.content.getText("crisislistitem_button_close");
-			if (cip_isonlist){
-				setCrisisListItemPanelToUpdate();
-			} else {
-				setCrisisListItemPanelToAdd();
-			}
-			//crisislistitempanel.animate({opacity:1});
-			// NOANIM
-			crisislistitempanel.visible = true;
-		}
-		pb.sub("/showcrisislistitempanel",function(skillid,fromlist){
-			showCrisisListItemPanel(skillid,fromlist);
-		});
+		
+		Ti.include("/cognitus/ui/skillistitempanel.js");
+		win.add(C.ui.createSkillListItemPanel());
 		
 
 		// ******************** Start logic
@@ -753,19 +576,11 @@
 })();
 
 Ti.include("/cognitus/ui/styles.js");
-
 Ti.include("/cognitus/ui/tab-skills.js");
-//Ti.include("/cognitus/ui/aboutmodules.js");
 Ti.include("/cognitus/ui/modulelist.js");
-//Ti.include("/cognitus/ui/moduleexplanation.js");
 Ti.include("/cognitus/ui/moduleskillist.js");
-//Ti.include("/cognitus/ui/skillexplanation.js");
-//Ti.include("/cognitus/ui/skillexercises.js");
-//Ti.include("/cognitus/ui/skillexamples.js");
-//Ti.include("/cognitus/ui/moduletraininstruction.js");
 Ti.include("/cognitus/ui/moduletrainsession.js");
 Ti.include("/cognitus/ui/moduletrainhistory.js");
-
 Ti.include("/cognitus/ui/mycrisisskillist.js");
 
 Ti.include("/cognitus/ui/newslist.js");
