@@ -1,14 +1,13 @@
 
 
 C.ui.createMyCrisisSkillListView = function(o){
-	var view = C.ui.createPage({
-		backgroundColor: "blue"
-	});
+	var view = C.ui.createPage({});
 	view.add( C.ui.createLabel(function(){return "mycrisisskillist_description";},{height:30,top:50}) );
 	var table = K.create({
 		k_type: "TableView",
 		editable:true,
 		moveable:true,
+		allowsSelectionDuringEditing: false,
 		top: 100,
 		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
 		k_click: function(e){

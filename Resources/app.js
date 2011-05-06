@@ -1,66 +1,84 @@
+/*global Ti: true, Ti.UI: true */
+
 Ti.include("/assets/kralib.js");
 Ti.include("/assets/pubsubhottub.js");
 Ti.include("/cognitus/cognitus.js");
 
-Titanium.UI.setBackgroundColor('#FFF');
+Ti.UI.setBackgroundColor('#FFF');
 
-var appstructure = [{
+var appstructure;
+appstructure = [{
 	pageid: "home"
-},{
+},
+{
 	navtextid: "skilltab",
 	navto: "aboutmodules",
 	sub: [{
 		pageid: "aboutmodules"
-	},{
+	},
+	{
 		pageid: "modulelist",
 		view: C.ui.createModuleListView(),
 		sub: [{
 			pageid: "moduleexplanation",
 			using: "module"
-		},{
+		},
+		{
 			pageid: "moduleskillist",
 			using: "module",
 			view: C.ui.createModuleSkillListView(),
 			sub: [{
 				using: "skill",
 				pageid: "skillrational"
-			},{
+			},
+			{
 				using: "skill",
 				pageid: "skilldescription"
-			},{
+			},
+			{
 				using: "skill",
 				pageid: "skillpractice"
 			}]
-		},{
+		},
+		{
 			navtextid: "moduletrain_nav",
 			navto: "moduletraininstruction",
 			sub: [{
 				using: "module",
 				pageid: "moduletraininstruction"
-			},{
+			},
+			{
 				using: "module",
 				pageid: "moduletrainsession",
 				view: C.ui.createModuleTrainSessionView()
-			},{
+			},
+			{
 				using: "module",
 				pageid: "moduletrainhistory",
 				view: C.ui.createModuleTrainHistoryView()
 			}]
 		}]
+	},
+	{
+		pageid: "mylists",
+		view: C.ui.createMyListsView()
 	}]
-},{
+},
+{
 	navtextid: "crisistab",
 	navto: "mycrisisskillist",
 	sub: [{
 		pageid: "mycrisisskillist",
 		view: C.ui.createMyCrisisSkillListView()
 	}]
-},{
+},
+{
 	navtextid: "abouttab",
 	navto: "about",
 	sub: [{
 		pageid: "about"
-	},{
+	},
+	{
 		pageid: "newslist",
 		view: C.ui.createNewsListView(),
 		sub: [{
@@ -76,7 +94,9 @@ C.state.mainWindow.open();
 
 pb.pub("/appstart");
 
-function forceLoad(){
+
+
+function forceLoad() {
 	Ti.UI.createActivityIndicator();
 	Ti.UI.createAlertDialog();
 	Ti.UI.createAnimation();
@@ -103,4 +123,4 @@ function forceLoad(){
 	Ti.UI.createView();
 	Ti.UI.createWebView();
 	Ti.UI.createWindow();
-};
+}

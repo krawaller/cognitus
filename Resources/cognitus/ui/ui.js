@@ -585,3 +585,5 @@ Ti.include("/cognitus/ui/mycrisisskillist.js");
 
 Ti.include("/cognitus/ui/newslist.js");
 Ti.include("/cognitus/ui/newsitem.js");
+
+Ti.include("/cognitus/ui/mylists.js");

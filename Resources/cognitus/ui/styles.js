@@ -28,6 +28,14 @@
 			textAlign: "center",
 			verticalAlign: "top",
 			verticalTextAlign: "top"
+		},
+		rowMainLabel: {
+			textAlign: "left",
+			font: {
+				fontWeight: "bold",
+				fontFamily: theme.fontFamily,
+				fontSize: 15
+			}
 		}
 	};
 })();

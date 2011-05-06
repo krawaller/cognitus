@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00034'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00042'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -43,6 +43,20 @@
 	}];
 
     C.content = {
+		getMyListsWithSkillCount: function(){
+			var rows = db.execute("SELECT lists.listid, lists.title, lists.priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists ORDER BY lists.priority"),
+				ret = [];
+			while(rows.isValidRow()){
+				ret.push({
+					ListId: rows.field(0),
+					title: rows.field(1),
+					priority: rows.field(2),
+					skillcount: rows.field(3)
+				});
+				rows.next();
+			}
+			return ret;
+		},
 		getNewsItem: function(newsid){
 			var item;
 			newsitems.forEach(function(n){if (n.newsid === newsid){item = n;}});
@@ -79,6 +93,29 @@
 				ret = rows.field(0);
 			rows.close();
 			return !!ret;
+		},
+		removeList: function(listid,delprio){
+			res = db.execute("DELETE FROM listitems WHERE listid = '"+listid+"'");
+			res = db.execute("DELETE FROM lists WHERE listid = '"+listid+"'");
+			db.execute("UPDATE lists SET priority = priority-1 WHERE priority > "+delprio);
+			if (res){
+				res.close();	
+			}
+		},
+		updateListTitle: function(listid,newtitle){
+			db.execute("UPDATE lists SET title = '"+newtitle+"' WHERE listid = '"+listid+"'");
+		},
+		updateListPosition: function(listid,newpriority,oldpriority){
+			Ti.API.log(["MOVE",listid,newpriority,oldpriority]);
+			if (newpriority > oldpriority){
+				db.execute("UPDATE lists SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
+			} else {
+				db.execute("UPDATE lists SET priority = priority+1 WHERE priority>="+newpriority+" AND priority<"+oldpriority+"");
+			}
+			res = db.execute("UPDATE lists SET priority = "+newpriority+" WHERE listid = '"+listid+"'");
+			if (res){
+				res.close();	
+			}
 		},
 		removeSkillFromCrisisList: function(skillid){
 			var res = db.execute("SELECT priority FROM crisislistobjects WHERE skillid = '"+skillid+"'"),

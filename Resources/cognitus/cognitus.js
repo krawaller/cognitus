@@ -1,3 +1,5 @@
+/*global Ti: true, K: true */
+
 var C = {};
 
 (function() {
