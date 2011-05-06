@@ -333,7 +333,30 @@
 				pagedef = C.state.currentPage;
 				args = C.state.lastArgs;
 			}
-			if (pagedef.using !== "news"){
+			var main, sup = "";
+			switch(pagedef.using){
+				case "news":
+					main = C.content.getText(args.NewsId +"_headline");
+					sup =  C.content.getNewsItem(args.NewsId).date;
+					break;
+				case "module":
+					sup = C.content.getText("module_"+args.ModuleId+"_title");
+					main = C.content.getText(pagedef.pageid +"_title");
+					break;
+				case "skill":
+					sup = C.content.getText("skill_"+args.SkillId+"_title");
+					main = C.content.getText(pagedef.pageid +"_title");
+					break;
+				case "list":
+					main = C.content.getListTitle(args.ListId);
+					break;
+				default:
+					main = C.content.getText(  pagedef.pageid +"_title");
+			}
+			titleview.k_children.maintitle.text = main;
+			titleview.k_children.supertitle.text = sup;
+			titleview.k_children.maintitle.top = (sup ? 12 : 7);
+			/*if (pagedef.using !== "news"){
 				titleview.k_children.maintitle.text = C.content.getText(  pagedef.pageid +"_title");
 			} else {
 				titleview.k_children.maintitle.text = C.content.getText(  args.NewsId +"_headline");
@@ -344,7 +367,7 @@
 			} else {
 				titleview.k_children.supertitle.text = "";
 				titleview.k_children.maintitle.top = 7;
-			}
+			}*/
         }
         pb.sub("/updatetext", updateTitle);
 
@@ -587,3 +610,4 @@ Ti.include("/cognitus/ui/newslist.js");
 Ti.include("/cognitus/ui/newsitem.js");
 
 Ti.include("/cognitus/ui/mylists.js");
+Ti.include("/cognitus/ui/skillist.js");

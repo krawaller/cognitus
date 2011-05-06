@@ -61,7 +61,12 @@ appstructure = [{
 	},
 	{
 		pageid: "mylists",
-		view: C.ui.createMyListsView()
+		view: C.ui.createMyListsView(),
+		sub: [{
+			pageid: "skillist",
+			view: C.ui.createSkillListView(),
+			using: "list"
+		}]
 	}]
 },
 {

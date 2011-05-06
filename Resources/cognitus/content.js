@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00045'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00049'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -43,6 +43,29 @@
 	}];
 
     C.content = {
+		getListSkills: function(listid){
+			var rows = db.execute("SELECT listitems.priority, listitems.usagetext, listitems.skillid, skills.moduleid, listitems.listitemid from listitems INNER JOIN skills ON listitems.skillid = skills.skillid WHERE listitems.listid = '"+listid+"' ORDER BY listitems.priority"),
+				ret = [];
+			while(rows.isValidRow()){
+				ret.push({
+					ListId: listid,
+					priority: rows.field(0),
+					usagetext: rows.field(1),
+					SkillId: rows.field(2),
+					ModuleId: rows.field(3),
+					ListItemId: rows.field(4)
+				});
+				rows.next();
+			}
+			rows.close();
+			return ret;
+		},
+		getListTitle: function(listid){
+			var rows = db.execute("SELECT lists.title FROM lists WHERE listid = '"+listid+"'"),
+				ret=  rows.field(0);
+			rows.close();
+			return ret;
+		},
 		addNewList: function(){
 			db.execute("UPDATE lists SET priority = priority+1");
 			var res = db.execute("INSERT INTO lists (listid,title,priority) VALUES ('list"+Date.now()+"', '"+C.content.getText("mylists_btn_newlist")+"', 0)");
@@ -62,6 +85,7 @@
 				});
 				rows.next();
 			}
+			rows.close();
 			return ret;
 		},
 		getNewsItem: function(newsid){
@@ -101,6 +125,13 @@
 			rows.close();
 			return !!ret;
 		},
+		removeSkillFromList: function(listitemid,delprio){
+			res = db.execute("DELETE FROM listitems WHERE listitemid = '"+listitemid+"'");
+			db.execute("UPDATE listitems SET priority = priority-1 WHERE priority > "+delprio);
+			if (res){
+				res.close();	
+			}
+		},
 		removeList: function(listid,delprio){
 			res = db.execute("DELETE FROM listitems WHERE listid = '"+listid+"'");
 			res = db.execute("DELETE FROM lists WHERE listid = '"+listid+"'");
@@ -109,8 +140,26 @@
 				res.close();	
 			}
 		},
+		updateSkillUsageText: function(listitemid,newusagetext){
+			db.execute("UPDATE listitems SET usagetext = '"+newusagetext+"' WHERE listitemid = '"+listitemid+"'");
+		},
 		updateListTitle: function(listid,newtitle){
 			db.execute("UPDATE lists SET title = '"+newtitle+"' WHERE listid = '"+listid+"'");
+		},
+		updateSkillPositionOnList: function(listitemid,newpriority,oldpriority){
+			if (newpriority === oldpriority){
+				return;
+			}
+			Ti.API.log(["MOVE",listitemid,newpriority,oldpriority]);
+			if (newpriority > oldpriority){
+				db.execute("UPDATE listitems SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
+			} else {
+				db.execute("UPDATE listitems SET priority = priority+1 WHERE priority>="+newpriority+" AND priority<"+oldpriority+"");
+			}
+			res = db.execute("UPDATE listitems SET priority = "+newpriority+" WHERE listitemid = '"+listitemid+"'");
+			if (res){
+				res.close();	
+			}
 		},
 		updateListPosition: function(listid,newpriority,oldpriority){
 			if (newpriority === oldpriority){

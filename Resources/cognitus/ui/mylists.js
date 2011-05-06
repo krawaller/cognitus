@@ -42,6 +42,11 @@ C.ui.createMyListsView = function(o) {
 			},
 			move: function(e) {
 				C.content.updateListPosition(e.row.ListId, e.index, e.fromIndex);
+			},
+			click: function(e){
+				if (!editing){
+					pb.pub("/navto","skillist",{ListId:e.row.ListId});
+				}
 			}
 		}
 	});
@@ -77,18 +82,10 @@ C.ui.createMyListsView = function(o) {
 		table.editing = false;
 		editing = false;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
-			Ti.API.log([r.ListId,i+"/"+ table.data[0].rows.length]);
 			if (r.k_children[1].oldvalue != r.k_children[1].value){
 				r.k_children[1].oldvalue = r.k_children[1].value;
-				Ti.API.log(["UPDATING LIST TITLE!!! ",r.ListId,r.k_children[1].value]);
 				C.content.updateListTitle(r.ListId,r.k_children[1].value);
-				r.k_children[0].text = r.k_children[1].value;
 			}
-		//	setTimeout(function(){
-				/*Ti.API.log(["TIMEOUTHIDING "+r.ListId,r.k_children[0],r.k_children[1],r.k_children[0].visible,r.k_children[1].visible]);
-				r.k_children[1].visible = false;
-				r.k_children[0].visible = true; */
-		//	},300);
 		});
 		setTimeout(function(){
 			renderTable();
