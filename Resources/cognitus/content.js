@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00042'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00045'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -43,6 +43,13 @@
 	}];
 
     C.content = {
+		addNewList: function(){
+			db.execute("UPDATE lists SET priority = priority+1");
+			var res = db.execute("INSERT INTO lists (listid,title,priority) VALUES ('list"+Date.now()+"', '"+C.content.getText("mylists_btn_newlist")+"', 0)");
+			if (res){
+				res.close();
+			}
+		},
 		getMyListsWithSkillCount: function(){
 			var rows = db.execute("SELECT lists.listid, lists.title, lists.priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists ORDER BY lists.priority"),
 				ret = [];
@@ -106,6 +113,9 @@
 			db.execute("UPDATE lists SET title = '"+newtitle+"' WHERE listid = '"+listid+"'");
 		},
 		updateListPosition: function(listid,newpriority,oldpriority){
+			if (newpriority === oldpriority){
+				return;
+			}
 			Ti.API.log(["MOVE",listid,newpriority,oldpriority]);
 			if (newpriority > oldpriority){
 				db.execute("UPDATE lists SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
