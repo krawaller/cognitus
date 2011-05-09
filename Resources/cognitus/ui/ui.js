@@ -328,6 +328,12 @@
         });
         frame.add(titleview);
 
+		function setTitle(main,sup){
+			titleview.k_children.maintitle.text = main;
+			titleview.k_children.supertitle.text = sup;
+			titleview.k_children.maintitle.top = (sup ? 12 : 7);
+		}
+		
         function updateTitle(pagedef,args) {
 			if (!pagedef){
 				pagedef = C.state.currentPage;
@@ -353,23 +359,12 @@
 				default:
 					main = C.content.getText(  pagedef.pageid +"_title");
 			}
-			titleview.k_children.maintitle.text = main;
-			titleview.k_children.supertitle.text = sup;
-			titleview.k_children.maintitle.top = (sup ? 12 : 7);
-			/*if (pagedef.using !== "news"){
-				titleview.k_children.maintitle.text = C.content.getText(  pagedef.pageid +"_title");
-			} else {
-				titleview.k_children.maintitle.text = C.content.getText(  args.NewsId +"_headline");
-			}
-			if (pagedef.using){
-				titleview.k_children.supertitle.text = (pagedef.using === "news" ? C.content.getNewsItem(args.NewsId).date : (C.content.getText(pagedef.using === "module" ? "module_"+args.ModuleId : "skill_"+args.SkillId ) +"_title"));
-				titleview.k_children.maintitle.top = 12;
-			} else {
-				titleview.k_children.supertitle.text = "";
-				titleview.k_children.maintitle.top = 7;
-			}*/
+			setTitle(main,sup);
         }
         pb.sub("/updatetext", updateTitle);
+        pb.sub("/updatetitle", setTitle);
+		win.showPageTitle = function(){titleview.visible = true;};
+		win.hidePageTitle = function(){titleview.visible = false;};
 
 
 		var controlpanel = K.create({
@@ -488,6 +483,7 @@
 		// ******************* Navigation logic
 		
 		pb.sub("/navto",function(pageid,args){
+			titleview.visible = true;
 			args = args || {};
 			if (!pages[pageid]){
 				throw "WTF, couldn't find "+pageid+" in tree!";
@@ -593,7 +589,10 @@
         createPage: createPage,
         createLabel: createLabel,
 		createAppWindow: createAppWindow,
-		createButton: createButton
+		createButton: createButton,
+		showPageTitle: function(){C.state.mainWindow.showPageTitle();},
+		hidePageTitle: function(){C.state.mainWindow.hidePageTitle();},
+		setPageTitle: function(main,sup){C.state.mainWindow.setPageTitle(main,sup);}
     };
 
 })();

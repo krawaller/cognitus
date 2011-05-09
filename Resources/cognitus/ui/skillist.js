@@ -48,21 +48,44 @@ C.ui.createSkillListView = function() {
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			if (r.k_children.usagetextfield.oldvalue != r.k_children.usagetextfield.value){
 				r.k_children.usagetextfield.oldvalue = r.k_children.usagetextfield.value;
-				Ti.API.log(["UPDATING LIST TITLE!!! ",r.ListId,r.k_children.usagetextfield.value]);
+				Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.k_children.usagetextfield.value]);
 				C.content.updateSkillUsageText(r.ListItemId,r.k_children.usagetextfield.value);
 			}
 		});
 		setTimeout(function(){
 			renderTable();
 		},300);
+		if (titletextfield.value !== titletextfield.oldvalue){
+			C.content.updateListTitle(listid,titletextfield.value);
+			Ti.API.log("Changing title from "+titletextfield.oldvalue+" to "+titletextfield.value);
+			pb.pub("/updatetitle",titletextfield.value);
+			titletextfield.oldvalue = titletextfield.value;
+		}
+		titletextfield.blur();
+		titletextfield.visible = false;
+		C.ui.showPageTitle();
 		updateButtons();
 	}
 	
+	var titletextfield = K.create({
+		k_type: "TextField",
+		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+		height: 30,
+		width: 230,
+		k_id: "titletextfield",
+		top: 10,
+		visible: false,
+		zIndex: 5
+	});
+	view.add(titletextfield);
+	
 	function startEditing(){
-		if (!(table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length)){
+		/*if (!(table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length)){
 			C.ui.showMessage("need items!","error"); // TODO - lang!
 			return;
-		}
+		}*/
+		titletextfield.visible = true;
+		C.ui.hidePageTitle();
 		editing = true;
 		table.editing = true;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
@@ -81,7 +104,7 @@ C.ui.createSkillListView = function() {
 	
 	function updateButtons(){
 		editbtn.title = C.content.getText("crisislist_button_" + (editing ? "done" : "edit"));
-		editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
+		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		//addbtn.title = C.content.getText("mylists_btn_newlist");
 		//addbtn.opacity = (editing ? 0.5 : 1);
 	}
@@ -148,6 +171,8 @@ C.ui.createSkillListView = function() {
 	var listid; 
 	view.render = function(args){
 		listid = args.ListId;
+		titletextfield.value = C.content.getListTitle(listid);
+		titletextfield.oldvalue = titletextfield.value;
 		renderTable();
 		updateButtons();
 	};

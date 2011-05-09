@@ -20,6 +20,7 @@ C.ui.createMyListsView = function(o) {
 					height: 30,
 					width: 230,
 					left: 15,
+					bottom: 5,
 					visible: false,
 					value: r.title,
 					oldvalue: r.title,
