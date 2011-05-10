@@ -24,6 +24,32 @@ C.ui.createSkillListView = function() {
 	});
 	view.add(table);
 	
+	var listsbtn = C.ui.createButton({
+		width: 70,
+		top: 45,
+		left: 10,
+		title: C.content.getText("skillist_btn_backtolists"),
+		k_click: function(){
+			pb.pub("/navto","mylists");
+		}
+	});
+	view.add(listsbtn);
+	
+	var addbtn = C.ui.createButton({
+		width: 30,
+		top: 45,
+		right: 90,
+		title: "+",
+		k_click: function(){
+			pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
+				C.content.addSkillToList(listid,skillid);
+				renderTable();
+				startEditing(true);
+			});
+		}
+	});
+	view.add(addbtn);
+	
 	var editing = false;
 	
 	var editbtn = C.ui.createButton({
@@ -79,7 +105,7 @@ C.ui.createSkillListView = function() {
 	});
 	view.add(titletextfield);
 	
-	function startEditing(){
+	function startEditing(focusfirst){
 		/*if (!(table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length)){
 			C.ui.showMessage("need items!","error"); // TODO - lang!
 			return;
@@ -94,9 +120,9 @@ C.ui.createSkillListView = function() {
 				r.k_children.skillabel.visible = false;
 				r.k_children.usagelabel.visible = false;
 				r.k_children.usagetextfield.visible = true;
-				/*if (added && !i){
-					r.k_children[1].focus();
-				}*/
+				if (!i && focusfirst){
+					r.k_children.usagetextfield.focus();
+				}
 			},300);
 		});
 		updateButtons();
@@ -112,6 +138,7 @@ C.ui.createSkillListView = function() {
 	function renderTable(){
 		table.setData(C.content.getListSkills(listid).map(function(r,i){
 			return K.create({
+				hasChild: true,
 				SkillId: r.SkillId,
 				ModuleId: r.ModuleId,
 				ListItemId: r.ListItemId,
@@ -158,6 +185,7 @@ C.ui.createSkillListView = function() {
 						height: 30,
 						width: 230,
 						k_id: "usagetextfield",
+						top: 5,
 						left: 15,
 						visible: false,
 						value: r.usagetext,

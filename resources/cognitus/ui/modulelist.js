@@ -1,7 +1,5 @@
 C.ui.createModuleListView = function(o){
-	var view = C.ui.createPage({
-		backgroundColor: "blue"
-	});
+	var view = C.ui.createPage({});
 	view.add( C.ui.createLabel(function(){return "modulelist_description";},{height:100,top:20}) );
 	var table = K.create({
 		k_type: "TableView",
@@ -13,14 +11,13 @@ C.ui.createModuleListView = function(o){
 	});
 	view.add(table);
 	view.render = function(arg){
-		var rows = [];
-		C.content.getAllSkillModules().forEach(function(m){
-			rows.push({
+		table.setData(C.content.getAllSkillModules().map(function(m){
+			return {
+				hasChild: true,
 				ModuleId: m,
 				title: C.content.getText("module_"+m+"_title")
-			});
-		});
-		table.setData(rows);
+			};
+		}));
 	};
 	return view;
 };

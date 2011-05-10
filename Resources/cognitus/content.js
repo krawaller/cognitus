@@ -43,6 +43,10 @@
 	}];
 
     C.content = {
+		addSkillToList: function(listid,skillid){
+			db.execute("UPDATE listitems SET priority = priority+1");
+			db.execute("INSERT INTO listitems (listitemid,listid,skillid,usagetext,priority) VALUES ('listitem_"+Date.now()+"','"+listid+"','"+skillid+"','',0)");
+		},
 		getListSkills: function(listid){
 			var rows = db.execute("SELECT listitems.priority, listitems.usagetext, listitems.skillid, skills.moduleid, listitems.listitemid from listitems INNER JOIN skills ON listitems.skillid = skills.skillid WHERE listitems.listid = '"+listid+"' ORDER BY listitems.priority"),
 				ret = [];
@@ -133,6 +137,9 @@
 			}
 		},
 		removeList: function(listid,delprio){
+			if (Ti.App.Properties.getString("crisislistid")===listid){
+				Ti.App.Properties.setString("crisislistid","");
+			}
 			res = db.execute("DELETE FROM listitems WHERE listid = '"+listid+"'");
 			res = db.execute("DELETE FROM lists WHERE listid = '"+listid+"'");
 			db.execute("UPDATE lists SET priority = priority-1 WHERE priority > "+delprio);

@@ -1,7 +1,11 @@
 C.ui.createMyListsView = function(o) {
+	
+	var crisislistid;
+	
 	function renderTable() {
 		table.setData(C.content.getMyListsWithSkillCount().map(function(r, i) {
 			return K.create({
+				hasChild: true,
 				k_type: "TableViewRow",
 				list: r,
 				ListId: r.ListId,
@@ -18,13 +22,32 @@ C.ui.createMyListsView = function(o) {
 					k_type: "TextField",
 					borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 					height: 30,
-					width: 230,
+					width: 195,
 					left: 15,
 					bottom: 5,
 					visible: false,
+					hintText: "poop",
 					value: r.title,
 					oldvalue: r.title,
 					visible: false
+				},{
+					k_type: "Button",
+					k_id: "crisisbutton",
+					height: 25,
+					width: 25,
+					right: 15,
+					top: 10,
+					visible: r.ListId === crisislistid,
+					enabled: false,
+					ListId: r.ListId,
+					title: r.ListId === crisislistid ? "K" : "-",
+					k_click: function(e){
+						crisislistid = e.source.ListId;
+						Ti.App.Properties.setString("crisislistid",e.source.ListId);
+						table.data[0].rows.forEach(function(r){
+							r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
+						});
+					}
 				}]
 			});
 		}));
@@ -72,9 +95,11 @@ C.ui.createMyListsView = function(o) {
 
 	var addbtn = C.ui.createButton({
 		width: 70, top: 45, right: 100, k_click: function(){
-			C.content.addNewList();
-			renderTable();
-			startEditing(true);
+			if (!editing){
+				C.content.addNewList();
+				renderTable();
+				startEditing(true);
+			}
 		}
 	});
 	view.add(addbtn);
@@ -105,6 +130,8 @@ C.ui.createMyListsView = function(o) {
 			setTimeout(function(){
 				r.k_children[0].visible = false;
 				r.k_children[1].visible = true;
+				r.k_children.crisisbutton.visible = true;
+				r.k_children.crisisbutton.enabled = true;
 				if (added && !i){
 					r.k_children[1].focus();
 				}
@@ -121,6 +148,7 @@ C.ui.createMyListsView = function(o) {
 	}
 
 	view.render = function() {
+		crisislistid = Ti.App.Properties.getString("crisislistid");
 		renderTable();
 		updateButtons();
 	};

@@ -13,15 +13,14 @@ C.ui.createModuleSkillListView = function(o){
 	});
 	view.add(table);
 	view.render = function(arg){
-		var rows = [];
-		C.content.getSkillsForModule(arg.ModuleId).forEach(function(s){
-			rows.push({
+		table.setData(C.content.getSkillsForModule(arg.ModuleId).map(function(s){
+			return {
+				hasChild: true,
 				SkillId: s,
 				ModuleId: arg.ModuleId,
 				title: C.content.getText("skill_"+s+"_title")
-			});
-		});
-		table.setData(rows);
+			};
+		}));
 	};
 	view.using = "ModuleId";
 	return view;

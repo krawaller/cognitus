@@ -245,14 +245,16 @@
 				frame.bottom = 0;
 			} else {
 				anchor.title = "↑";
+				var rowsshowing = 0;
 				tabrows.forEach(function(tabrow,i){
 					if (tabrow.showing){
+						rowsshowing++;
 						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
 					}
 				});
 				controlpanel.top = 0;
 				frame.top = 40;
-				frame.bottom = Ti.App.Properties.getInt("tabrowheight");
+				frame.bottom = Ti.App.Properties.getInt("tabrowheight")*rowsshowing;
 			}
 		}
 		
@@ -260,12 +262,14 @@
 			var bgcolours = ["#777","#999","#BBB","#DDD","#FFF"],
 				numrows = page.listhistory.length;
 			//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
+			var rowsshowing = 0;
 			tabrows.forEach(function(tabrow,i){
 				if (i < page.listhistory.length){ // this level is shown!
 					var list = lists[page.listhistory[i]];
 					//Ti.API.log("Tabrow "+i+" set to listid "+page.listhistory[i]+", which has "+list.length+" tabs");
 					tabrow.listid = page.listhistory[i];
 					if (tabrow.showing){
+						rowsshowing++;
 						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
 					}
 					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - numrows - 1 + i]);
@@ -301,6 +305,7 @@
 					tabrow.showing = 0;
 				}
 			});
+			frame.bottom = rowsshowing*Ti.App.Properties.getInt("tabrowheight");
 		}
 
         // ****************** Title bits
@@ -355,6 +360,7 @@
 					break;
 				case "list":
 					main = C.content.getListTitle(args.ListId);
+					sup = C.content.getText("list_noun");
 					break;
 				default:
 					main = C.content.getText(  pagedef.pageid +"_title");
@@ -421,10 +427,11 @@
 					newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
 				Ti.API.log("going from rowheight "+currenth+" to "+newh);
 				Ti.App.Properties.setInt("tabrowheight",newh);
-				frame.bottom = newh;
+				var rowsshowing = 0;
 				tabrows.forEach(function(r,i){
 					if (r.showing){
 						r.bottom = i * newh;
+						rowsshowing++;
 					}
 					r.height = newh;
 					r.buttons.forEach(function(b,j){
@@ -432,6 +439,8 @@
 						b.k_children.label.height = newh - 5;
 					});
 				});
+				frame.bottom = rowsshowing * newh;
+				Ti.API.log("set frame.bottom to "+frame.bottom);
 			}
 		});
 		controlpanel.add(notesbtn);
@@ -568,6 +577,11 @@
 		
 		Ti.include("/cognitus/ui/skillistitempanel.js");
 		win.add(C.ui.createSkillListItemPanel());
+		
+		// ********************* Skill selection panel logic *********************
+		Ti.include("/cognitus/ui/selectskillmodal.js");
+		var selectskillmodal = C.ui.createSelectSkillModal();
+		win.add(selectskillmodal);
 		
 
 		// ******************** Start logic

@@ -11,9 +11,9 @@ C.ui.createNewsListView = function(o){
 	});
 	view.add(table);
 	view.render = function(arg){
-		var rows = [];
-		C.content.getNewsList().forEach(function(n){
-			rows.push(K.create({
+		table.setData(C.content.getNewsList().map(function(n){
+			 return K.create({
+				hasChild: true,
 				k_type: "TableViewRow",
 				NewsId: n.newsid,
 				k_children: [{
@@ -36,9 +36,8 @@ C.ui.createNewsListView = function(o){
 					},
 					text: n.headline
 				}]
-			}));
-		});
-		table.setData(rows);
+			});
+		}));
 	};
 	return view;
 };
