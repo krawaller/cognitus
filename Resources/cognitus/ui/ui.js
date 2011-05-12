@@ -40,6 +40,9 @@
 	function createButton(o){
 		var btn = K.create(K.merge(o||{},{
 			k_type: "Button",
+			font: {
+				fontSize: 11
+			},
 			height: 30
 		}));
 		if (o.textid){
@@ -259,7 +262,7 @@
 		}
 		
 		function updateTabs(page){
-			var bgcolours = ["#777","#999","#BBB","#DDD","#FFF"],
+			var bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
 				numrows = page.listhistory.length;
 			//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 			var rowsshowing = 0;
@@ -272,7 +275,7 @@
 						rowsshowing++;
 						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
 					}
-					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - numrows - 1 + i]);
+					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - 1 - numrows*2 + i*2]);
 					tabrow.showing = 1;
 					tabrow.buttons.forEach(function(btn,j){
 						var label = btn.k_children.label;
@@ -285,7 +288,7 @@
 									fontWeight: "bold",
 									fontSize: 10
 								};
-								btn.backgroundColor = bgcolours[bgcolours.length - numrows + i];
+								btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 2];
 								btn.top = 0;
 							} else {
 								label.font = {
@@ -293,7 +296,7 @@
 									fontSize: 10
 								};
 								btn.top = 1;
-								btn.backgroundColor = bgcolours[bgcolours.length - numrows - 1 + i];
+								btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 1];
 							}
 						} else {
 							btn.visible = false;
@@ -545,17 +548,17 @@
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
 			updateAnchor();
-			// skill crisis list btn
+		/*	// skill crisis list btn
 			if (topage.using === "skill"){
 				crisislistitembutton.visible = true;
 				crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
 			}
 			if (topage.using !== "skill"){
 				crisislistitembutton.visible = false;
-			}
+			}*/
 		});
 
-		// ******************** Crisis list item button
+/*		// ******************** Crisis list item button
 		var crisislistitembutton = createButton({
 			top: 50,
 			right: 5,
@@ -572,7 +575,7 @@
 		frame.add(crisislistitembutton);
 		pb.sub("/hidcrisislistitempanel",function(){
 			crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(C.state.lastArgs.SkillId) ? "-" : "+");
-		});
+		}); */
 		
 		
 		Ti.include("/cognitus/ui/skillistitempanel.js");
@@ -617,7 +620,9 @@ Ti.include("/cognitus/ui/modulelist.js");
 Ti.include("/cognitus/ui/moduleskillist.js");
 Ti.include("/cognitus/ui/moduletrainsession.js");
 Ti.include("/cognitus/ui/moduletrainhistory.js");
-Ti.include("/cognitus/ui/mycrisisskillist.js");
+//Ti.include("/cognitus/ui/mycrisisskillist.js");
+
+Ti.include("/cognitus/ui/crisis.js");
 
 Ti.include("/cognitus/ui/newslist.js");
 Ti.include("/cognitus/ui/newsitem.js");

@@ -83,7 +83,6 @@ C.ui.createSkillListView = function() {
 		},300);
 		if (titletextfield.value !== titletextfield.oldvalue){
 			C.content.updateListTitle(listid,titletextfield.value);
-			Ti.API.log("Changing title from "+titletextfield.oldvalue+" to "+titletextfield.value);
 			pb.pub("/updatetitle",titletextfield.value);
 			titletextfield.oldvalue = titletextfield.value;
 		}
@@ -116,9 +115,9 @@ C.ui.createSkillListView = function() {
 		table.editing = true;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			setTimeout(function(){
-				r.k_children.modulelabel.visible = false;
-				r.k_children.skillabel.visible = false;
-				r.k_children.usagelabel.visible = false;
+				/*r.k_children.modulelabel.visible = false;
+				r.k_children.skillabel.visible = false;*/
+				r.k_children.usagelabel.visible = false; 
 				r.k_children.usagetextfield.visible = true;
 				if (!i && focusfirst){
 					r.k_children.usagetextfield.focus();
@@ -130,6 +129,7 @@ C.ui.createSkillListView = function() {
 	
 	function updateButtons(){
 		editbtn.title = C.content.getText("crisislist_button_" + (editing ? "done" : "edit"));
+		listsbtn.title = C.content.getText("skillist_btn_backtolists");
 		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		//addbtn.title = C.content.getText("mylists_btn_newlist");
 		//addbtn.opacity = (editing ? 0.5 : 1);
@@ -146,51 +146,62 @@ C.ui.createSkillListView = function() {
 				height: 60,
 				k_type: "TableViewRow",
 				k_children: [{
-					k_type: "Label",
-					k_id: "modulelabel",
+					k_type: "View",
+					height: 22,
+					layout: "horizontal",
 					top: 0,
-					left: 20,
-					textAlign: "left",
-					font: {
-						fontSize: 10
-					},
-					text: C.content.getText("module_"+r.ModuleId+"_title")
-				},{
-					k_type: "Label",
-					top: 12,
+					width: "auto",
 					left: 5,
-					k_id: "skillabel",
-					textAlign: "left",
-					font: {
-						fontSize: 15,
-						fontWeight: "bold"
-					},
-					text: C.content.getText("skill_"+r.SkillId+"_title")
+					k_children: [{
+						k_type: "Label",
+						k_id: "modulelabel",
+						left: 0,
+						height: 20,
+						width: "auto",
+						font: {
+							fontSize: 10
+						},
+						color: "#666",
+						text: C.content.getText("module_"+r.ModuleId+"_title")+" -"
+					},{
+						k_type: "Label",
+						k_id: "skillabel",
+						height: 20,
+						left: 5,
+						width: "auto",
+						color: "#444",
+						font: {
+							fontSize: 12,
+							fontWeight: "normal",//"bold",
+							textDecoration: "underline"
+						},
+						text: C.content.getText("skill_"+r.SkillId+"_title")
+					}]
 				},{
 					k_type: "Label",
-					top: 28,
-					left: 40,
+					top: 20,
+					left: 25,
 					height: 30,
 					textAlign: "left",
 					k_id: "usagelabel",
 					width: $$.platformWidth,
 					font: {
-						fontSize: 12,
+						fontSize: 14,
 						fontStyle: "italic"
 					},
 					text: r.usagetext
-				},	{
-						k_type: "TextField",
-						borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-						height: 30,
-						width: 230,
-						k_id: "usagetextfield",
-						top: 5,
-						left: 15,
-						visible: false,
-						value: r.usagetext,
-						oldvalue: r.usagetext,
-						visible: false
+				},{
+					k_type: "TextField",
+					borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+					height: 30,
+					width: 230,
+					k_id: "usagetextfield",
+					top: 20,
+					left: 15,
+					visible: false,
+					value: r.usagetext,
+					oldvalue: r.usagetext,
+					visible: false
 				}]
 			});
 		}));

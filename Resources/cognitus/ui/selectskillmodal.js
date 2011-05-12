@@ -10,14 +10,29 @@ C.ui.createSelectSkillModal = function(){
 		excluded = excluded.map(function(r){return r.SkillId;});
 		cancelcb = a_cancelcb;
 		selectcb = a_selectcb;
+		selectedrow = null;
 		view.visible = true;
 		selbtn.opacity = 0.5;
 		selbtn.title = C.content.getText("selectskillmodal_btn_selskill");
+		cancelbtn.title = C.content.getText("selectskillmodal_btn_cancel");
 		Ti.API.log(["MOO",excluded]);
 		view.k_children.panel.k_children.table.setData(C.content.getAllSkillModules().map(function(moduleid){
 			return K.create({
 				k_type: "TableViewSection",
-				headerTitle: C.content.getText("module_"+moduleid+"_title"),
+				headerView: K.create({
+					k_type: "View",
+					height: 15,
+					backgroundColor: "#333",
+					k_children: [{
+						k_type: "Label",
+						color: "#EEE",
+						textAlign: "left",
+						left: 10,
+						text: C.content.getText("module_"+moduleid+"_title")
+					}]
+				}),
+/*				headerTitle: C.content.getText("module_"+moduleid+"_title"), 
+				headerBackgroundColor: "green",*/
 				rows: C.content.getSkillsForModule(moduleid).map(function(skillid){
 					Ti.API.log(["CREATING SKILLTABLE",skillid,excluded.length,excluded.indexOf(skillid)]);
 					var x = excluded.indexOf(skillid) != -1;
@@ -70,12 +85,12 @@ C.ui.createSelectSkillModal = function(){
 								view.visible = false;
 								return;
 							}
-							if (selectedrow) { 
+							if (selectedrow) { // we already had a selected row
 								selectedrow.backgroundColor = "#FFF";
-								selbtn.title = C.content.getText("selectskillmodal_btn_sel")+" "+C.content.getText("skill_"+e.row.skillid+"_title");
 							} else {
 								selbtn.opacity = 1;
 							}
+							selbtn.title = C.content.getText("selectskillmodal_btn_sel")+" "+C.content.getText("skill_"+e.row.skillid+"_title");
 							selectedrow = e.row;
 							e.row.backgroundColor = "yellow";
 						}
@@ -95,7 +110,7 @@ C.ui.createSelectSkillModal = function(){
 		k_type: "Button",
 		top: 40,
 		right: 10,
-		width: 120,
+		width: 180,
 		k_click: function(e){
 			if (selectedrow){
 				selectcb(selectedrow.skillid);
@@ -104,6 +119,16 @@ C.ui.createSelectSkillModal = function(){
 		}
 	});
 	view.k_children.panel.add(selbtn);
+	
+	var cancelbtn = C.ui.createButton({
+		k_type: "Button",
+		top: 40,
+		left: 10,
+		width: 70,
+		k_click: cancel
+	});
+	view.k_children.panel.add(cancelbtn);
+
 
 	view.show = show;
 	

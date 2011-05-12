@@ -71,10 +71,12 @@ appstructure = [{
 },
 {
 	navtextid: "crisistab",
-	navto: "mycrisisskillist",
+	navto: "crisis",
 	sub: [{
-		pageid: "mycrisisskillist",
-		view: C.ui.createMyCrisisSkillListView()
+		pageid: "crisis",
+		view: C.ui.createCrisisView()
+		/*pageid: "mycrisisskillist",
+		view: C.ui.createMyCrisisSkillListView()*/
 	}]
 },
 {
