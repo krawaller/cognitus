@@ -3,7 +3,7 @@
 var C = {};
 
 (function() {
-	C.state = {lang:"sv",history:[],historyposition:-1};
+	C.state = {lang:"sv",history:[],historyposition:-1,showingTabs:true};
 })();
 
 

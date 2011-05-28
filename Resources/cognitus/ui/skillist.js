@@ -212,8 +212,15 @@ C.ui.createSkillListView = function() {
 		listid = args.ListId;
 		titletextfield.value = C.content.getListTitle(listid);
 		titletextfield.oldvalue = titletextfield.value;
-		renderTable();
-		updateButtons();
+		if (args.addSkillId){
+			C.content.addSkillToList(listid,args.addSkillId);
+			renderTable();
+			updateButtons();
+			startEditing(true);
+		} else {
+			renderTable();
+			updateButtons();
+		}
 	};
 	
 	return view;

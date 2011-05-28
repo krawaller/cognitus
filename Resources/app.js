@@ -75,8 +75,6 @@ appstructure = [{
 	sub: [{
 		pageid: "crisis",
 		view: C.ui.createCrisisView()
-		/*pageid: "mycrisisskillist",
-		view: C.ui.createMyCrisisSkillListView()*/
 	}]
 },
 {

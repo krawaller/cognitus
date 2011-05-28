@@ -1,12 +1,11 @@
 (function() {
 
     function createPage(o) {
-		delete o.backgroundColor; // TODO - remove in respective file!
-        var view = K.create(K.merge({
-            k_type: "View"
-            //, width: $$.platformWidth
-        },
-        o));
+		o = K.merge({
+			k_type:"View",
+			backgroundColor: "#FFF"
+		},o||{});
+		var view = K.create(o);
         return view;
     }
 	
@@ -121,6 +120,7 @@
 			top: 40,
 			bottom: 40,
 			backgroundColor: "#FFF",
+			zIndex: 2,
 			k_children: [{
 				k_type: "View",
 				height: 1,
@@ -155,17 +155,167 @@
             	frame.add(page.view);
 			}
         }
+		C.state.frame = frame;
+		
 		
 		// tab stuff
 		
-		var tabrows = [], rowbigheight = 40, rowdefaultheight = 25, rowheight, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
+		
+		/*var tabrows = [], rowbigheight = 40, rowdefaultheight = 25, rowheight, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
 		Ti.App.Properties.setInt("tabrowheight",Ti.App.Properties.getInt("tabrowheight") || rowbigheight);
-		rowheight = Ti.App.Properties.getInt("tabrowheight");
-		[0,1,2,3].forEach(function(row){
+		rowheight = Ti.App.Properties.getInt("tabrowheight");*/
+		
+		/*var rowcontainer = K.create({
+			k_type: "View",
+			height: rowheight * 3,
+			bottom: rowheight,
+			k_children: [0,1,2].map(function(i){
+				return {
+					k_type: "View",
+					height: rowheight,
+					top: i*rowheight,
+					backgroundColor: "green",//["#DDD","#BBB","#999"][i],
+					k_children: [{
+						k_type: "View",
+						height: 1,
+						top: 0,
+						backgroundColor: "#000"
+					}]
+				};
+			})
+		});
+		win.add(rowcontainer);
+		var buttonscontainer = K.create({
+			k_type: "View",
+			bottom: 0,
+			k_children: [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3],[3,0],[3,1],[3,2],[3,3]].map(function(p){
+				var row = p[0], col = p[1];
+				return {
+					k_type: "View",
+					k_style: "NavButtonView",
+					k_id: row+","+col,
+					myrow: row,
+					mycol: col,
+					bottom: row * rowheight + 5,
+					left: btnspace+((row ? btnwidth : firstrowbtnwidth)+btnspace)*col + 15*((row)%2),
+					height: row ? btnwidth : firstrowbtnwidth,
+					width: btnwidth,
+					k_children: [{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						width: 1,
+						left: 0
+					},{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						width: 1,
+						right: 0
+					},{
+						k_type: "View",
+						borderSize: 1,
+						borderColor: "#000",
+						height: 1,
+						bottom: 0
+					},{
+						k_id: "label",
+						k_type: "Label",
+						height: rowheight - 5,
+						width: row ? btnwidth : firstrowbtnwidth
+					}]
+				};
+			}),
+			k_click: function(e){
+				if (e.source.myrow){
+					pb.pub("/navto",lists[C.state.currentPage.listhistory[e.source.myrow]][e.source.mycol].navto);
+				}
+			}
+		});
+		win.add(buttonscontainer);
+		
+		function updateTabs(){
+			var begin = Date.now(),
+				page = C.state.currentPage,
+				bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
+				numrows = page.listhistory.length,
+				height = Ti.App.Properties.getInt("tabrowheight");
+			if (showingtabs) {
+				frame.bottom = 300; // numrows*height;
+				//rowcontainer.height = (numrows-1) * height;
+				rowcontainer.bottom = rowheight;
+			}
+			for(var r = 0; r<numrows; r++){
+				var list = lists[C.state.currentPage.listhistory[r]],
+					colornumber = bgcolours.length - 1 - numrows*2 + r*2;
+				for(var c = 0; c<4; c++){
+					var btn = buttonscontainer.k_children[r+","+c],
+						label = btn.k_children.label;
+					if (c<list.length && list[c]){
+						btn.visible = true;
+						label.text = C.content.getText(list[c].navtextid)+list[c].suffix;
+						if (c === page.listpositions[r]){
+							label.font = {
+								fontWeight: "bold",
+								fontSize: 10
+							};
+							btn.backgroundColor = bgcolours[colornumber + 2];
+							btn.top = 0;
+						} else {
+							btn.top = 1;
+							label.font = {
+								fontWeight: "normal",
+								fontSize: 10
+							};
+							btn.backgroundColor = bgcolours[colornumber + 1];
+						}
+					} else {
+						btn.visible = false;
+					}
+				}
+			}
+			
+			tabrows.forEach(function(tabrow,i){
+				if (i < page.listhistory.length){ // this level is shown!
+					var list = lists[page.listhistory[i]],
+						colornumber = bgcolours.length - 1 - numrows*2 + i*2;
+					//tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[colornumber]);
+					tabrow.buttons.forEach(function(btn,j){
+						var label = btn.k_children.label;
+						if (j<list.length && list[j]){
+							btn.visible = true;
+							label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
+							btn.navto = list[j].navto;
+							if (j==page.listpositions[i]){
+								label.font = {
+									fontWeight: "bold",
+									fontSize: 10
+								};
+								btn.backgroundColor = bgcolours[colornumber + 2];
+								btn.top = 0;
+							} else {
+								label.font = {
+									fontWeight: "normal",
+									fontSize: 10
+								};
+								btn.top = 1;
+								btn.backgroundColor = bgcolours[colornumber + 1];
+							}
+						} else {
+							btn.visible = false;
+						}
+					});
+				}
+			});
+			Ti.API.log("CHANGED TABS IN "+(Date.now()-begin));
+		}*/
+		
+		
+		/*[0,1,2,3].forEach(function(row){
 			var tabrow = K.create({
 				k_type: "View",
 				height: rowheight,
-				backgroundColor: ["#AAA","#BBB","#CCC","#DDD"][row],
+				backgroundColor: ["#transparent","#999","#BBB","#DDD"][row],
 				bottom: row*rowheight,
 				k_children: [{
 					k_type: "View",
@@ -212,13 +362,14 @@
 						pb.pub("/navto", btn.navto );
 					}
 				});
+				btn.label = btn.k_children.label;
 				buttons.push(btn);
 				tabrow.add(btn);
 			});
 			tabrow.buttons = buttons;
 			tabrows.push(tabrow);
 			win.add(tabrow);
-		});
+		}); */
 		
 		var anchor = createButton({
 			zIndex: 100,
@@ -228,57 +379,42 @@
 			top: 5,
 			title: "↓",
 			k_click: function(e){
-				updateAnchor(true);
+				C.state.showingTabs = !C.state.showingTabs;
+				if (C.state.showingTabs){
+					anchor.title = "↑";
+					//controlpanel.visible = true;
+					frame.top = 40;
+					frame.bottom = Ti.App.Properties.getInt("tabrowheight")*C.state.currentPage.listhistory.length;
+				} else {
+					frame.top = 0;
+					frame.bottom = 0;
+					//controlpanel.visible = false;
+					anchor.title = "↓";
+				}
 			}
 		});
 		
 		win.add(anchor);
 		
 		var showingtabs = true;
-		function updateAnchor(toggle){
-			var dur = 300, prev = showingtabs;
-			showingtabs = toggle? !showingtabs : showingtabs;
-			if (!showingtabs){
-				anchor.title = "↓";
-				tabrows.forEach(function(tabrow){
-					tabrow.bottom = -Ti.App.Properties.getInt("tabrowheight");
-				});
-				controlpanel.top = -50;
-				frame.top = 0;
-				frame.bottom = 0;
-			} else {
-				anchor.title = "↑";
-				var rowsshowing = 0;
-				tabrows.forEach(function(tabrow,i){
-					if (tabrow.showing){
-						rowsshowing++;
-						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
-					}
-				});
-				controlpanel.top = 0;
-				frame.top = 40;
-				frame.bottom = Ti.App.Properties.getInt("tabrowheight")*rowsshowing;
+		/*
+		function updateTabs(){
+			var begin = Date.now(),
+				page = C.state.currentPage,
+				bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
+				numrows = page.listhistory.length,
+			 	rowsshowing = 0,
+				height = Ti.App.Properties.getInt("tabrowheight");
+			if (showingtabs) {
+				frame.bottom = page.listhistory.length*height;
 			}
-		}
-		
-		function updateTabs(page){
-			var bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
-				numrows = page.listhistory.length;
-			//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
-			var rowsshowing = 0;
 			tabrows.forEach(function(tabrow,i){
 				if (i < page.listhistory.length){ // this level is shown!
-					var list = lists[page.listhistory[i]];
-					//Ti.API.log("Tabrow "+i+" set to listid "+page.listhistory[i]+", which has "+list.length+" tabs");
-					tabrow.listid = page.listhistory[i];
-					if (tabrow.showing){
-						rowsshowing++;
-						tabrow.bottom = i*Ti.App.Properties.getInt("tabrowheight");
-					}
-					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - 1 - numrows*2 + i*2]);
-					tabrow.showing = 1;
+					var list = lists[page.listhistory[i]],
+						colornumber = bgcolours.length - 1 - numrows*2 + i*2;
+					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[colornumber]);
 					tabrow.buttons.forEach(function(btn,j){
-						var label = btn.k_children.label;
+						var label = btn.label; //btn.k_children.label;
 						if (j<list.length && list[j]){
 							btn.visible = true;
 							label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
@@ -288,7 +424,7 @@
 									fontWeight: "bold",
 									fontSize: 10
 								};
-								btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 2];
+								btn.backgroundColor = bgcolours[colornumber + 2];
 								btn.top = 0;
 							} else {
 								label.font = {
@@ -296,20 +432,22 @@
 									fontSize: 10
 								};
 								btn.top = 1;
-								btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 1];
+								btn.backgroundColor = bgcolours[colornumber + 1];
 							}
 						} else {
 							btn.visible = false;
 						}
 					});
-				} else { // hide the tabrow;
-					tabrow.listid = -1;
-					tabrow.bottom = -rowbigheight;
-					tabrow.showing = 0;
 				}
 			});
-			frame.bottom = rowsshowing*Ti.App.Properties.getInt("tabrowheight");
-		}
+			Ti.API.log("CHANGED TABS IN "+(Date.now()-begin));
+		}*/
+
+
+		// ******************* Tabs
+		Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choise of tabstructure file
+		win.add(C.ui.createTabStructure(lists,pages));
+
 
         // ****************** Title bits
         var titleview = K.create({
@@ -418,35 +556,23 @@
         });
 		controlpanel.add(forwardbtn);
 
-		// ********************* Notes btn
+		// ********************* Size btn
 		
-		var notesbtn = createNavButton({
+		var sizebtn = createNavButton({
 			width: 50,
 			top: 5,
 			left: 95,
 			title: "size",
 			k_click: function(){
+				var rowdefaultheight = 25, rowbigheight = 40;
 				var currenth = Ti.App.Properties.getInt("tabrowheight"),
 					newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
-				Ti.API.log("going from rowheight "+currenth+" to "+newh);
 				Ti.App.Properties.setInt("tabrowheight",newh);
-				var rowsshowing = 0;
-				tabrows.forEach(function(r,i){
-					if (r.showing){
-						r.bottom = i * newh;
-						rowsshowing++;
-					}
-					r.height = newh;
-					r.buttons.forEach(function(b,j){
-						b.height = newh - 5;
-						b.k_children.label.height = newh - 5;
-					});
-				});
-				frame.bottom = rowsshowing * newh;
-				Ti.API.log("set frame.bottom to "+frame.bottom);
+				pb.pub("/settabrowheight",newh);
+				frame.bottom = C.state.currentPage.listhistory.length * newh;
 			}
 		});
-		controlpanel.add(notesbtn);
+		controlpanel.add(sizebtn);
 
 		// ********************* Language test
 
@@ -474,7 +600,7 @@
 			var webview = C.ui.createWebView({top:30});
 			view.add(webview);
 			view.render = function(argstouse,topage){
-				Ti.API.log(["Updating web view",argstouse,topage]);
+				//Ti.API.log(["Updating web view",argstouse,topage]);
 				var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 						  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : topage.pageid) + "_html";
 				C.ui.updateWebView(webview,C.content.getText(id));
@@ -489,7 +615,7 @@
 			if (C.state.currentPageView.render){
 				C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
 			}
-			updateTabs(C.state.currentPage);
+			//updateTabs(C.state.currentPage);
 		});
 
 		// ******************* Navigation logic
@@ -504,6 +630,11 @@
 				topage = pages[pageid],
 				historymax = 25;
 			// HISTORY
+			
+			/*if (showingtabs){
+				frame.bottom = topage.listhistory.length * Ti.App.Properties.getInt("tabrowheight");
+			}*/
+			
 			if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)){
 				C.state.historyposition++;
 				C.state.history.splice(C.state.historyposition);
@@ -516,9 +647,6 @@
 				C.state.history = C.state.history.splice(C.state.history.length-historymax);
 				C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
 			}
-			
-			
-			updateTabs(topage);
 			
 			// textview
 			if (topage.basic){
@@ -533,6 +661,9 @@
 				topage.view.visible = true;
 			}
 			// render stuff
+			
+			C.state.lastArgs && delete C.state.lastArgs.addSkillId;
+			
 			var argstouse = K.merge(args || {},C.state.lastArgs || {});
 			if (argstouse.SkillId && !argstouse.ModuleId){
 				argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
@@ -547,19 +678,23 @@
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
-			updateAnchor();
-		/*	// skill crisis list btn
+			//updateAnchor();
+			//updateTabs();
+			
+			pb.pub("/updatetabs",pageid);
+			
+			// skill crisis list btn
 			if (topage.using === "skill"){
-				crisislistitembutton.visible = true;
-				crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
+				listitembutton.visible = true;
+				//listitembutton.title = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
 			}
 			if (topage.using !== "skill"){
-				crisislistitembutton.visible = false;
-			}*/
+				listitembutton.visible = false;
+			}
 		});
 
-/*		// ******************** Crisis list item button
-		var crisislistitembutton = createButton({
+		// ******************** Add skill to list button
+		var listitembutton = createButton({
 			top: 50,
 			right: 5,
 			height: 30,
@@ -567,24 +702,26 @@
 			visible: 0,
 			zIndex: 5,
 			k_click: function(e){
-				//showCrisisListItemPanel(C.state.lastArgs.SkillId,false);
-				pb.pub("/showcrisislistitempanel",C.state.lastArgs.SkillId,false);
+				pb.pub("/showselectlistmodal",C.content.getListsIncludingSkill(C.state.lastArgs.SkillId),function(listid){
+					pb.pub("/navto","skillist",{ListId: listid, addSkillId: C.state.lastArgs.SkillId});
+				});
 			},
 			title: "+"
 		});
-		frame.add(crisislistitembutton);
-		pb.sub("/hidcrisislistitempanel",function(){
-			crisislistitembutton.title = (C.content.testIfSkillOnCrisisList(C.state.lastArgs.SkillId) ? "-" : "+");
-		}); */
-		
-		
-		Ti.include("/cognitus/ui/skillistitempanel.js");
-		win.add(C.ui.createSkillListItemPanel());
+		frame.add(listitembutton);
+
 		
 		// ********************* Skill selection panel logic *********************
 		Ti.include("/cognitus/ui/selectskillmodal.js");
 		var selectskillmodal = C.ui.createSelectSkillModal();
 		win.add(selectskillmodal);
+		
+		// ********************* List selection panel logic *********************
+		Ti.include("/cognitus/ui/selectlistmodal.js");
+		var selectlistmodal = C.ui.createSelectListModal();
+		win.add(selectlistmodal);
+		
+		
 		
 
 		// ******************** Start logic

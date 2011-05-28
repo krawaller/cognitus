@@ -43,7 +43,7 @@ C.ui.createMyListsView = function(o) {
 					title: r.ListId === crisislistid ? "K" : "-",
 					k_click: function(e){
 						crisislistid = e.source.ListId;
-						Ti.App.Properties.setString("crisislistid",e.source.ListId);
+						C.content.setCrisisList(e.source.ListId);
 						table.data[0].rows.forEach(function(r){
 							r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
 						});
@@ -148,7 +148,7 @@ C.ui.createMyListsView = function(o) {
 	}
 
 	view.render = function() {
-		crisislistid = Ti.App.Properties.getString("crisislistid");
+		crisislistid = C.content.getCrisisList();
 		renderTable();
 		updateButtons();
 	};

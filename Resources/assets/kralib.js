@@ -65,12 +65,20 @@
 	};
 
 	K.merge = function(){
-        if (!arguments[0]){
-            arguments[0] = {};
-        }
-        if (!arguments[1]){
-            arguments[1] = {};
-        }
+		if(arguments.length === 1){
+			return arguments[0];
+		}
+		if (arguments.length === 0){
+			throw("K.merge called without any arguments!");
+		}
+		if (typeof arguments[0] !== "object"){
+			Ti.API.log(arguments[0]);
+			throw("K.merge called with non-object first argument!");
+		}
+		if (typeof arguments[1] !== "object"){
+			Ti.API.log(arguments[1]);
+			throw("K.merge called with non-object argument!");
+		}
         for (var property in arguments[1]) {
             if (!arguments[0].hasOwnProperty(property)){ arguments[0][property] = arguments[1][property]; }
         }
@@ -91,8 +99,6 @@
         if (typeof o === "string"){
             o = { k_type: "Label", text: o };
         }
-        
-     //   delete o.id;
         if (o.k_class){
              if (typeof o.k_class === "string") {
                  o = K.merge(o,styles[o.k_class] || {});
@@ -130,9 +136,9 @@
         if (o.k_type == "Window" && styles[o.url]){
              o = K.merge(o,styles[o.url]);
         }
-		o.init && K.isFunc(o.init) && o.init.call(o);
+		//o.init && K.isFunc(o.init) && o.init.call(o);
 	
-        if (o.k_type == "WebView" && (o.k_templatefile || o.k_temlatehtml)){
+        /*if (o.k_type == "WebView" && (o.k_templatefile || o.k_temlatehtml)){
             o = K.merge(o, {
                 url: "../views/"+ (o.k_masterpage || "_masterpage.html"),
                 k_templateview: true,
@@ -145,7 +151,7 @@
 					}
 				}
             });
-        }
+        }*/
         
         // Delegate to correct Ti Factory
         o.k_module = o.k_module || (['MapView', 'Annotation'].indexOf(o.k_type) != -1 ? 'Map' : 'UI');
@@ -155,15 +161,14 @@
         if (!typeof Ti[o.k_module]["create"+o.k_type] == "function"){
             throw "No constructor found for "+o.k_type+"!";
         }
-        //Ti.API.log('creating', ['Ti', o.k_module, "create"+o.k_type].join(".") + '('+JSON.stringify(o)+')');
-        var o = K.merge(o, styles[o.k_type], styles.all),
+        var o = K.merge(o, styles[o.k_type]  || {}, styles.all || {}),
             e = Ti[o.k_module]["create"+o.k_type](o);
         e.k_def = o;
-        if (o.k_templateview){
+        /*if (o.k_templateview){
             var template = (o.k_templatefile ? Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/"+o.k_templatefile).read().text : o.k_templatehtml),
                 opts = { template: template, data: {data: o.k_templatedata} };
             e.addEventListener("load",function(){ e.evalJS("render("+JSON.stringify(opts)+")"); });
-        }
+        }*/
         if (o.k_events){
 			if(o.k_events.app){
 				for(var ev in o.k_events.app){
@@ -175,6 +180,12 @@
                 e.addEventListener(ev,o.k_events[ev].bind(o.k_events.scope||e, e));
             }
         }
+		if (o.k_subs){
+			for(var ev in o.k_subs){
+				pb.sub(ev,o.k_subs[ev],e);
+			}
+		}
+
         if (o.k_click){
             e.addEventListener("click",o.k_click);
         }
@@ -199,10 +210,10 @@
             }
             e.k_children = childrenById;
         }
-		o.k_events && o.k_events.beforerender && o.k_events.beforerender(e);
-		if(o.k_type == "Window" && o.tab){
+		//o.k_events && o.k_events.beforerender && o.k_events.beforerender(e);
+		/*if(o.k_type == "Window" && o.tab){
 			o.tab.open(e);
-		}
+		}*/
         return e;
     };
 

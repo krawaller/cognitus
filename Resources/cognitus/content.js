@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00054'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00056'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -43,6 +43,33 @@
 	}];
 
     C.content = {
+		getCrisisList: function(){
+			return Ti.App.Properties.getString("crisislistid");
+		},
+		setCrisisList: function(listid){
+			Ti.App.Properties.setString("crisislistid",listid);
+		},
+		getCrisisNumber: function(){
+			return Ti.App.Properties.getInt("crisisnumber");
+		},
+		setCrisisNumber: function(number){
+			Ti.App.Properties.setInt("crisisnumber",number);
+		},
+		getListsIncludingSkill: function(skillid){
+			var rows = db.execute("SELECT lists.listid, lists.title, lists.priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists INNER JOIN listitems ON lists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'");
+				ret = [];
+			while(rows.isValidRow()){
+				ret.push({
+					ListId: rows.field(0),
+					title: rows.field(1),
+					priority: rows.field(2),
+					skillcount: rows.field(3)
+				});
+				rows.next();
+			}
+			rows.close();
+			return ret;			
+		},
 		addSkillToList: function(listid,skillid){
 			db.execute("UPDATE listitems SET priority = priority+1");
 			db.execute("INSERT INTO listitems (listitemid,listid,skillid,usagetext,priority) VALUES ('listitem_"+Date.now()+"','"+listid+"','"+skillid+"','',0)");
