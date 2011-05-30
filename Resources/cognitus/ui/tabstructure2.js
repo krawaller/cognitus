@@ -1,3 +1,16 @@
+/*
+Tabstructure receives lists & pages as argument. returns container with tabthings. 
+Responsible for subscribing to the navto event and redraw the tabs when that happens. 
+Tabs should of course also fire proper navto event.
+
+Listens to:
+	settabrowheight
+	orientationchange (native event)
+	updatetabs        (fired from navto bits)
+
+
+*/
+
 C.ui.createTabStructure = function(lists, pages) {
 	// tab stuff
 	var tabrows = [],
@@ -12,6 +25,8 @@ C.ui.createTabStructure = function(lists, pages) {
 	var container = K.create({
 		k_type: "View",
 		bottom: 0,
+		width: Ti.Platform.displayCaps.platformWidth,
+		height: Ti.Platform.displayCaps.platformWidth,
 		k_click: function(e){
 			Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
 			if (e.source && e.source.navto){ // && !e.source.selected){
@@ -214,12 +229,22 @@ C.ui.createTabStructure = function(lists, pages) {
 
 	// interactivity
 	pb.sub("/updatetabs", function(pageid) {
-		if (C.state.showingTabs) {
-			C.state.frame.top = 40;
-			//C.state.frame[Titanium.Gesture.orientation.isPortrait() ? "bottom" : "right"] = pages[pageid].listhistory.length * Ti.App.Properties.getInt("tabrowheight");
-			C.state.frame["bottom"] = pages[pageid].listhistory.length * Ti.App.Properties.getInt("tabrowheight");
-		}
 		updateTabs(pages[pageid]);
+	});
+	
+	Ti.Gesture.addEventListener('orientationchange', function(e){
+		C.state.orientation = ((e.source.orientation === Titanium.UI.LANDSCAPE_LEFT) || (e.source.orientation === Titanium.UI.LANDSCAPE_RIGHT) ? "landscape" : "portrait");
+		Ti.API.log("changing! "+C.state.orientation);
+		if (C.state.orientation === "landscape"){
+			container.right = 0;
+			container.transform = Ti.UI.create2DMatrix({rotate:-90});
+			//container.width = Ti.Platform.displayCaps.platformHeight;
+		} else {
+			container.transform = Ti.UI.create2DMatrix({rotate:0});
+			delete container.right;
+			//container.width = Ti.Platform.displayCaps.platformWidth;
+			container.bottom = 0;
+		}
 	});
 	
 	pb.sub("/settabrowheight", function(newh){
@@ -231,6 +256,8 @@ C.ui.createTabStructure = function(lists, pages) {
 			});
 		});
 	});
+	
+	
 
 	return container;
 };

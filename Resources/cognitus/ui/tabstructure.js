@@ -158,6 +158,7 @@ Ti.API.log("creating container");
 		container.k_children["page_"+pageid].visible = true;
 		nowshowing = container.k_children["page_"+pageid];
 	});
+	
 	pb.sub("/showchrome",function(){
 		
 	});

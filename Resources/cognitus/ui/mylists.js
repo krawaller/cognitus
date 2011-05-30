@@ -26,7 +26,7 @@ C.ui.createMyListsView = function(o) {
 					left: 15,
 					bottom: 5,
 					visible: false,
-					hintText: "poop",
+					hintText: C.content.getText("mylists_field_namehint"),
 					value: r.title,
 					oldvalue: r.title,
 					visible: false
@@ -141,10 +141,11 @@ C.ui.createMyListsView = function(o) {
 	}
 
 	function updateButtons(){
-		btn.title = C.content.getText("crisislist_button_" + (editing ? "done" : "edit"));
+		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
 		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("mylists_btn_newlist");
 		addbtn.opacity = (editing ? 0.5 : 1);
+		// TODO - also update hinttext?
 	}
 
 	view.render = function() {

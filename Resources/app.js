@@ -11,7 +11,7 @@ appstructure = [{
 	pageid: "home"
 },
 {
-	navtextid: "skilltab",
+	navtextid: "tab_skill",
 	navto: "aboutmodules",
 	sub: [{
 		pageid: "aboutmodules"
@@ -41,7 +41,7 @@ appstructure = [{
 			}]
 		},
 		{
-			navtextid: "moduletrain_nav",
+			navtextid: "tab_moduletrain",
 			navto: "moduletraininstruction",
 			sub: [{
 				using: "module",
@@ -70,7 +70,7 @@ appstructure = [{
 	}]
 },
 {
-	navtextid: "crisistab",
+	navtextid: "tab_crisis",
 	navto: "crisis",
 	sub: [{
 		pageid: "crisis",
@@ -78,7 +78,7 @@ appstructure = [{
 	}]
 },
 {
-	navtextid: "abouttab",
+	navtextid: "tab_about",
 	navto: "about",
 	sub: [{
 		pageid: "about"

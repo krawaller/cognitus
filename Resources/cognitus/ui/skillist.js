@@ -36,16 +36,18 @@ C.ui.createSkillListView = function() {
 	view.add(listsbtn);
 	
 	var addbtn = C.ui.createButton({
-		width: 30,
+		width: 70,
 		top: 45,
 		right: 90,
 		title: "+",
 		k_click: function(){
-			pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
-				C.content.addSkillToList(listid,skillid);
-				renderTable();
-				startEditing(true);
-			});
+			if (!editing){
+				pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
+					C.content.addSkillToList(listid,skillid);
+					renderTable();
+					startEditing(true);
+				});
+			}
 		}
 	});
 	view.add(addbtn);
@@ -74,7 +76,7 @@ C.ui.createSkillListView = function() {
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			if (r.k_children.usagetextfield.oldvalue != r.k_children.usagetextfield.value){
 				r.k_children.usagetextfield.oldvalue = r.k_children.usagetextfield.value;
-				Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.k_children.usagetextfield.value]);
+				//Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.k_children.usagetextfield.value]);
 				C.content.updateSkillUsageText(r.ListItemId,r.k_children.usagetextfield.value);
 			}
 		});
@@ -128,11 +130,12 @@ C.ui.createSkillListView = function() {
 	}
 	
 	function updateButtons(){
-		editbtn.title = C.content.getText("crisislist_button_" + (editing ? "done" : "edit"));
+		editbtn.title = C.content.getText("skillist_btn_" + (editing ? "done" : "edit"));
 		listsbtn.title = C.content.getText("skillist_btn_backtolists");
 		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
-		//addbtn.title = C.content.getText("mylists_btn_newlist");
-		//addbtn.opacity = (editing ? 0.5 : 1);
+		addbtn.title = C.content.getText("skillist_btn_addskill");
+		titletextfield.hintText = C.content.getText("mylists_field_namehint");
+		addbtn.opacity = (editing ? 0.5 : 1);
 	}
 	
 	function renderTable(){
@@ -196,6 +199,7 @@ C.ui.createSkillListView = function() {
 					height: 30,
 					width: 230,
 					k_id: "usagetextfield",
+					hintText: C.content.getText("skillist_field_usagehint"),
 					top: 20,
 					left: 15,
 					visible: false,
@@ -212,6 +216,9 @@ C.ui.createSkillListView = function() {
 		listid = args.ListId;
 		titletextfield.value = C.content.getListTitle(listid);
 		titletextfield.oldvalue = titletextfield.value;
+		if (editing){
+			stopEditing();
+		}
 		if (args.addSkillId){
 			C.content.addSkillToList(listid,args.addSkillId);
 			renderTable();

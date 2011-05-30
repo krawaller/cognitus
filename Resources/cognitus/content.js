@@ -1,9 +1,19 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00056'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00059'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
-		moduleskills = {};
+		moduleskills = {},
+		moduleswithsubs = {};
+	
+	/*allmodules = ["mindfulness","interpersonaleffectiveness","emotionregulation","distresstolerance"];
+	moduleskills = {
+		mindfulness: [],
+		interpersonaleffectiveness: [],
+		emotionregulation: [],
+		distresstolerance: []
+	}*/
+	
 	
 	function updateMe(o,textid,textpropname){
 		if (!o){
@@ -14,18 +24,30 @@
 	}
 	
 	function loadSkillsAndModules(){
-		var rows = db.execute("SELECT moduleid FROM modules ORDER BY priority DESC");
+		var rows = db.execute("SELECT moduleid FROM modules ORDER BY priority ASC");
 		while (rows.isValidRow()){
 			moduleskills[rows.field(0)] = [];
+			moduleswithsubs[rows.field(0)] = {};
 			allmodules.push(rows.field(0));
 			rows.next();
 		}
 		rows.close();
-		rows = db.execute("SELECT skillid, moduleid FROM skills ORDER BY priority DESC");
+		rows = db.execute("SELECT skillid, moduleid, submoduleid FROM skills ORDER BY moduleid, priority ASC");
+		var prevsub, prevmodule;
 		while (rows.isValidRow()){
-			var skill = rows.field(0), module = rows.field(1);
+			var skill = rows.field(0),
+				module = rows.field(1),
+				sub = (rows.field(2) || "NONE");
 			skilltomodule[skill] = module;
 			moduleskills[module].push(skill);
+			if ((sub !== prevsub) || (prevmodule !== module)){
+				//Ti.API.log("New submodule "+sub+" (last was "+prevsub+")");
+				moduleswithsubs[module][sub] = [];
+			}
+			//Ti.API.log([skill,module,sub]);
+			moduleswithsubs[module][sub].push(skill);
+			prevmodule = module;
+			prevsub = sub;
 			rows.next();
 		}
 		rows.close();
@@ -43,6 +65,9 @@
 	}];
 
     C.content = {
+		getModuleWithSubModules: function(moduleid){
+			return moduleswithsubs[moduleid];
+		},
 		getCrisisList: function(){
 			return Ti.App.Properties.getString("crisislistid");
 		},

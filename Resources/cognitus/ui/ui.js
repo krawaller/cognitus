@@ -126,6 +126,11 @@
 				height: 1,
 				top: 0,
 				backgroundColor: "#000"
+			},{
+				k_type: "View",
+				width: 1,
+				left: 0,
+				backgroundColor: "#000"
 			}],
 			k_events: {
 				doubletap: function(e){
@@ -156,297 +161,24 @@
 			}
         }
 		C.state.frame = frame;
-		
-		
-		// tab stuff
-		
-		
-		/*var tabrows = [], rowbigheight = 40, rowdefaultheight = 25, rowheight, btnwidth = 90, firstrowbtnwidth = 68, btnspace = 10;
-		Ti.App.Properties.setInt("tabrowheight",Ti.App.Properties.getInt("tabrowheight") || rowbigheight);
-		rowheight = Ti.App.Properties.getInt("tabrowheight");*/
-		
-		/*var rowcontainer = K.create({
-			k_type: "View",
-			height: rowheight * 3,
-			bottom: rowheight,
-			k_children: [0,1,2].map(function(i){
-				return {
-					k_type: "View",
-					height: rowheight,
-					top: i*rowheight,
-					backgroundColor: "green",//["#DDD","#BBB","#999"][i],
-					k_children: [{
-						k_type: "View",
-						height: 1,
-						top: 0,
-						backgroundColor: "#000"
-					}]
-				};
-			})
-		});
-		win.add(rowcontainer);
-		var buttonscontainer = K.create({
-			k_type: "View",
-			bottom: 0,
-			k_children: [[0,0],[0,1],[0,2],[0,3],[1,0],[1,1],[1,2],[1,3],[2,0],[2,1],[2,2],[2,3],[3,0],[3,1],[3,2],[3,3]].map(function(p){
-				var row = p[0], col = p[1];
-				return {
-					k_type: "View",
-					k_style: "NavButtonView",
-					k_id: row+","+col,
-					myrow: row,
-					mycol: col,
-					bottom: row * rowheight + 5,
-					left: btnspace+((row ? btnwidth : firstrowbtnwidth)+btnspace)*col + 15*((row)%2),
-					height: row ? btnwidth : firstrowbtnwidth,
-					width: btnwidth,
-					k_children: [{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						width: 1,
-						left: 0
-					},{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						width: 1,
-						right: 0
-					},{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						height: 1,
-						bottom: 0
-					},{
-						k_id: "label",
-						k_type: "Label",
-						height: rowheight - 5,
-						width: row ? btnwidth : firstrowbtnwidth
-					}]
-				};
-			}),
-			k_click: function(e){
-				if (e.source.myrow){
-					pb.pub("/navto",lists[C.state.currentPage.listhistory[e.source.myrow]][e.source.mycol].navto);
-				}
-			}
-		});
-		win.add(buttonscontainer);
-		
-		function updateTabs(){
-			var begin = Date.now(),
-				page = C.state.currentPage,
-				bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
-				numrows = page.listhistory.length,
-				height = Ti.App.Properties.getInt("tabrowheight");
-			if (showingtabs) {
-				frame.bottom = 300; // numrows*height;
-				//rowcontainer.height = (numrows-1) * height;
-				rowcontainer.bottom = rowheight;
-			}
-			for(var r = 0; r<numrows; r++){
-				var list = lists[C.state.currentPage.listhistory[r]],
-					colornumber = bgcolours.length - 1 - numrows*2 + r*2;
-				for(var c = 0; c<4; c++){
-					var btn = buttonscontainer.k_children[r+","+c],
-						label = btn.k_children.label;
-					if (c<list.length && list[c]){
-						btn.visible = true;
-						label.text = C.content.getText(list[c].navtextid)+list[c].suffix;
-						if (c === page.listpositions[r]){
-							label.font = {
-								fontWeight: "bold",
-								fontSize: 10
-							};
-							btn.backgroundColor = bgcolours[colornumber + 2];
-							btn.top = 0;
-						} else {
-							btn.top = 1;
-							label.font = {
-								fontWeight: "normal",
-								fontSize: 10
-							};
-							btn.backgroundColor = bgcolours[colornumber + 1];
-						}
-					} else {
-						btn.visible = false;
-					}
-				}
-			}
-			
-			tabrows.forEach(function(tabrow,i){
-				if (i < page.listhistory.length){ // this level is shown!
-					var list = lists[page.listhistory[i]],
-						colornumber = bgcolours.length - 1 - numrows*2 + i*2;
-					//tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[colornumber]);
-					tabrow.buttons.forEach(function(btn,j){
-						var label = btn.k_children.label;
-						if (j<list.length && list[j]){
-							btn.visible = true;
-							label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
-							btn.navto = list[j].navto;
-							if (j==page.listpositions[i]){
-								label.font = {
-									fontWeight: "bold",
-									fontSize: 10
-								};
-								btn.backgroundColor = bgcolours[colornumber + 2];
-								btn.top = 0;
-							} else {
-								label.font = {
-									fontWeight: "normal",
-									fontSize: 10
-								};
-								btn.top = 1;
-								btn.backgroundColor = bgcolours[colornumber + 1];
-							}
-						} else {
-							btn.visible = false;
-						}
-					});
-				}
-			});
-			Ti.API.log("CHANGED TABS IN "+(Date.now()-begin));
-		}*/
-		
-		
-		/*[0,1,2,3].forEach(function(row){
-			var tabrow = K.create({
-				k_type: "View",
-				height: rowheight,
-				backgroundColor: ["#transparent","#999","#BBB","#DDD"][row],
-				bottom: row*rowheight,
-				k_children: [{
-					k_type: "View",
-					height: 1,
-					top: 0,
-					backgroundColor: "#000"
-				}]
-			});
-			var buttons = [];
-			[0,1,2,3].forEach(function(col){
-				var btn = K.create({
-					k_type: "View",
-					k_style: "NavButtonView",
-					k_id: "button",
-					k_children: [{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						width: 1,
-						left: 0
-					},{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						width: 1,
-						right: 0
-					},{
-						k_type: "View",
-						borderSize: 1,
-						borderColor: "#000",
-						height: 1,
-						bottom: 0
-					},{
-						k_id: "label",
-						k_type: "Label",
-						height: rowheight - 5,
-						width: row ? btnwidth : firstrowbtnwidth
-					}],
-					height: rowheight - 5,
-					width: row ? btnwidth : firstrowbtnwidth,
-					top: 0,
-					left: btnspace+((row ? btnwidth : firstrowbtnwidth)+btnspace)*col + 15*((row)%2),
-					k_click: function(e){
-						pb.pub("/navto", btn.navto );
-					}
-				});
-				btn.label = btn.k_children.label;
-				buttons.push(btn);
-				tabrow.add(btn);
-			});
-			tabrow.buttons = buttons;
-			tabrows.push(tabrow);
-			win.add(tabrow);
-		}); */
+
+		// controls
 		
 		var anchor = createButton({
 			zIndex: 100,
 			height: 30,
 			width: 30,
-			right: 5,
+			left: 5,
 			top: 5,
 			title: "↓",
 			k_click: function(e){
 				C.state.showingTabs = !C.state.showingTabs;
-				if (C.state.showingTabs){
-					anchor.title = "↑";
-					//controlpanel.visible = true;
-					frame.top = 40;
-					frame.bottom = Ti.App.Properties.getInt("tabrowheight")*C.state.currentPage.listhistory.length;
-				} else {
-					frame.top = 0;
-					frame.bottom = 0;
-					//controlpanel.visible = false;
-					anchor.title = "↓";
-				}
+				anchor.title = C.state.showingTabs ? "↑" : "↓";
+				pb.pub("/adjustframe");
 			}
 		});
 		
 		win.add(anchor);
-		
-		var showingtabs = true;
-		/*
-		function updateTabs(){
-			var begin = Date.now(),
-				page = C.state.currentPage,
-				bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
-				numrows = page.listhistory.length,
-			 	rowsshowing = 0,
-				height = Ti.App.Properties.getInt("tabrowheight");
-			if (showingtabs) {
-				frame.bottom = page.listhistory.length*height;
-			}
-			tabrows.forEach(function(tabrow,i){
-				if (i < page.listhistory.length){ // this level is shown!
-					var list = lists[page.listhistory[i]],
-						colornumber = bgcolours.length - 1 - numrows*2 + i*2;
-					tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[colornumber]);
-					tabrow.buttons.forEach(function(btn,j){
-						var label = btn.label; //btn.k_children.label;
-						if (j<list.length && list[j]){
-							btn.visible = true;
-							label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
-							btn.navto = list[j].navto;
-							if (j==page.listpositions[i]){
-								label.font = {
-									fontWeight: "bold",
-									fontSize: 10
-								};
-								btn.backgroundColor = bgcolours[colornumber + 2];
-								btn.top = 0;
-							} else {
-								label.font = {
-									fontWeight: "normal",
-									fontSize: 10
-								};
-								btn.top = 1;
-								btn.backgroundColor = bgcolours[colornumber + 1];
-							}
-						} else {
-							btn.visible = false;
-						}
-					});
-				}
-			});
-			Ti.API.log("CHANGED TABS IN "+(Date.now()-begin));
-		}*/
-
-
-		// ******************* Tabs
-		Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choise of tabstructure file
-		win.add(C.ui.createTabStructure(lists,pages));
 
 
         // ****************** Title bits
@@ -501,7 +233,7 @@
 					break;
 				case "list":
 					main = C.content.getListTitle(args.ListId);
-					sup = C.content.getText("list_noun");
+					sup = C.content.getText("skillist_supertitle");
 					break;
 				default:
 					main = C.content.getText(  pagedef.pageid +"_title");
@@ -516,9 +248,8 @@
 
 		var controlpanel = K.create({
 			k_type: "View",
-			top:0,
-			height:30
-			
+			width: Ti.Platform.displayCaps.platformWidth,
+			top: 0
 		});
 		win.add(controlpanel);
 
@@ -533,7 +264,7 @@
             height: 30,
             top: 5,
             width: 30,
-            left: 5,
+            left: 50,
 			title: "←",
 			k_click: goBack
         });
@@ -550,7 +281,7 @@
             height: 30,
             top: 5,
             width: 30,
-            left: 40,
+            left: 90,
 			title: "→",
 			k_click: goForward
         });
@@ -561,7 +292,7 @@
 		var sizebtn = createNavButton({
 			width: 50,
 			top: 5,
-			left: 95,
+			left: 130,
 			title: "size",
 			k_click: function(){
 				var rowdefaultheight = 25, rowbigheight = 40;
@@ -569,7 +300,7 @@
 					newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
 				Ti.App.Properties.setInt("tabrowheight",newh);
 				pb.pub("/settabrowheight",newh);
-				frame.bottom = C.state.currentPage.listhistory.length * newh;
+				pb.pub("/adjustframe");
 			}
 		});
 		controlpanel.add(sizebtn);
@@ -579,7 +310,7 @@
 		var langtest = createNavButton({
 			width: 50,
 			top: 5,
-			left: 150,
+			left: 210,
 			title: "lang",
 			k_click: function(e){
 				var lang = C.state.lang;
@@ -589,6 +320,12 @@
 			}
 		});
 		controlpanel.add(langtest);
+
+
+		// ******************* Tabs
+		Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choise of tabstructure file
+		win.add(C.ui.createTabStructure(lists,pages));
+
 
 		// ******************* Basic text view
 		
@@ -609,13 +346,52 @@
 		})();
 		frame.add(textview);
 
+
+		// ******************* Frame adjustment
+		
+		Ti.Gesture.addEventListener('orientationchange', function(e){
+			pb.pub("/adjustframe");
+		});
+		
+		pb.sub("/adjustframe",function(){
+			if (C.state.showingTabs){
+				var tabheight = C.state.currentPage.listhistory.length * Ti.App.Properties.getInt("tabrowheight");
+				if (C.state.orientation === "landscape"){
+					frame.bottom = 0;
+					frame.right = tabheight;
+					frame.left = 40;
+					frame.top = 0;
+					controlpanel.transform = Ti.UI.create2DMatrix({rotate:-90});
+					//controlpanel.width = Ti.Platform.displayCaps.platformHeight;
+					controlpanel.bottom = 0;
+					controlpanel.left = 0;
+				} else {
+					frame.top = 40;
+					frame.left = 0;
+					frame.right = 0;
+					frame.bottom = tabheight;
+					controlpanel.transform = Ti.UI.create2DMatrix({rotate:0});
+					//controlpanel.width = Ti.Platform.displayCaps.platformWidth;
+					controlpanel.bottom = undefined;
+					controlpanel.left = undefined;
+					//controlpanel.top = 0;
+				}
+			} else {
+				frame.right = 0;
+				frame.left = 0;
+				frame.top = 0;
+				frame.bottom = 0;
+			}
+		});
+
+
+
 		// ******************* Stuff
 
 		pb.sub("/updatetext",function(){
 			if (C.state.currentPageView.render){
 				C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
 			}
-			//updateTabs(C.state.currentPage);
 		});
 
 		// ******************* Navigation logic
@@ -630,10 +406,6 @@
 				topage = pages[pageid],
 				historymax = 25;
 			// HISTORY
-			
-			/*if (showingtabs){
-				frame.bottom = topage.listhistory.length * Ti.App.Properties.getInt("tabrowheight");
-			}*/
 			
 			if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)){
 				C.state.historyposition++;
@@ -678,10 +450,9 @@
 			C.state.currentPageId = pageid;
 			C.state.currentBack = topage.back;
 			C.state.lastArgs = argstouse;
-			//updateAnchor();
-			//updateTabs();
 			
 			pb.pub("/updatetabs",pageid);
+			pb.pub("/adjustframe");
 			
 			// skill crisis list btn
 			if (topage.using === "skill"){
@@ -751,18 +522,17 @@
 
 })();
 
-Ti.include("/cognitus/ui/styles.js");
-Ti.include("/cognitus/ui/tab-skills.js");
-Ti.include("/cognitus/ui/modulelist.js");
-Ti.include("/cognitus/ui/moduleskillist.js");
-Ti.include("/cognitus/ui/moduletrainsession.js");
-Ti.include("/cognitus/ui/moduletrainhistory.js");
-//Ti.include("/cognitus/ui/mycrisisskillist.js");
-
-Ti.include("/cognitus/ui/crisis.js");
-
-Ti.include("/cognitus/ui/newslist.js");
-Ti.include("/cognitus/ui/newsitem.js");
-
-Ti.include("/cognitus/ui/mylists.js");
-Ti.include("/cognitus/ui/skillist.js");
+Ti.include(
+	"/cognitus/ui/styles.js",
+	"/cognitus/ui/tab-skills.js",
+	"/cognitus/ui/modulelist.js",
+	"/cognitus/ui/moduleskillist.js",
+	"/cognitus/ui/moduletrainsession.js",
+	"/cognitus/ui/moduletrainhistory.js",
+	"/cognitus/ui/crisis.js",
+	"/cognitus/ui/newslist.js",
+	"/cognitus/ui/newsitem.js",
+	"/cognitus/ui/mylists.js",
+	"/cognitus/ui/skillist.js",
+	"/cognitus/ui/skilltable.js"
+);
