@@ -483,7 +483,7 @@
 
 		
 		// ********************* Skill selection panel logic *********************
-		Ti.include("/cognitus/ui/selectskillmodal.js");
+		Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
 		var selectskillmodal = C.ui.createSelectSkillModal();
 		win.add(selectskillmodal);
 		

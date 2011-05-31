@@ -12,41 +12,10 @@ C.ui.createSelectSkillModal = function(){
 		selectcb = a_selectcb;
 		selectedrow = null;
 		view.visible = true;
-		selbtn.opacity = 0.5;
-		selbtn.title = C.content.getText("selectskillmodal_btn_selskill");
+		sellabel.text = C.content.getText("selectskillmodal_instruction");
 		cancelbtn.title = C.content.getText("selectskillmodal_btn_cancel");
-		Ti.API.log(["MOO",excluded]);
-		view.k_children.panel.k_children.table.setData(C.content.getAllSkillModules().map(function(moduleid){
-			return K.create({
-				k_type: "TableViewSection",
-				headerView: K.create({
-					k_type: "View",
-					height: 15,
-					backgroundColor: "#333",
-					k_children: [{
-						k_type: "Label",
-						color: "#EEE",
-						textAlign: "left",
-						left: 10,
-						text: C.content.getText("module_"+moduleid+"_title")
-					}]
-				}),
-/*				headerTitle: C.content.getText("module_"+moduleid+"_title"), 
-				headerBackgroundColor: "green",*/
-				rows: C.content.getSkillsForModule(moduleid).map(function(skillid){
-					Ti.API.log(["CREATING SKILLTABLE",skillid,excluded.length,excluded.indexOf(skillid)]);
-					var x = excluded.indexOf(skillid) != -1;
-					return K.create({
-						k_type: "TableViewRow",
-						skillid: skillid,
-						selected: false,
-						title: (x ? "(" : "")+C.content.getText("skill_"+skillid+"_title")+(x?")":""),
-						backgroundColor: x ? "#CCC" : "#FFF",
-						excluded: x
-					});
-				})
-			});
-		}));
+		var lastoffset = 50, totaloffset = 50;
+		table.render(undefined,excluded);
 	}
 	
 	var selectedrow;
@@ -71,70 +40,44 @@ C.ui.createSelectSkillModal = function(){
 			left: 20,
 			right: 20,
 			bottom: 20,
-			k_id: "panel",
-			k_children: [{
-				k_type: "TableView",
-				k_id: "table",
-				top: 100,
-				k_events: {
-					click: function(e){
-						Ti.API.log(["Clicked skill!",e.row, e.row.skillid, e.row.excluded,selectedrow && selectedrow.skillid]);
-						if (e.row && !e.row.excluded){
-							if (selectedrow && selectedrow.skillid === e.row.skillid){ // tapping already chosen, select it!
-								selectcb(selectedrow.skillid);
-								view.visible = false;
-								return;
-							}
-							if (selectedrow) { // we already had a selected row
-								selectedrow.backgroundColor = "#FFF";
-							} else {
-								selbtn.opacity = 1;
-							}
-							selbtn.title = C.content.getText("selectskillmodal_btn_sel")+" "+C.content.getText("skill_"+e.row.skillid+"_title");
-							selectedrow = e.row;
-							e.row.backgroundColor = "yellow";
-						}
-					},
-					doubletap: function(e){
-						if (e.row && !e.row.excluded){
-							selectcb(selectedrow.skillid);
-							view.visible = false;
-						}
-					}
-				}
-			}]
+		//	layout: "vertical",
+			k_id: "panel"
 		}]
 	});
 	
-	var selbtn = C.ui.createButton({
-		k_type: "Button",
-		top: 40,
+	var panel = view.k_children.panel;
+	
+	
+	function click(skillid){
+		selectcb(skillid);
+		view.visible = false;
+	}
+	
+	var table = C.ui.createSkillTable({top:50,left: 0},click);
+	panel.add(table);
+	
+	var sellabel = Ti.UI.createLabel({
+		top: 10,
+		height: 30,
 		right: 10,
 		width: 180,
-		k_click: function(e){
-			if (selectedrow){
-				selectcb(selectedrow.skillid);
-				view.visible = false;
-			}
-		}
+		text: "MOO"
 	});
-	view.k_children.panel.add(selbtn);
+	panel.add(sellabel);
 	
 	var cancelbtn = C.ui.createButton({
 		k_type: "Button",
-		top: 40,
+		top: 10,
+		height: 30,
 		left: 10,
 		width: 70,
 		k_click: cancel
 	});
-	view.k_children.panel.add(cancelbtn);
-
+	panel.add(cancelbtn); 
 
 	view.show = show;
 	
-	pb.sub("/showselectskillmodal",show);/*function(excl,sel,cncl){
-		show(excl,sel,cncl);
-	});*/
+	pb.sub("/showselectskillmodal",show);
 	
 	return view;
 };

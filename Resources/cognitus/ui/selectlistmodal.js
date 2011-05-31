@@ -12,8 +12,7 @@ C.ui.createSelectListModal = function(){
 		selectcb = a_selectcb;
 		selectedrow = null;
 		view.visible = true;
-		selbtn.opacity = 0.5;
-		selbtn.title = C.content.getText("selectlistmodal_btn_sellist");
+		sellabel.text = C.content.getText("selectlistmodal_instruction");
 		cancelbtn.title = C.content.getText("selectlistmodal_btn_cancel");
 		view.k_children.panel.k_children.table.setData(C.content.getMyListsWithSkillCount().map(function(l){
 			var x = excluded.indexOf(l.ListId) != -1;
@@ -60,24 +59,7 @@ C.ui.createSelectListModal = function(){
 					click: function(e){
 						Ti.API.log(["Clicked list!",e.row, e.row.ListId, e.row.excluded,selectedrow && selectedrow.ListId]);
 						if (e.row && !e.row.excluded){
-							if (selectedrow && selectedrow.ListId === e.row.ListId){ // tapping already chosen, select it!
-								selectcb(selectedrow.ListId);
-								view.visible = false;
-								return;
-							}
-							if (selectedrow) { // we already had a selected row
-								selectedrow.backgroundColor = "#FFF";
-							} else {
-								selbtn.opacity = 1;
-							}
-							selbtn.title = C.content.getText("selectlistmodal_btn_sel")+" "+e.row.listtitle;
-							selectedrow = e.row;
-							e.row.backgroundColor = "yellow";
-						}
-					},
-					doubletap: function(e){
-						if (e.row && !e.row.excluded){
-							selectcb(selectedrow.ListId);
+							selectcb(e.row.ListId);
 							view.visible = false;
 						}
 					}
@@ -86,19 +68,14 @@ C.ui.createSelectListModal = function(){
 		}]
 	});
 	
-	var selbtn = C.ui.createButton({
-		k_type: "Button",
+	var sellabel = Ti.UI.createLabel({
 		top: 40,
+		height: 30,
 		right: 10,
 		width: 180,
-		k_click: function(e){
-			if (selectedrow){
-				selectcb(selectedrow.ListId);
-				view.visible = false;
-			}
-		}
+		text: "..."
 	});
-	view.k_children.panel.add(selbtn);
+	view.k_children.panel.add(sellabel);
 	
 	var cancelbtn = C.ui.createButton({
 		k_type: "Button",
