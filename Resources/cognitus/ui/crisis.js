@@ -43,7 +43,7 @@ C.ui.createCrisisView = function(){
 			} else if (editing){
 				pb.pub("/showselectlistmodal",[],function(listid){
 					C.content.setCrisisList(listid);
-					updateButtons();
+					stopEditing();
 				});
 			}
 		}

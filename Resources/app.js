@@ -1,10 +1,21 @@
 /*global Ti: true, Ti.UI: true */
 
-Ti.include("/assets/kralib.js");
-Ti.include("/assets/pubsubhottub.js");
-Ti.include("/cognitus/cognitus.js");
+var C = {
+	state: {lang:"sv",history:[],historyposition:-1,showingTabs:true}
+};
 
-Ti.UI.setBackgroundColor('#FFF');
+Ti.include("/assets/kralib.js",
+		   "/assets/pubsubhottub.js",
+		   "/cognitus/content2.js",
+		   "/cognitus/ui/ui.js");
+
+K.setStyles(C.ui.properties);
+
+Ti.UI.setBackgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
+//Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
+
+Ti.UI.setBackgroundColor('#00F');
+
 
 var appstructure;
 appstructure = [{
@@ -70,12 +81,14 @@ appstructure = [{
 	}]
 },
 {
-	navtextid: "tab_crisis",
+	pageid: "crisis",
+	view: C.ui.createCrisisView()
+	/*navtextid: "tab_crisis",
 	navto: "crisis",
 	sub: [{
 		pageid: "crisis",
 		view: C.ui.createCrisisView()
-	}]
+	}]*/
 },
 {
 	navtextid: "tab_about",
@@ -88,9 +101,12 @@ appstructure = [{
 		view: C.ui.createNewsListView(),
 		sub: [{
 			using: "news",
-			pageid: "newsitem",
-			view: C.ui.createNewsItemView()
+			pageid: "newsitem"
+			//view: C.ui.createNewsItemView()
 		}]
+	},{
+		pageid: "test",
+		view: C.ui.createTestView()
 	}]
 }];
 
@@ -99,7 +115,7 @@ C.state.mainWindow.open();
 
 pb.pub("/appstart");
 
-
+C.content.test();
 
 function forceLoad() {
 	Ti.UI.createActivityIndicator();
@@ -113,6 +129,7 @@ function forceLoad() {
 	Ti.UI.createOptionDialog();
 	Ti.UI.createPicker();
 	Ti.UI.createProgressBar();
+	Ti.UI.createScrollView();
 	Ti.UI.createScrollableView();
 	Ti.UI.createSlider();
 	Ti.UI.createSwitch();

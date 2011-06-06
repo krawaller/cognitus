@@ -1,5 +1,5 @@
 (function() {
-	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00062'),
+	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00073'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
@@ -65,6 +65,30 @@
 	}];
 
     C.content = {
+		getMaxLastUpdated: function(){
+			res = db.execute("SELECT MAX(lastupdated) as max FROM TEXTS");
+			return res.fieldByName("max");
+		},
+		receiveTextsFromServer: function(o){
+			if (!o || o.error || !o.forEach){
+				return;
+			}
+			Ti.API.log("WOO! "+o.length);
+			o.forEach(function(text){
+				Ti.API.log("Updating "+text.textid+" ("+text.lastupdated+")");
+				db.execute("REPLACE INTO texts (textid, lastupdated, sv, en, fr, es, de) VALUES (?,?,?,?,?,?,?)",
+					text.textid,
+					text.lastupdated,
+					text.sv,
+					text.en,
+					text.fr,
+					text.es,
+					text.de
+				);
+				pb.pub("/updatetexts");
+			});
+			// TODO - add insert for news part shit?
+		},
 		getModuleWithSubModules: function(moduleid){
 			return moduleswithsubs[moduleid];
 		},
@@ -81,7 +105,7 @@
 			Ti.App.Properties.setInt("crisisnumber",number);
 		},
 		getListsIncludingSkill: function(skillid){
-			var rows = db.execute("SELECT lists.listid, lists.title, lists.priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists INNER JOIN listitems ON lists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'");
+			var rows = db.execute("SELECT mylists.listid, title, mylists.priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'");
 				ret = [];
 			while(rows.isValidRow()){
 				ret.push({
@@ -130,7 +154,7 @@
 			}
 		},
 		getMyListsWithSkillCount: function(){
-			var rows = db.execute("SELECT lists.listid, lists.title, lists.priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists ORDER BY lists.priority"),
+			var rows = db.execute("SELECT listid, title, priority, skillcount FROM mylists ORDER BY priority"),
 				ret = [];
 			while(rows.isValidRow()){
 				ret.push({
@@ -303,9 +327,23 @@
         getText: function(id) {
             var lang = C.state.lang,
 				rows = db.execute("SELECT "+lang+" FROM texts WHERE textid = '"+id+"'"),
-				ret = rows.field(0);
+				ret = rows.fieldByName(lang);
+			if (!ret){
+				Ti.API.log("COULDN'T FIND TEXT:");
+				Ti.API.log([id,lang,rows.rowCount,ret]);
+			}
 			rows.close();
 			return ret || "(no "+id+")";
-        }
+        },
+		test: function(){
+			var res = db.execute("SELECT * FROM texts WHERE textid = 'moduleexplanation_distresstolerance_hmtl'");
+			Ti.API.log("COUNT: "+res.rowCount);
+			if (res.isValidRow()){
+				Ti.API.log(res.fieldByName("textid"));
+				Ti.API.log(res.fieldByName("sv"));
+			}
+			res.close();
+			Ti.API.log(C.content.getText("moduleexplanation_distresstolerance_hmtl"));
+		}
     };
 })();

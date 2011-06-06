@@ -1,4 +1,7 @@
 /*
+Version with only one set of tabs
+
+
 Tabstructure receives lists & pages as argument. returns container with tabthings. 
 Responsible for subscribing to the navto event and redraw the tabs when that happens. 
 Tabs should of course also fire proper navto event.
@@ -28,7 +31,7 @@ C.ui.createTabStructure = function(lists, pages) {
 		width: Ti.Platform.displayCaps.platformWidth,
 		height: Ti.Platform.displayCaps.platformWidth,
 		k_click: function(e){
-			Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
+			//Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
 			if (e.source && e.source.navto){ // && !e.source.selected){
 				pb.pub("/navto",e.source.navto);
 			}

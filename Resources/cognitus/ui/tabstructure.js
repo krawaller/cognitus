@@ -1,4 +1,6 @@
 /*
+Version with per-page sets of tabs
+
 Tabstructure receives lists & pages as argument. returns container with tabthings. 
 Responsible for subscribing to the navto event and redraw the tabs when that happens. 
 Tabs should of course also fire proper navto event.

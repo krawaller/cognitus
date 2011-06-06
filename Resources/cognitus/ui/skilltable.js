@@ -34,7 +34,7 @@ C.ui.createSkillTable = function(o, callback) {
 						backgroundColor: "#red",
 						k_children: [{
 							k_type: "Label",
-							text: C.content.getText(submoduleid + "_title")
+							text: C.content.getText("module_"+submoduleid + "_title")
 						}]
 					});
 					section.headerView = header;
