@@ -55,7 +55,7 @@ C.ui.createAppWindow = function(appstructure) {
 			Titanium.UI.LANDSCAPE_LEFT,
 			Titanium.UI.LANDSCAPE_RIGHT
 		],
-		opacity: 0.1,
+		opacity: 1,
         fullscreen: true,
 		backgroundColor: "transparent"
     });
@@ -67,6 +67,7 @@ C.ui.createAppWindow = function(appstructure) {
 		k_type: "View",
 		top: 40,
 		bottom: 40,
+		opacity: 0.1,
 		backgroundColor: "transparent",
 		zIndex: 2,
 		k_children: [{
@@ -167,25 +168,29 @@ C.ui.createAppWindow = function(appstructure) {
 			args = C.state.lastArgs;
 		}
 		var main, sup = "";
-		switch(pagedef.using){
-			case "news":
-				main = C.content.getText(args.NewsId +"_headline");
-				sup =  C.content.getNewsItem(args.NewsId).date;
-				break;
-			case "module":
-				sup = C.content.getText("module_"+args.ModuleId+"_title");
-				main = C.content.getText(pagedef.pageid +"_title");
-				break;
-			case "skill":
-				sup = C.content.getText("skill_"+args.SkillId+"_title");
-				main = C.content.getText(pagedef.pageid +"_title");
-				break;
-			case "list":
-				main = C.content.getListTitle(args.ListId);
-				sup = C.content.getText("skillist_supertitle");
-				break;
-			default:
-				main = C.content.getText(  pagedef.pageid +"_title");
+		if (Array.isArray(pagedef.using)){
+			
+		} else {
+			switch(pagedef.using){
+				case "news":
+					main = C.content.getText(args.NewsId +"_headline");
+					sup =  C.content.getNewsItem(args.NewsId).date;
+					break;
+				case "module":
+					sup = C.content.getText("module_"+args.ModuleId+"_title");
+					main = C.content.getText(pagedef.pageid +"_title");
+					break;
+				case "skill":
+					sup = C.content.getText("skill_"+args.SkillId+"_title");
+					main = C.content.getText(pagedef.pageid +"_title");
+					break;
+				case "list":
+					main = C.content.getListTitle(args.ListId);
+					sup = C.content.getText("skillist_supertitle");
+					break;
+				default:
+					main = C.content.getText(  pagedef.pageid +"_title");
+			}
 		}
 		setTitle(main,sup);
     }
@@ -272,7 +277,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 
 	// ******************* Tabs
-	Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choise of tabstructure file
+	Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choice of tabstructure file
 	win.add(C.ui.createTabStructure(lists,pages));
 
 
@@ -342,6 +347,7 @@ C.ui.createAppWindow = function(appstructure) {
 	// ******************* Stuff
 
 	pb.sub("/updatetext",function(){
+		Ti.API.log("Textupdate! Calling render in the current view!");
 		if (C.state.currentPageView.render){
 			C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
 		}
@@ -393,9 +399,7 @@ C.ui.createAppWindow = function(appstructure) {
 		if (argstouse.SkillId && !argstouse.ModuleId){
 			argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
 		}
-		if (topage.view.render){
-			topage.view.render(argstouse,topage);
-		}
+
 		C.state.currentPageView = topage.view;
 		C.state.currentPage = topage;
 		C.state.currentTitle = C.content.getText(pageid+"_title");
@@ -405,7 +409,7 @@ C.ui.createAppWindow = function(appstructure) {
 		C.state.lastArgs = argstouse;
 		
 		pb.pub("/updatetabs",pageid);
-		pb.pub("/adjustframe");
+		pb.pub("/adjustframe"); // will call view.render!
 		
 		// skill crisis list btn
 		if (topage.using === "skill"){
@@ -452,7 +456,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	pb.sub("/appstart",function(){
 		pb.pub("/navto","home"); // TODO - fix dynamically!
-		win.animate({opacity:1,duration:400});
+		frame.animate({opacity:1,duration:400});
 	});
 
     // ******************* All done, returning the window!

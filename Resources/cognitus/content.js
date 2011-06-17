@@ -1,3 +1,5 @@
+// Old version with no centralised DB access
+
 (function() {
 	var db = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",'00073'),
 		notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),

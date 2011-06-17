@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+		<meta name="format-detection" content="telephone=no" />
+        <title>MasterPage</title>
+        <link rel="stylesheet" type="text/css" href="/cognitus/html/style.css" />
+        <script type="text/javascript" src="/cognitus/html/html.utils.js"></script>
+        <style type="text/css">
+* {
+	/*-webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+	-webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+	-webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+	/*-webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+}
+
+body,html {
+	padding: 0;
+	margin: 0;
+}
+
+.tab {
+	display: block;
+	width: 90px;
+	margin-left: 10;
+	float: left;
+	border: 1px solid black;
+	border-top: none;
+	font-size: 9px;
+}
+
+.tabselected {
+	top: -1px;
+}
+
+.small .tab { height: 15px ;}
+.big .tab { height: 30;}
+
+.rowbottom .tab { width: 68px; margin-left: 7px; }
+
+.rowdepth1 { background-color: "#EEE";}
+.rowdepth2 { background-color: "#CCC";}
+.rowdepth3 { background-color: "#AAA";}
+.rowdepth4 { background-color: "#888";}
+.rowbottom { background-color: "transparent"; bottom: 0;}
+
+.row {
+	border-top: 1px solid black;
+	padding-left: 5;
+	clear: both;
+}
+
+.rowodd {
+	padding-left: 15;
+}
+
+.big .row {
+	height: 40px;
+}
+
+.small .row {
+	height: 25px;
+}
+
+.big.depth1 { height: 40px;}
+.big.depth2 { height: 80px;}
+.big.depth3 { height: 120px;}
+.big.depth4 { height: 160px;}
+
+.small.depth1 { height: 25px;}
+.small.depth2 { height: 50px;}
+.small.depth3 { height: 75px;}
+.small.depth4 { height: 100px;}
+
+        </style>
+    </head>
+    <body>
+        <div id="wrapper" class="big portrait">XXXCONTENTXXX</div>
+        
+
+<script type="text/javascript">
+
+    document.addEventListener('click', function(e){
+		alert("?");
+		var target = e.target,
+			navto = target.getAttribute("navto");
+		if (navto){
+			alert("!!");
+			e.preventDefault();
+			Ti.App.fireEvent("tabnavto",navto);
+		}
+</script>
+
+
+    </body>
+</html>

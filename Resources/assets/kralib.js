@@ -104,7 +104,7 @@
                  o = K.merge(o,styles[o.k_class] || {});
              }
              else {
-                 o.k_class.map(function(s){
+                 o.k_class.forEach(function(s){
                       o = K.merge(o,styles[s] || {});
                  });
              }
@@ -161,8 +161,8 @@
         if (!typeof Ti[o.k_module]["create"+o.k_type] == "function"){
             throw "No constructor found for "+o.k_type+"!";
         }
-        var o = K.merge(o, styles[o.k_type]  || {}, styles.all || {}),
-            e = Ti[o.k_module]["create"+o.k_type](o);
+        o = K.merge(o, (styles[o.k_type]) || ({}), (styles.all || {}));
+		var e = Ti[o.k_module]["create"+o.k_type](o);
         e.k_def = o;
         /*if (o.k_templateview){
             var template = (o.k_templatefile ? Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/"+o.k_templatefile).read().text : o.k_templatehtml),
@@ -198,6 +198,8 @@
                 childrenById[i++] = child;
                 if (c.k_id){
                     childrenById[c.k_id] = child;
+					e["k_child_"+c.k_id] = child;
+					e["k_child_"+i] = child;
                 }
                 if (o.k_type == "TableView" && child.k_def.k_type == "TableViewSection"){
                     children.push(child);

@@ -1,10 +1,14 @@
+// Version with centralised DB handling
+
 (function() {
+	var USEVIEWS = true;
+	
 	var notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
 		skilltomodule = {},
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00074';
+		DBNAME = 'COGNITUS_00080';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
@@ -99,7 +103,26 @@
 		date: "2011-04-12"
 	}];
 
+
+
     C.content = {
+		getModuleQuizSessions: function(moduleid){
+			var sql = 'SELECT quizdate FROM quizsessions WHERE moduleid = "'+moduleid+'"',
+				mould = {quizdate:"quizdate"};
+			return dbQuery(sql,mould);
+		},
+		getModuleQuestions: function(moduleid){
+			var NOVIEWSsql = 'SELECT * FROM (SELECT quizquestionid, moduleid, priority, type, en, sv, fr, de, es FROM quizquestions INNER JOIN texts ON textid = "quizquestion_" || moduleid || "_" || quizquestionid) as q ORDER BY priority'
+				VIEWSsql = "SELECT * FROM quizquestionswithtexts ORDER BY priority",
+				mould = {
+					quizquestionid: "quizquestionid",
+					moduleid: "moduleid",
+					type: "type",
+					priority: "priority",
+					en: "en", sv: "sv", de: "de", es: "es", fr: "fr"
+				};
+			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
+		},
 		getMaxLastUpdated: function(){
 			return dbSinglePropQuery("SELECT MAX(lastupdated) as max FROM TEXTS","max");
 		},
@@ -141,9 +164,10 @@
 			Ti.App.Properties.setInt("crisisnumber",number);
 		},
 		getListsIncludingSkill: function(skillid){
-			var sql = "SELECT mylists.listid, title, mylists.priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
+			var NOVIEWSsql = "SELECT mylists.listid, title, mylists.priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
+				VIEWSsql = "SELECT mylists.listid, title, mylists.priority, skillcount FROM (SELECT listid, title, priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists WHERE listid NOT LIKE 'PRELIST%') as mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
 				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"};
-			return dbQuery(sql,mould);
+			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
 		},
 		addSkillToList: function(listid,skillid){
 			dbOperation("UPDATE listitems SET priority = priority+1");
@@ -162,10 +186,11 @@
 			dbOperation("INSERT INTO lists (listid,title,priority) VALUES ('list"+Date.now()+"', '"+C.content.getText("mylists_btn_newlist")+"', 0)");
 		},
 		getMyListsWithSkillCount: function(){
-			var sql = "SELECT listid, title, priority, skillcount FROM mylists ORDER BY priority",
+			var VIEWSsql = "SELECT listid, title, priority, skillcount FROM mylists ORDER BY priority",
+				NOVIEWSsql = "SELECT listid, title, priority, skillcount FROM (SELECT listid, title, priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists WHERE listid NOT LIKE 'PRELIST%') as mylists ORDER BY priority",
 				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"};
 			Ti.API.log("WOO!");
-			return dbQuery(sql,mould);
+			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
 		},
 		getNewsItem: function(newsid){
 			var item;
@@ -290,26 +315,14 @@
 			Ti.App.Properties.setString("notes",JSON.stringify(notes));
 		},
         getText: function(id) {
-			//return (dbSinglePropQuery("SELECT "+C.state.lang+" FROM texts WHERE textid = '"+id+"'",C.state.lang)) || ("(no "+id+")");
-			var test = "moduleexplanation_distresstolerance_hmtl";
-			if (id === test){
-				Ti.API.log("Uh oh, trying to get "+test+"!");
-			}
-			var lang = C.state.lang,
+			return (dbSinglePropQuery("SELECT "+C.state.lang+" FROM texts WHERE textid = '"+id+"'",C.state.lang)) || ("(no "+id+")");
+			/*var lang = C.state.lang,
 				db = Ti.Database.open(DBNAME),
 				rows = db.execute("SELECT "+lang+" FROM texts WHERE textid = '"+id+"'"),
 				ret = rows.fieldByName(lang);
-			if (!ret){
-				Ti.API.log("COULDN'T FIND TEXT:");
-				Ti.API.log([id,test,"Equal: "+(test==id),"testlen: "+test.length,"idlen: "+id.length,lang,rows.rowCount,ret]);
-				Ti.API.log("char by char comparison!");
-				for(var i = 0, l = Math.min(id.length,test.length); i<l;i++){
-					Ti.API.log([id[i],test[i],id[i]==test[i]]);
-				}
-			}
 			rows.close();
 			db.close();
-			return ret || "(no "+id+")";
+			return ret || "(no "+id+")";*/
         },
 		test: function(){
 			var db = Ti.Database.open(DBNAME),

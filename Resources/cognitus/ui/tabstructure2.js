@@ -2,7 +2,7 @@
 Version with only one set of tabs
 
 
-Tabstructure receives lists & pages as argument. returns container with tabthings. 
+Tabstructure constructor receives lists & pages as argument. returns container with tabthings. 
 Responsible for subscribing to the navto event and redraw the tabs when that happens. 
 Tabs should of course also fire proper navto event.
 
@@ -39,11 +39,11 @@ C.ui.createTabStructure = function(lists, pages) {
 	});
 	
 	
-	[0, 1, 2, 3].forEach(function(row) {
+	[0, 1, 2, 3, 4].forEach(function(row) {
 		var tabrow = K.create({
 			k_type: "View",
 			height: rowheight,
-			backgroundColor: ["#AAA", "#BBB", "#CCC", "#DDD"][row],
+			backgroundColor: ["#AAA", "#BBB", "#CCC", "#DDD", "#EEE"][row],
 			bottom: row * rowheight,
 			k_children: [{
 				k_type: "View",
@@ -106,7 +106,8 @@ C.ui.createTabStructure = function(lists, pages) {
 
 
 	function updateTabs(page){
-				var bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
+		var start = Date.now();
+				var bgcolours = ["#666","#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
 					numrows = page.listhistory.length;
 				//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 				tabrows.forEach(function(tabrow,i){
@@ -116,7 +117,8 @@ C.ui.createTabStructure = function(lists, pages) {
 						tabrow.listid = page.listhistory[i];
 						tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - 1 - numrows*2 + i*2]);
 						tabrow.buttons.forEach(function(btn,j){
-							var label = btn.k_children.label;
+							//var label = btn.k_children.label;
+							var label = btn.k_child_label;
 							if (j<list.length && list[j]){
 								btn.visible = true;
 								label.text = C.content.getText(list[j].navtextid)+list[j].suffix;
@@ -151,84 +153,10 @@ C.ui.createTabStructure = function(lists, pages) {
 					}
 				});
 		//		frame.bottom = rowsshowing*Ti.App.Properties.getInt("tabrowheight");
-			}
+		Ti.API.log("CHANGED TABS IN " + (Date.now() - start));
+	}
 			
 	var showingtabs = true;
-	/*function updateTabs(page) {
-		var begin = Date.now(),
-			//page = C.state.currentPage,
-			bgcolours = ["#777", "#888", "#999", "#AAA", "#BBB", "#CCC", "#DDD", "#EEE", "#FFF"],
-			numrows = page.listhistory.length,
-			height = Ti.App.Properties.getInt("tabrowheight");
-		//if (showingtabs) {
-		//	frame.bottom = 300; // numrows*height;
-			//rowcontainer.height = (numrows-1) * height;
-		//	rowcontainer.bottom = rowheight;
-		//}
-		for (var r = 0; r < numrows; r++) {
-			var list = lists[C.state.currentPage.listhistory[r]],
-				colornumber = bgcolours.length - 1 - numrows * 2 + r * 2;
-			for (var c = 0; c < 4; c++) {
-				var btn = buttonscontainer.k_children[r + "," + c],
-					label = btn.k_children.label;
-				if (c < list.length && list[c]) {
-					btn.visible = true;
-					label.text = C.content.getText(list[c].navtextid) + list[c].suffix;
-					if (c === page.listpositions[r]) {
-						label.font = {
-							fontWeight: "bold",
-							fontSize: 10
-						};
-						btn.backgroundColor = bgcolours[colornumber + 2];
-						btn.top = 0;
-					} else {
-						btn.top = 1;
-						label.font = {
-							fontWeight: "normal",
-							fontSize: 10
-						};
-						btn.backgroundColor = bgcolours[colornumber + 1];
-					}
-				} else {
-					btn.visible = false;
-				}
-			}
-		}
-
-		tabrows.forEach(function(tabrow, i) {
-			if (i < page.listhistory.length) { // this level is shown!
-				var list = lists[page.listhistory[i]],
-					colornumber = bgcolours.length - 1 - numrows * 2 + i * 2;
-				//tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[colornumber]);
-				tabrow.buttons.forEach(function(btn, j) {
-					var label = btn.k_children.label;
-					if (j < list.length && list[j]) {
-						btn.visible = true;
-						label.text = C.content.getText(list[j].navtextid) + list[j].suffix;
-						btn.navto = list[j].navto;
-						if (j == page.listpositions[i]) {
-							label.font = {
-								fontWeight: "bold",
-								fontSize: 10
-							};
-							btn.backgroundColor = bgcolours[colornumber + 2];
-							btn.top = 0;
-						} else {
-							label.font = {
-								fontWeight: "normal",
-								fontSize: 10
-							};
-							btn.top = 1;
-							btn.backgroundColor = bgcolours[colornumber + 1];
-						}
-					} else {
-						btn.visible = false;
-					}
-				});
-			}
-		});
-		Ti.API.log("CHANGED TABS IN " + (Date.now() - begin));
-	}*/
 
 	// interactivity
 	pb.sub("/updatetabs", function(pageid) {

@@ -11,10 +11,10 @@ Ti.include("/assets/kralib.js",
 
 K.setStyles(C.ui.properties);
 
+//Ti.UI.setBackgroundColor('#00F');
 Ti.UI.setBackgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 //Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 
-Ti.UI.setBackgroundColor('#00F');
 
 
 var appstructure;
@@ -60,13 +60,13 @@ appstructure = [{
 			},
 			{
 				using: "module",
-				pageid: "moduletrainsession",
-				view: C.ui.createModuleTrainSessionView()
-			},
-			{
-				using: "module",
-				pageid: "moduletrainhistory",
-				view: C.ui.createModuleTrainHistoryView()
+				pageid: "moduletrainsessionlist",
+				view: C.ui.createModuleTrainSessionListView(),
+				sub: [{
+					pageid: "moduletrainsession",
+					view: C.ui.createModuleTrainSessionView(),
+					using: ["trainsession","module"]
+				}]
 			}]
 		}]
 	},
@@ -115,7 +115,11 @@ C.state.mainWindow.open();
 
 pb.pub("/appstart");
 
-C.content.test();
+var view = Ti.UI.createView();
+Ti.API.log("OK: "+(typeof view.render));
+
+
+//C.content.test();
 
 function forceLoad() {
 	Ti.UI.createActivityIndicator();

@@ -67,7 +67,7 @@ Ti.include(
 	"/cognitus/ui/modulelist.js",
 	"/cognitus/ui/moduleskillist.js",
 	"/cognitus/ui/moduletrainsession.js",
-	"/cognitus/ui/moduletrainhistory.js",
+	"/cognitus/ui/moduletrainsessionlist.js",
 	"/cognitus/ui/crisis.js",
 	"/cognitus/ui/newslist.js",
 	"/cognitus/ui/mylists.js",
