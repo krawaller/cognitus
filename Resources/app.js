@@ -7,6 +7,7 @@ var C = {
 Ti.include("/assets/kralib.js",
 		   "/assets/pubsubhottub.js",
 		   "/cognitus/content2.js",
+		   "/cognitus/utils.js",
 		   "/cognitus/ui/ui.js");
 
 K.setStyles(C.ui.properties);
@@ -102,7 +103,7 @@ appstructure = [{
 		sub: [{
 			using: "news",
 			pageid: "newsitem"
-			//view: C.ui.createNewsItemView()
+			//, view: C.ui.createNewsItemView()
 		}]
 	},{
 		pageid: "test",
@@ -114,10 +115,6 @@ C.state.mainWindow = C.ui.createAppWindow(appstructure);
 C.state.mainWindow.open();
 
 pb.pub("/appstart");
-
-var view = Ti.UI.createView();
-Ti.API.log("OK: "+(typeof view.render));
-
 
 //C.content.test();
 

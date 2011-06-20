@@ -85,12 +85,12 @@ C.ui.createSkillListView = function() {
 		},300);
 		if (titletextfield.value !== titletextfield.oldvalue){
 			C.content.updateListTitle(listid,titletextfield.value);
-			pb.pub("/updatetitle",titletextfield.value);
+			pb.pub("/setnewtitle",titletextfield.value);
 			titletextfield.oldvalue = titletextfield.value;
 		}
 		titletextfield.blur();
 		titletextfield.visible = false;
-		C.ui.showPageTitle();
+		pb.pub("/showtitle");
 		updateButtons();
 	}
 	
@@ -112,7 +112,7 @@ C.ui.createSkillListView = function() {
 			return;
 		}*/
 		titletextfield.visible = true;
-		C.ui.hidePageTitle();
+		pb.pub("/hidetitle");
 		editing = true;
 		table.editing = true;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){

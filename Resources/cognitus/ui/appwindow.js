@@ -63,6 +63,7 @@ C.ui.createAppWindow = function(appstructure) {
 	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	//Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 	var swipedir;
+	var GRADIENTBREDTH = 30;
 	var frame = K.create({
 		k_type: "View",
 		top: 40,
@@ -80,9 +81,41 @@ C.ui.createAppWindow = function(appstructure) {
 			width: 1,
 			left: 0,
 			backgroundColor: "#000"
+		},{
+			visible: false,
+			k_type: "View",
+			k_id: "gradientportrait",
+			height: GRADIENTBREDTH,
+			bottom: 0,
+			backgroundGradient: {
+				type: 'linear',
+				colors: [{
+					color: 'transparent',
+					position: 0.0
+				}, {
+					color: '#ffffff',
+					position: 1.0
+				}]
+			}
+		},{
+			visible: false,
+			k_type: "View",
+			k_id: "gradientlandscape",
+			width: GRADIENTBREDTH,
+			right: 0,
+			backgroundGradient: {
+				type: 'linear',
+				colors: [{
+					color: 'transparent',
+					position: 0.0
+				}, {
+					color: '#ffffff',
+					position: 1.0
+				}]
+			}
 		}],
 		k_events: {
-			doubletap: toggleControls,
+			doubletap: toggleControls/*, TODO - decide if we want Back-forward!
 			swipe: function(e){
 				swipedir = e.direction;
 			},
@@ -95,10 +128,12 @@ C.ui.createAppWindow = function(appstructure) {
 					}
 					swipedir = false;
 				}
-			}
+			} */
 		}
 	});
 	win.add(frame);
+	var gradientportrait = frame.k_children.gradientportrait,
+		gradientlandscape = frame.k_children.gradientlandscape;
 
     for (var pid in pages) {
         var page = pages[pid];
@@ -132,7 +167,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 
     // ****************** Title bits
-    var titleview = K.create({
+   /* var titleview = K.create({
         k_type: "View",
         height: 35,
         top: 5,
@@ -154,9 +189,14 @@ C.ui.createAppWindow = function(appstructure) {
             font: {fontSize:14,fontWeight:"bold"}
         }]
     });
-    frame.add(titleview);
+    frame.add(titleview);*/
 
-	function setTitle(main,sup){
+
+	Ti.include("/cognitus/ui/title.js");
+	var titleview = C.ui.createTitleView();
+	frame.add(titleview);
+	
+	/*function setTitle(main,sup){
 		titleview.k_children.maintitle.text = main;
 		titleview.k_children.supertitle.text = sup;
 		titleview.k_children.maintitle.top = (sup ? 12 : 7);
@@ -173,8 +213,8 @@ C.ui.createAppWindow = function(appstructure) {
 		} else {
 			switch(pagedef.using){
 				case "news":
-					main = C.content.getText(args.NewsId +"_headline");
-					sup =  C.content.getNewsItem(args.NewsId).date;
+					main = C.content.getText("news_title_"+args.NewsId);
+					sup =  K.dateFormat(Date(args.NewsId*1000),"yyyy-mm-dd")
 					break;
 				case "module":
 					sup = C.content.getText("module_"+args.ModuleId+"_title");
@@ -195,7 +235,7 @@ C.ui.createAppWindow = function(appstructure) {
 		setTitle(main,sup);
     }
     pb.sub("/updatetext", updateTitle);
-    pb.sub("/updatetitle", setTitle);
+    pb.sub("/updatetitle", setTitle);*/
 	win.showPageTitle = function(){titleview.visible = true;};
 	win.hidePageTitle = function(){titleview.visible = false;};
 
@@ -206,7 +246,7 @@ C.ui.createAppWindow = function(appstructure) {
 		top: 0
 	});
 	win.add(controlpanel);
-
+/* TODO - decide if we want back-forward func
 	// ********************* Backbtn
 	function goBack(){
 		if (C.state.historyposition>0){
@@ -240,7 +280,7 @@ C.ui.createAppWindow = function(appstructure) {
 		k_click: goForward
     });
 	controlpanel.add(forwardbtn);
-
+*/
 	// ********************* Size btn
 	
 	var sizebtn = C.ui.createButton({
@@ -276,6 +316,27 @@ C.ui.createAppWindow = function(appstructure) {
 	controlpanel.add(langtest);
 
 
+	// ********************* Note button
+	var notebutton = C.ui.createButton({
+		width: 50,
+		top: 5,
+		left: 70,
+		title: "note",
+		k_click: function(e){
+			pb.pub("/shownotesmodal");
+		}
+	});
+	controlpanel.add(notebutton);
+	pb.sub("/hasnote",function(note){
+		notebutton.title = note ? "NOTE" : "note";
+	});
+	Ti.include("/cognitus/ui/notesmodal.js");
+	var notesmodal = C.ui.createNotesModal();
+	win.add(notesmodal);
+
+
+
+
 	// ******************* Tabs
 	Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choice of tabstructure file
 	win.add(C.ui.createTabStructure(lists,pages));
@@ -300,6 +361,9 @@ C.ui.createAppWindow = function(appstructure) {
 				platformheight = Ti.Platform.displayCaps.platformHeight,
 				platformwidth = Ti.Platform.displayCaps.platformWidth;
 			if (C.state.orientation === "landscape"){
+				gradientlandscape.visible = true;
+				gradientportrait.visible = false;
+				
 				frame.bottom = 0;
 				frame.right = tabheight;
 				frame.left = 40;
@@ -313,6 +377,9 @@ C.ui.createAppWindow = function(appstructure) {
 				controlpanel.bottom = 0;
 				controlpanel.left = 0;
 			} else {
+				gradientportrait.visible = true;
+				gradientlandscape.visible = false;
+				
 				frame.top = 40;
 				frame.left = 0;
 				frame.right = 0;
@@ -328,6 +395,9 @@ C.ui.createAppWindow = function(appstructure) {
 				//controlpanel.top = 0;
 			}
 		} else {
+			gradientportrait.visible = false;
+			gradientlandscape.visible = false;
+			
 			frame.right = 0;
 			frame.left = 0;
 			frame.top = 0;
@@ -337,9 +407,9 @@ C.ui.createAppWindow = function(appstructure) {
 			frame.width = platformwidth;
 			frame.bottom = platformheight;*/
 		}
-		if (C.state.currentPageView.render){
+		/*if (C.state.currentPageView.render){
 			C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
-		}
+		}*/
 	});
 
 
@@ -372,8 +442,10 @@ C.ui.createAppWindow = function(appstructure) {
 			C.state.history.push({pageid:pageid,args:args});
 		}
 		delete args.dontadjusthistory;
+		/* TODO - decide if we want back-forward func
 		backbtn.opacity = C.state.historyposition ? 1 : 0.5;
 		forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
+		*/
 		if (C.state.history.length>historymax){
 			C.state.history = C.state.history.splice(C.state.history.length-historymax);
 			C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
@@ -402,14 +474,14 @@ C.ui.createAppWindow = function(appstructure) {
 
 		C.state.currentPageView = topage.view;
 		C.state.currentPage = topage;
-		C.state.currentTitle = C.content.getText(pageid+"_title");
-		updateTitle(topage,args);
 		C.state.currentPageId = pageid;
 		C.state.currentBack = topage.back;
 		C.state.lastArgs = argstouse;
 		
+		C.state.currentTitle = C.content.getText(pageid+"_title"); // TODO - not using this?
+		pb.pub("/updatetitle");
 		pb.pub("/updatetabs",pageid);
-		pb.pub("/adjustframe"); // will call view.render!
+		pb.pub("/adjustframe");
 		
 		// skill crisis list btn
 		if (topage.using === "skill"){
@@ -419,6 +491,13 @@ C.ui.createAppWindow = function(appstructure) {
 		if (topage.using !== "skill"){
 			listitembutton.visible = false;
 		}
+		
+		if (topage.view.render){
+			topage.view.render(argstouse,topage);
+		}
+		pb.pub("/hasnote",C.content.testIfPageHasNote(C.utils.currentPageName()));
+		Ti.API.log("Name: "+C.utils.currentPageName());
+		Ti.API.log(C.utils.pageNameToArgs(C.utils.currentPageName()));
 	});
 
 	// ******************** Add skill to list button
@@ -438,6 +517,7 @@ C.ui.createAppWindow = function(appstructure) {
 	});
 	frame.add(listitembutton);
 
+
 	
 	// ********************* Skill selection panel logic *********************
 	Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
@@ -456,7 +536,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	pb.sub("/appstart",function(){
 		pb.pub("/navto","home"); // TODO - fix dynamically!
-		frame.animate({opacity:1,duration:400});
+		frame.animate({opacity:1,duration:400},function(){pb.pub("/navto","home");});
 	});
 
     // ******************* All done, returning the window!

@@ -53,9 +53,9 @@
         createPage: createPage,
         createLabel: createLabel,
 		createButton: createButton,
-		showPageTitle: function(){C.state.mainWindow.showPageTitle();},
-		hidePageTitle: function(){C.state.mainWindow.hidePageTitle();},
-		setPageTitle: function(main,sup){C.state.mainWindow.setPageTitle(main,sup);}
+		//showPageTitle: function(){C.state.mainWindow.showPageTitle();},
+		//hidePageTitle: function(){C.state.mainWindow.hidePageTitle();},
+		//setPageTitle: function(main,sup){C.state.mainWindow.setPageTitle(main,sup);}
     };
 
 })();
@@ -70,6 +70,7 @@ Ti.include(
 	"/cognitus/ui/moduletrainsessionlist.js",
 	"/cognitus/ui/crisis.js",
 	"/cognitus/ui/newslist.js",
+	"/cognitus/ui/newsitem.js",
 	"/cognitus/ui/mylists.js",
 	"/cognitus/ui/skillist.js",
 	"/cognitus/ui/skilltable.js",

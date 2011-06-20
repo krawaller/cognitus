@@ -1,30 +1,47 @@
 C.ui.createModuleTrainSessionView = function(o){
 	Ti.API.log("MDOASD");
 	var view = C.ui.createPage({backgroundColor: "yellow"}),
-		table = Ti.UI.createTableView({top: 60, bottom: 0});
+		table = Ti.UI.createTableView({top: 100});
 	view.add(table);
-	view.render = function(args){
-		pb.pub("/updatetitle", "Ny session!",C.content.getText("module_"+args.ModuleId+"_title"));
-		questions = C.content.getModuleQuestions(args.ModuleId);
-		Ti.API.log(questions);
-		var rowheight = 80,
-			lastrow = Ti.UI.createTableViewRow({
-				className:"lastRow",
-				isLast:true,
-				height: rowheight
-			}),
-			finishbtn = Ti.UI.createButton({
-				title:"MOO!", left: 15, right: 15, height: 30, top: 20
-			});
-		lastrow.add(finishbtn);
-		finishbtn.addEventListener("click",function(e){
-			Ti.API.log([table.data,table.data[0],table.data[0].rows,table.data[0].rows.length,typeof table.data[0].rows,Array.isArray(table.data[0].rows),table.data[0].rows.each]);
-			table.data[0].rows.forEach(function(r){
-				if (!r.isLast){
-					Ti.API.log([r.quizquestionid,typeof r.getVal, typeof r.control, r.control.value]);
-				}
+	
+	var savebtn = C.ui.createButton({
+		textid: "moduletrainsession_btn_save",
+		title:"MOO!", right: 20, width: 120, top: 50
+	});
+	savebtn.addEventListener("click",function(e){
+		var answers = [],
+			quizdate = old ? C.state.lastArgs.quizdate : K.dateFormat(Date(),"yyyy-mm-dd HH:MM:ss");
+		table.data[0].rows.forEach(function(r){
+			answers.push({
+				value: r.control.value,
+				quizquestionid: r.quizquestionid
 			});
 		});
+		C.content.storeQuizSession(quizdate,answers);
+		C.ui.showMessage("moduletrainsession_msg_"+(old?"updated":"storednew"));
+		pb.pub("/navto","moduletrainsessionlist");
+	});
+	view.add(savebtn);
+	
+	var backbtn = C.ui.createButton({
+		textid: "moduletrainsession_btn_backtolist",
+		left: 20,
+		width: 120,
+		top: 50
+	});
+	backbtn.addEventListener("click",function(){
+		pb.pub("/navto","moduletrainsessionlist");
+	});
+	view.add(backbtn);
+	
+	var old;
+	view.render = function(args){
+	    old = (args.quizdate !== "NEW");
+		Ti.API.log("Render! quizdate:"+args.quizdate+", old:"+old);
+		pb.pub("/setnewtitle", old ? args.quizdate : C.content.getText("moduletrainsession_title_new"),C.content.getText("module_"+args.ModuleId+"_title"));
+		questions = !old ? C.content.getModuleQuestions(args.ModuleId) : C.content.getQuizSessionAnswers(args.quizdate);
+		Ti.API.log(questions);
+		var rowheight = 80;
 		table.setData(questions.map(function(q){
 			var control, r = Ti.UI.createTableViewRow({
 				className: q.type,
@@ -50,8 +67,12 @@ C.ui.createModuleTrainSessionView = function(o){
 			control.top = 35;
 			r.control = control;
 			r.add(control);
+			if (old){
+				control.value = q.value;
+				//control.enabled = false;
+			}
 			return r;
-		}).concat(lastrow));
+		}));
 		setTimeout(function(){table.height = table.data[0].rows.length * rowheight;},100);
 	};
 	return view;

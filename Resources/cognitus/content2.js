@@ -8,14 +8,14 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00080';
+		DBNAME = 'COGNITUS_00099';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
 	
-	function dbSinglePropQuery(sql,prop){
+	function dbSinglePropQuery(sql,prop,varargs){
 		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql),
+			res = db.execute(sql,varargs || []),
 			ret;
 		if(res.isValidRow()){
 			ret = res.fieldByName(prop);
@@ -25,9 +25,9 @@
 		return ret;
 	}
 	
-	function dbQuery(sql,mould){
+	function dbQuery(sql,mould,varargs){
 		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql),
+			res = db.execute(sql,varargs || []),
 			ret = [],
 			i = -1,p;
 		while(res.isValidRow()){
@@ -43,9 +43,9 @@
 		return ret;
 	}
 	
-	function dbOperation(sql){
+	function dbOperation(sql,varargs){
 		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql);
+			res = db.execute(sql,varargs || []);
 		if (res){
 			res.close();
 		}
@@ -106,14 +106,49 @@
 
 
     C.content = {
+		dbQuery: dbQuery,
+		dbSinglePropQuery: dbSinglePropQuery,
+		dbOperation: dbOperation,
+		testIfPageHasNote: function(pagename){
+			return dbSinglePropQuery("SELECT COUNT(*) as c FROM notes WHERE pagename = ?","c",[pagename]);
+		},
+		getNoteForPage: function(pagename){
+			return dbSinglePropQuery("SELECT note FROM notes WHERE pagename = ?","note",[pagename]) || "";
+		},
+		saveNoteForPage: function(pagename,note){
+			dbOperation("REPLACE INTO notes (pagename,note) VALUES (?,?)",[pagename,note]);
+		},
+		deleteQuizSession: function(quizdate){
+			Ti.API.log("WOO "+dbSinglePropQuery("SELECT COUNT(*) as c FROM quizanswers WHERE quizdate = ?","c",[quizdate]));
+			dbOperation("DELETE FROM quizanswers WHERE quizdate = ?",[quizdate]);
+		},
+		storeQuizSession: function(quizdate,answers){
+			dbOperation("DELETE FROM quizanswers WHERE quizdate = ?",[quizdate]);
+			answers.forEach(function(a){
+				dbOperation("INSERT INTO quizanswers (quizdate,quizquestionid,value) VALUES (?,?,?)",[quizdate,a.quizquestionid,a.value]);
+			});
+		},
 		getModuleQuizSessions: function(moduleid){
-			var sql = 'SELECT quizdate FROM quizsessions WHERE moduleid = "'+moduleid+'"',
+			var sql = 'SELECT quizdate FROM quizsessions WHERE moduleid = ? ORDER BY quizdate DESC',
 				mould = {quizdate:"quizdate"};
-			return dbQuery(sql,mould);
+			return dbQuery(sql,mould,[moduleid]);
+		},
+		getQuizSessionAnswers: function(quizdate){
+			var sql = "SELECT * FROM quizanswerswithdetails WHERE quizdate = ?",
+				mould = {
+					quizquestionid: "quizquestionid",
+					moduleid: "moduleid",
+					type: "type",
+					priority: "priority",
+					en: "en", sv: "sv", de: "de", es: "es", fr: "fr",
+					quizdate: "quizdate",
+					value: "value"
+				};
+			return dbQuery(sql,mould,[quizdate]);
 		},
 		getModuleQuestions: function(moduleid){
-			var NOVIEWSsql = 'SELECT * FROM (SELECT quizquestionid, moduleid, priority, type, en, sv, fr, de, es FROM quizquestions INNER JOIN texts ON textid = "quizquestion_" || moduleid || "_" || quizquestionid) as q ORDER BY priority'
-				VIEWSsql = "SELECT * FROM quizquestionswithtexts ORDER BY priority",
+			var NOVIEWSsql = "SELECT * FROM (SELECT quizquestionid, moduleid, priority, type, en, sv, fr, de, es FROM quizquestions INNER JOIN texts ON textid = 'quizquestion_' || moduleid || '_' || quizquestionid) as q WHERE moduleid = ? ORDER BY priority",
+				VIEWSsql = "SELECT * FROM quizquestionswithtexts WHERE moduleid = ? ORDER BY priority",
 				mould = {
 					quizquestionid: "quizquestionid",
 					moduleid: "moduleid",
@@ -121,7 +156,7 @@
 					priority: "priority",
 					en: "en", sv: "sv", de: "de", es: "es", fr: "fr"
 				};
-			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
+			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould,[moduleid]);
 		},
 		getMaxLastUpdated: function(){
 			return dbSinglePropQuery("SELECT MAX(lastupdated) as max FROM TEXTS","max");
@@ -134,14 +169,15 @@
 			var db = Ti.Database.open(DBNAME),res;
 			o.forEach(function(text){
 				Ti.API.log("Updating "+text.textid+" ("+text.lastupdated+")");
-				res = db.execute("REPLACE INTO texts (textid, lastupdated, sv, en, fr, es, de) VALUES (?,?,?,?,?,?,?)",
+				res = db.execute("REPLACE INTO texts (textid, lastupdated, sv, en, fr, es, de, created) VALUES (?,?,?,?,?,?,?,?)",
 					text.textid,
 					text.lastupdated,
 					text.sv,
 					text.en,
 					text.fr,
 					text.es,
-					text.de
+					text.de,
+					text.created
 				);
 				pb.pub("/updatetexts");
 			});
@@ -192,20 +228,39 @@
 			Ti.API.log("WOO!");
 			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
 		},
-		getNewsItem: function(newsid){
-			var item;
-			newsitems.forEach(function(n){if (n.newsid === newsid){item = n;}});
-			if (!item){
-				throw "No find news! "+newsid;
-			}
-			return K.merge(item,{headline: C.content.getText(item.newsid+"_headline"), content: C.content.getText(item.newsid+"_content")});
+		getNewsItem: function(created){
+			var sql = "SELECT created, title_sv, title_en, title_de, title_es, title_fr, html_sv, html_en, html_de, html_es, html_fr FROM newswithdetails WHERE created = ?",
+				mould = {
+					created: "created",
+					title_sv: "title_sv",
+					title_en: "title_en",
+					title_es: "title_es",
+					title_de: "title_de",
+					title_fr: "title_fr",
+					html_sv: "html_sv",
+					html_en: "html_en",
+					html_es: "html_es",
+					html_de: "html_de",
+					html_fr: "html_fr"
+				};
+			return dbQuery(sql,mould,[created]);
 		},
 		getNewsList: function(){
-			return newsitems.map(function(n){
-				return K.merge(n,{
-					headline: C.content.getText(n.newsid+"_headline")
-				});
-			});
+			/*var sql = "SELECT created, title_sv, title_en, title_de, title_es, title_fr FROM newswithdetails",
+				mould = {
+					created: "created",
+					title_sv: "title_sv",
+					title_en: "title_en",
+					title_es: "title_es",
+					title_de: "title_de",
+					title_fr: "title_fr"
+				};*/
+			var sql = "SELECT created, textid FROM texts WHERE textid LIKE 'news_title_%'",
+				mould = {
+					created: "created",
+					textid: "textid"
+				};
+			return dbQuery(sql,mould);
 		},
 		getMyCrisisSkills: function(){
 			var sql = "SELECT skillid, freetext, priority FROM crisislistobjects ORDER BY priority ASC",

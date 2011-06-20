@@ -29,10 +29,9 @@ C.ui.createHtmlView = function(){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
 		view.scrollTo(0,0);
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
-				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : topage.pageid) + "_html";
-		if (topage.using === "news"){
-			id = "news_"+argstouse.NewsId+"_html";
-		}
+				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
+				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 
+				  topage.pageid) + (topage.using === "news" ? "" : "_html");
 		Ti.API.log(["webview",id]);
 		//updateWebView(webview,C.content.getText(id));
 		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,C.content.getText(id));

@@ -11,11 +11,17 @@ C.ui.createNewsListView = function(o){
 	});
 	view.add(table);
 	view.render = function(arg){
-		table.setData(C.content.getNewsList().map(function(n){
+		var news = C.content.getNewsList();
+		Ti.API.log("KSDAÖKDKSA");
+		Ti.API.log(news);
+		Ti.API.log("KSDAÖKDKSA");
+		Ti.API.log(C.content.dbSinglePropQuery("SELECT count(*) as c FROM texts WHERE textid LIKE 'news_html_%'","c"));
+		Ti.API.log(C.content.dbSinglePropQuery("SELECT count(*) as c FROM newswithdetails","c"));
+		table.setData(news.map(function(n){
 			 return K.create({
 				hasChild: true,
 				k_type: "TableViewRow",
-				NewsId: n.newsid,
+				NewsId: n.created,
 				k_children: [{
 					k_type: "Label",
 					top: 0,
@@ -24,7 +30,7 @@ C.ui.createNewsListView = function(o){
 					font: {
 						fontSize: 10
 					},
-					text: n.date
+					text: K.dateFormat(Date(n.created*1000),"yyyy-mm-dd")
 				},{
 					k_type: "Label",
 					top: 12,
@@ -34,7 +40,7 @@ C.ui.createNewsListView = function(o){
 						fontSize: 15,
 						fontWeight: "normal"
 					},
-					text: n.headline
+					text: C.content.getText("news_title_"+n.created)//n["title_"+C.state.lang]
 				}]
 			});
 		}));
