@@ -53,9 +53,6 @@
         createPage: createPage,
         createLabel: createLabel,
 		createButton: createButton,
-		//showPageTitle: function(){C.state.mainWindow.showPageTitle();},
-		//hidePageTitle: function(){C.state.mainWindow.hidePageTitle();},
-		//setPageTitle: function(main,sup){C.state.mainWindow.setPageTitle(main,sup);}
     };
 
 })();

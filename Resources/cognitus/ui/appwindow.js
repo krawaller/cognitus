@@ -144,6 +144,13 @@ C.ui.createAppWindow = function(appstructure) {
     }
 	C.state.frame = frame;
 
+
+	// ******************* Basic text view
+	
+	Ti.include("/cognitus/ui/htmlview.js");
+	var textview = C.ui.createHtmlView({});
+	frame.add(textview);
+
 	// controls
 	
 	
@@ -165,77 +172,10 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	win.add(anchor);
 
-
-    // ****************** Title bits
-   /* var titleview = K.create({
-        k_type: "View",
-        height: 35,
-        top: 5,
-        width: 200,
-        left: 50,
-        borderWidth: 1,
-		zIndex: 5,
-        borderColor: "#000",
-        backgroundColor: "#CCC",
-        k_children: [,{
-			k_id: "supertitle",
-			k_type: "Label",
-			font: {fontSize:10},
-			top: 0
-		},{
-			top: 12,
-			k_type: "Label",
-			k_id: "maintitle",
-            font: {fontSize:14,fontWeight:"bold"}
-        }]
-    });
-    frame.add(titleview);*/
-
-
 	Ti.include("/cognitus/ui/title.js");
 	var titleview = C.ui.createTitleView();
 	frame.add(titleview);
 	
-	/*function setTitle(main,sup){
-		titleview.k_children.maintitle.text = main;
-		titleview.k_children.supertitle.text = sup;
-		titleview.k_children.maintitle.top = (sup ? 12 : 7);
-	}
-	
-    function updateTitle(pagedef,args) {
-		if (!pagedef){
-			pagedef = C.state.currentPage;
-			args = C.state.lastArgs;
-		}
-		var main, sup = "";
-		if (Array.isArray(pagedef.using)){
-			
-		} else {
-			switch(pagedef.using){
-				case "news":
-					main = C.content.getText("news_title_"+args.NewsId);
-					sup =  K.dateFormat(Date(args.NewsId*1000),"yyyy-mm-dd")
-					break;
-				case "module":
-					sup = C.content.getText("module_"+args.ModuleId+"_title");
-					main = C.content.getText(pagedef.pageid +"_title");
-					break;
-				case "skill":
-					sup = C.content.getText("skill_"+args.SkillId+"_title");
-					main = C.content.getText(pagedef.pageid +"_title");
-					break;
-				case "list":
-					main = C.content.getListTitle(args.ListId);
-					sup = C.content.getText("skillist_supertitle");
-					break;
-				default:
-					main = C.content.getText(  pagedef.pageid +"_title");
-			}
-		}
-		setTitle(main,sup);
-    }
-    pb.sub("/updatetext", updateTitle);
-    pb.sub("/updatetitle", setTitle);*/
 	win.showPageTitle = function(){titleview.visible = true;};
 	win.hidePageTitle = function(){titleview.visible = false;};
 
@@ -246,47 +186,49 @@ C.ui.createAppWindow = function(appstructure) {
 		top: 0
 	});
 	win.add(controlpanel);
-/* TODO - decide if we want back-forward func
-	// ********************* Backbtn
-	function goBack(){
-		if (C.state.historyposition>0){
-			var to = C.state.history[--C.state.historyposition];
-			pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
-		}
-	}
-	var backbtn = C.ui.createButton({
-        height: 30,
-        top: 5,
-        width: 30,
-        left: 50,
-		title: "←",
-		k_click: goBack
-    });
-	controlpanel.add(backbtn);
+
+
+	// ********************* Help func
 	
-	// ********************* Forwardbutton
-	function goForward(){
-		if (C.state.historyposition < C.state.history.length-1){
-			var to = C.state.history[++C.state.historyposition];
-			pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+	var helpbtn = C.ui.createButton({
+		width: 50,
+		left: 50,
+		top: 5,
+		title: "help",
+		k_click: function(){
+			if (C.state.currentHelp){
+				pb.pub("/showhelpmodal",C.state.currentHelp);
+			} else {
+				C.ui.showMessage("sys_nohelp");
+			}
 		}
-	}
-	var forwardbtn = C.ui.createButton({
-        height: 30,
-        top: 5,
-        width: 30,
-        left: 90,
-		title: "→",
-		k_click: goForward
-    });
-	controlpanel.add(forwardbtn);
-*/
+	});
+	function updateHelp(pageid){
+		var help = C.content.getHelpForPageId(pageid,C.state.lang);
+		if (help){
+			helpbtn.title = "HELP";
+			C.state.currentHelp = help;
+		} else {
+			helpbtn.title = "help";
+			delete C.state.currentHelp;
+		}
+	};
+	pb.sub("/navto",updateHelp);
+	pb.sub("/updatetext",function(){
+		updateHelp(C.state.currentPageId);
+	});
+	controlpanel.add(helpbtn);
+	
+	Ti.include("/cognitus/ui/helpmodal.js");
+	var helpmodal = C.ui.createHelpModal();
+	win.add(helpmodal);
+
 	// ********************* Size btn
 	
 	var sizebtn = C.ui.createButton({
 		width: 50,
 		top: 5,
-		left: 130,
+		left: 170,
 		title: "size",
 		k_click: function(){
 			var rowdefaultheight = 25, rowbigheight = 40;
@@ -304,7 +246,7 @@ C.ui.createAppWindow = function(appstructure) {
 	var langtest = C.ui.createButton({
 		width: 50,
 		top: 5,
-		left: 210,
+		left: 230,
 		title: "lang",
 		k_click: function(e){
 			var lang = C.state.lang;
@@ -320,7 +262,7 @@ C.ui.createAppWindow = function(appstructure) {
 	var notebutton = C.ui.createButton({
 		width: 50,
 		top: 5,
-		left: 70,
+		left: 110,
 		title: "note",
 		k_click: function(e){
 			pb.pub("/shownotesmodal");
@@ -342,12 +284,6 @@ C.ui.createAppWindow = function(appstructure) {
 	win.add(C.ui.createTabStructure(lists,pages));
 
 
-	// ******************* Basic text view
-	
-	Ti.include("/cognitus/ui/htmlview.js");
-	var textview = C.ui.createHtmlView({});
-	frame.add(textview);
-
 
 	// ******************* Frame adjustment
 	
@@ -368,10 +304,7 @@ C.ui.createAppWindow = function(appstructure) {
 				frame.right = tabheight;
 				frame.left = 40;
 				frame.top = 0;
-				/*frame.height = platformheight;
-				frame.width = platformwidth - tabheight - 40;
-				frame.left = 40;
-				frame.top = 0;*/
+				
 				controlpanel.transform = Ti.UI.create2DMatrix({rotate:-90});
 				//controlpanel.width = Ti.Platform.displayCaps.platformHeight;
 				controlpanel.bottom = 0;
@@ -384,10 +317,7 @@ C.ui.createAppWindow = function(appstructure) {
 				frame.left = 0;
 				frame.right = 0;
 				frame.bottom = tabheight;
-				/*frame.top = 40;
-				frame.left = 0;
-				frame.height = platformheight - 40 - tabheight;
-				frame.width = platformwidth;*/
+
 				controlpanel.transform = Ti.UI.create2DMatrix({rotate:0});
 				//controlpanel.width = Ti.Platform.displayCaps.platformWidth;
 				controlpanel.bottom = undefined;
@@ -402,14 +332,7 @@ C.ui.createAppWindow = function(appstructure) {
 			frame.left = 0;
 			frame.top = 0;
 			frame.bottom = 0;
-			/*frame.top = 0;
-			frame.left = 0;
-			frame.width = platformwidth;
-			frame.bottom = platformheight;*/
 		}
-		/*if (C.state.currentPageView.render){
-			C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
-		}*/
 	});
 
 
@@ -498,6 +421,7 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/hasnote",C.content.testIfPageHasNote(C.utils.currentPageName()));
 		Ti.API.log("Name: "+C.utils.currentPageName());
 		Ti.API.log(C.utils.pageNameToArgs(C.utils.currentPageName()));
+		pb.pub("/arrivedatnewpage",topage,argstouse);
 	});
 
 	// ******************** Add skill to list button

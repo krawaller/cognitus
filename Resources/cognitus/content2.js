@@ -8,7 +8,7 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00099';
+		DBNAME = 'COGNITUS_00100';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
@@ -106,6 +106,9 @@
 
 
     C.content = {
+		getHelpForPageId: function(pageid,lang){
+			return dbSinglePropQuery("SELECT "+lang+"  FROM texts WHERE textid = ?",lang,[pageid+"_help_html"]);
+		},
 		dbQuery: dbQuery,
 		dbSinglePropQuery: dbSinglePropQuery,
 		dbOperation: dbOperation,

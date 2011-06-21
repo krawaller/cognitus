@@ -25,6 +25,7 @@ C.ui.createHtmlView = function(){
 		view.contentHeight = "auto";
 	});
 	view.add(webview);
+
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
 		view.scrollTo(0,0);
