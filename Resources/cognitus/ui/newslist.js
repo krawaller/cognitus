@@ -19,7 +19,8 @@ C.ui.createNewsListView = function(o){
 		Ti.API.log(C.content.dbSinglePropQuery("SELECT count(*) as c FROM newswithdetails","c"));
 		table.setData(news.map(function(n){
 			 return K.create({
-				hasChild: true,
+				//hasChild: true,
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				k_type: "TableViewRow",
 				NewsId: n.created,
 				k_children: [{

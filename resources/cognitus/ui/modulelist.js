@@ -13,7 +13,8 @@ C.ui.createModuleListView = function(o){
 	view.render = function(arg){
 		table.setData(C.content.getAllSkillModules().map(function(m){
 			return {
-				hasChild: true,
+				//hasChild: true,
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				ModuleId: m,
 				title: C.content.getText("module_"+m+"_title")
 			};

@@ -21,7 +21,9 @@
 			left: 10,
 			k_class: "textLabel"
         }));
-        C.content.setObjectText(label, id);
+		if (id){
+        	C.content.setObjectText(label, id);
+		}
         return label;
     }
 

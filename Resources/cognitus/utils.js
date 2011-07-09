@@ -14,6 +14,12 @@
 			}
 			return [pageid, args];
 		},
+		pageNameToTitle: function(pagename){
+			var a = C.utils.pageNameToArgs(pagename),
+				pageid = a[0],
+				args = a[1];
+			return C.utils.getPageTitle(C.state.pages[pageid],args);
+		},
 		currentPageName: function() {
 			var p = C.state.currentPage,
 				args = C.state.lastArgs,
@@ -50,7 +56,10 @@
 			}
 			var main, sup = "";
 			if (Array.isArray(pagedef.using)){
-
+				if ((pagedef.using[0] === "trainsession") && (pagedef.using[1] === "module")){
+					main = args.quizdate;
+					sup = C.content.getText("module_"+args.ModuleId+"_title");
+				}
 			} else {
 				switch(pagedef.using){
 					case "news":
@@ -71,6 +80,7 @@
 						break;
 					default:
 						main = C.content.getText(  pagedef.pageid +"_title");
+						break;
 				}
 			}
 			return {main:main,sup:sup};

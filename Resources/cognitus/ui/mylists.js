@@ -5,7 +5,8 @@ C.ui.createMyListsView = function(o) {
 	function renderTable() {
 		table.setData(C.content.getMyListsWithSkillCount().map(function(r, i) {
 			return K.create({
-				hasChild: true,
+				//hasChild: true,
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				k_type: "TableViewRow",
 				list: r,
 				ListId: r.ListId,
@@ -83,6 +84,7 @@ C.ui.createMyListsView = function(o) {
 		top: 45,
 		right: 10,
 		zIndex: 5,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		k_click: function() {
 			if (editing) {
 				stopEditing();
@@ -94,6 +96,7 @@ C.ui.createMyListsView = function(o) {
 	view.add(btn);
 
 	var addbtn = C.ui.createButton({
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
 		width: 70, top: 45, right: 100, k_click: function(){
 			if (!editing){
 				C.content.addNewList();
@@ -142,6 +145,7 @@ C.ui.createMyListsView = function(o) {
 
 	function updateButtons(){
 		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
+		btn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+ (editing ? "save" : "edit") +".png";
 		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("mylists_btn_newlist");
 		addbtn.opacity = (editing ? 0.5 : 1);

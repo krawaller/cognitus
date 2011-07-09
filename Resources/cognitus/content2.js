@@ -8,7 +8,7 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00100';
+		DBNAME = 'COGNITUS_00104';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
@@ -70,7 +70,7 @@
 			rows.next();
 		}
 		rows.close();
-		rows = db.execute("SELECT skillid, moduleid, submoduleid FROM skills ORDER BY moduleid, priority ASC");
+		rows = db.execute("SELECT skillid, moduleid, submoduleid FROM skills ORDER BY moduleid, submoduleid DESC, priority ASC");
 		var prevsub, prevmodule;
 		while (rows.isValidRow()){
 			var skill = rows.field(0),
@@ -112,14 +112,32 @@
 		dbQuery: dbQuery,
 		dbSinglePropQuery: dbSinglePropQuery,
 		dbOperation: dbOperation,
+		getNoteList: function(){
+			var sql = "SELECT pagename, note, updated FROM notes ORDER BY updated DESC",
+				mould = {
+					pagename: "pagename",
+					note: "note",
+					updated: "updated"
+				},
+				res = dbQuery(sql,mould);
+			Ti.API.log(res);
+			return dbQuery(sql,mould);
+		},
 		testIfPageHasNote: function(pagename){
 			return dbSinglePropQuery("SELECT COUNT(*) as c FROM notes WHERE pagename = ?","c",[pagename]);
 		},
 		getNoteForPage: function(pagename){
 			return dbSinglePropQuery("SELECT note FROM notes WHERE pagename = ?","note",[pagename]) || "";
 		},
+		deleteNote: function(pagename){
+			dbOperation("DELETE FROM notes WHERE pagename = ?",[pagename]);
+		},
 		saveNoteForPage: function(pagename,note){
-			dbOperation("REPLACE INTO notes (pagename,note) VALUES (?,?)",[pagename,note]);
+			if (!note){
+				dbOperation("DELETE FROM notes WHERE pagename = ?",[pagename]);
+			} else {
+				dbOperation("REPLACE INTO notes (pagename,note,updated) VALUES (?,?,DATETIME())",[pagename,note]);
+			}
 		},
 		deleteQuizSession: function(quizdate){
 			Ti.API.log("WOO "+dbSinglePropQuery("SELECT COUNT(*) as c FROM quizanswers WHERE quizdate = ?","c",[quizdate]));
@@ -197,16 +215,19 @@
 			Ti.App.Properties.setString("crisislistid",listid);
 		},
 		getCrisisNumber: function(){
-			return Ti.App.Properties.getInt("crisisnumber");
+			return Ti.App.Properties.getString("crisisnumber");
 		},
 		setCrisisNumber: function(number){
-			Ti.App.Properties.setInt("crisisnumber",number);
+			Ti.App.Properties.setString("crisisnumber",number);
 		},
 		getListsIncludingSkill: function(skillid){
-			var NOVIEWSsql = "SELECT mylists.listid, title, mylists.priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
-				VIEWSsql = "SELECT mylists.listid, title, mylists.priority, skillcount FROM (SELECT listid, title, priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists WHERE listid NOT LIKE 'PRELIST%') as mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
-				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"};
-			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
+			var sql = "SELECT mylists.listid as listid, title, mylists.priority as priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
+				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"},
+				result;
+			Ti.API.log("Going to get lists including skill!");
+			result = dbQuery(sql,mould);
+			Ti.API.log("GOt sills!");
+			return result;
 		},
 		addSkillToList: function(listid,skillid){
 			dbOperation("UPDATE listitems SET priority = priority+1");

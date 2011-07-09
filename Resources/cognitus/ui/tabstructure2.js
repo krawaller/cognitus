@@ -22,8 +22,7 @@ C.ui.createTabStructure = function(lists, pages) {
 		rowheight, btnwidth = 90,
 		firstrowbtnwidth = 68,
 		btnspace = 10;
-	Ti.App.Properties.setInt("tabrowheight", Ti.App.Properties.getInt("tabrowheight") || rowbigheight);
-	rowheight = Ti.App.Properties.getInt("tabrowheight");
+	rowheight = Ti.App.Properties.getBool("usingbigtabs") ? rowbigheight : rowdefaultheight;
 	
 	var container = K.create({
 		k_type: "View",
@@ -106,6 +105,7 @@ C.ui.createTabStructure = function(lists, pages) {
 
 
 	function updateTabs(page){
+		if (!page) {return;}
 		var start = Date.now();
 				var bgcolours = ["#666","#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
 					numrows = page.listhistory.length;
@@ -163,7 +163,7 @@ C.ui.createTabStructure = function(lists, pages) {
 		updateTabs(pages[pageid]);
 	});
 	
-	Ti.Gesture.addEventListener('orientationchange', function(e){
+	/*Ti.Gesture.addEventListener('orientationchange', function(e){
 		C.state.orientation = ((e.source.orientation === Titanium.UI.LANDSCAPE_LEFT) || (e.source.orientation === Titanium.UI.LANDSCAPE_RIGHT) ? "landscape" : "portrait");
 		Ti.API.log("changing! "+C.state.orientation);
 		if (C.state.orientation === "landscape"){
@@ -176,7 +176,7 @@ C.ui.createTabStructure = function(lists, pages) {
 			//container.width = Ti.Platform.displayCaps.platformWidth;
 			container.bottom = 0;
 		}
-	});
+	});*/
 	
 	pb.sub("/settabrowheight", function(newh){
 		tabrows.forEach(function(row,i){

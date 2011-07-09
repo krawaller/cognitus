@@ -6,7 +6,8 @@ C.ui.createModuleTrainSessionView = function(o){
 	
 	var savebtn = C.ui.createButton({
 		textid: "moduletrainsession_btn_save",
-		title:"MOO!", right: 20, width: 120, top: 50
+		title:"MOO!", right: 20, width: 120, top: 50,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/save.png"
 	});
 	savebtn.addEventListener("click",function(e){
 		var answers = [],
@@ -27,7 +28,8 @@ C.ui.createModuleTrainSessionView = function(o){
 		textid: "moduletrainsession_btn_backtolist",
 		left: 20,
 		width: 120,
-		top: 50
+		top: 50,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png"
 	});
 	backbtn.addEventListener("click",function(){
 		pb.pub("/navto","moduletrainsessionlist");

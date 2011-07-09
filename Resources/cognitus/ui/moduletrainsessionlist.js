@@ -4,7 +4,8 @@ C.ui.createModuleTrainSessionListView = function(o){
 		top: 50,
 		width: 120,
 		left: 20,
-		textid: "moduletrainsessionlist_btn_new"
+		textid: "moduletrainsessionlist_btn_new",
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png"
 	});
 	function startEditing(){
 		savebtn.visible = true;
@@ -20,6 +21,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		top: 50,
 		width: 120,
 		right: 20,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		textid: "moduletrainsessionlist_btn_delete"
 	});
 	var savebtn = C.ui.createButton({
@@ -27,6 +29,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		width: 120,
 		right: 20,
 		visible: false,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/save.png",
 		textid: "moduletrainsessionlist_btn_done"
 	});
 	newbtn.addEventListener("click",function(){

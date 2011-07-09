@@ -44,8 +44,9 @@ C.ui.createHelpModal = function(){
 		top: 10,
 		height: 30,
 		left: 10,
-		width: 70,
-		textid: "helpmodal_btn_close",
+		width: 30,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
+		//textid: "helpmodal_btn_close",
 		k_click: close
 	});
 

@@ -29,6 +29,7 @@ C.ui.createHtmlView = function(){
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
 		view.scrollTo(0,0);
+		webview.top = (topage.using === "skill" ? 80 : 30);
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
 				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 

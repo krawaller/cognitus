@@ -29,6 +29,7 @@ C.ui.createSkillListView = function() {
 		top: 45,
 		left: 10,
 		title: C.content.getText("skillist_btn_backtolists"),
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 		k_click: function(){
 			pb.pub("/navto","mylists");
 		}
@@ -36,10 +37,10 @@ C.ui.createSkillListView = function() {
 	view.add(listsbtn);
 	
 	var addbtn = C.ui.createButton({
-		width: 70,
+		width: 110,
 		top: 45,
 		right: 90,
-		title: "+",
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
 		k_click: function(){
 			if (!editing){
 				pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
@@ -60,6 +61,7 @@ C.ui.createSkillListView = function() {
 		top: 45,
 		right: 10,
 		zIndex: 5,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		k_click: function() {
 			if (editing) {
 				stopEditing();
@@ -131,6 +133,7 @@ C.ui.createSkillListView = function() {
 	
 	function updateButtons(){
 		editbtn.title = C.content.getText("skillist_btn_" + (editing ? "done" : "edit"));
+		editbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing?"save":"edit")+".png";
 		listsbtn.title = C.content.getText("skillist_btn_backtolists");
 		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("skillist_btn_addskill");
@@ -141,7 +144,8 @@ C.ui.createSkillListView = function() {
 	function renderTable(){
 		table.setData(C.content.getListSkills(listid).map(function(r,i){
 			return K.create({
-				hasChild: true,
+				//hasChild: true,
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				SkillId: r.SkillId,
 				ModuleId: r.ModuleId,
 				ListItemId: r.ListItemId,

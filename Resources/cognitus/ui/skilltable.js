@@ -22,11 +22,16 @@ C.ui.createSkillTable = function(o, callback) {
 				sections.push(modulesection);
 			}
 			Ti.API.log("---- module "+moduleid);
-			var submodules = C.content.getModuleWithSubModules(moduleid);
-			for (var submoduleid in submodules) {
+			var submodules = C.content.getModuleWithSubModules(moduleid),
+				numberofsubmodules = 0,
+				submoduleid;
+			for(submoduleid in submodules){
+				numberofsubmodules++;
+			}
+			for (submoduleid in submodules) {
 				Ti.API.log("---- ---- submodule " + submoduleid);
 				var section = Ti.UI.createTableViewSection();
-				if (submoduleid !== "NONE") {
+				if (numberofsubmodules > 1) { //submoduleid !== "NONE") {
 					headers++;
 					var header = K.create({
 						k_type: "View",
@@ -34,7 +39,7 @@ C.ui.createSkillTable = function(o, callback) {
 						backgroundColor: "#red",
 						k_children: [{
 							k_type: "Label",
-							text: C.content.getText("module_"+submoduleid + "_title")
+							text: C.content.getText(submoduleid === "NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid + "_title")
 						}]
 					});
 					section.headerView = header;
@@ -44,6 +49,7 @@ C.ui.createSkillTable = function(o, callback) {
 					var x = excluded.indexOf(skillid) != -1;
 					rows++;
 					section.add(Ti.UI.createTableViewRow({
+						rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 						skillid: skillid,
 						height: rowheight,
 						moduleid: moduleid,

@@ -13,7 +13,7 @@ C.ui.createSelectSkillModal = function(){
 		selectedrow = null;
 		view.visible = true;
 		sellabel.text = C.content.getText("selectskillmodal_instruction");
-		cancelbtn.title = C.content.getText("selectskillmodal_btn_cancel");
+		//cancelbtn.title = C.content.getText("selectskillmodal_btn_cancel");
 		var lastoffset = 50, totaloffset = 50;
 		table.render(undefined,excluded);
 	}
@@ -66,11 +66,12 @@ C.ui.createSelectSkillModal = function(){
 	panel.add(sellabel);
 	
 	var cancelbtn = C.ui.createButton({
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
 		k_type: "Button",
 		top: 10,
 		height: 30,
 		left: 10,
-		width: 70,
+		width: 30,
 		k_click: cancel
 	});
 	panel.add(cancelbtn); 

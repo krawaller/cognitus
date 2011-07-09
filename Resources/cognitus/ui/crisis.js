@@ -8,8 +8,6 @@ C.ui.createCrisisView = function(){
 	
 	function stopEditing(){
 		editing = false;
-		C.content.setCrisisNumber(dialtextfield.value);
-		chosencrisisnumber = dialtextfield.value;
 		dialtextfield.blur();
 		updateButtons();
 	}
@@ -23,26 +21,29 @@ C.ui.createCrisisView = function(){
 		dialtextfield.visible = editing;
 		dialbtn.visible = !editing;
 		chosencrisislistid  = C.content.getCrisisList();
-		chosencrisisnumber = C.content.getCrisisNumber();
-		dialtextfield.value = chosencrisisnumber || "";
+		dialtextfield.value = C.content.getCrisisNumber() || "";
 		dialtextfield.hintText = C.content.getText("crisis_number_hinttext");
 		editbtn.title = C.content.getText("crisis_btn_"+(editing ? "stopedit" : "startedit"));
+		editbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing?"save":"edit")+".png";
 		gotolistbtn.title = editing ? C.content.getText("crisis_btn_changelist") : chosencrisislistid ? C.content.getListTitle(chosencrisislistid) : C.content.getText("crisis_nolist");
+		gotolistbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing ? "list" : "goto")+".png";
 		gotolistbtn.opacity = chosencrisislistid ? 1 : 0.5;
-		dialbtn.title = chosencrisisnumber ? chosencrisisnumber : C.content.getText("crisis_nonumber");
-		dialbtn.opacity = chosencrisisnumber ? 1 : 0.5;
+		dialbtn.title = dialtextfield.value || C.content.getText("crisis_nonumber");
+		dialbtn.opacity = dialtextfield.value ? 1 : 0.5;
 	}
 	
 	var gotolistbtn = C.ui.createButton({
 		top: 60,
 		left:20,
 		width: 160,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 		k_click: function(){
 			if (!editing && chosencrisislistid){
 				pb.pub("/navto","skillist",{ListId:chosencrisislistid});
 			} else if (editing){
 				pb.pub("/showselectlistmodal",[],function(listid){
 					C.content.setCrisisList(listid);
+					C.content.setCrisisNumber(dialtextfield.value);
 					stopEditing();
 				});
 			}
@@ -62,8 +63,8 @@ C.ui.createCrisisView = function(){
 		left: 20,
 		width: 160,
 		k_click: function(){
-			if (chosencrisisnumber){
-				Ti.Platform.openURL("tel:"+chosencrisisnumber);
+			if (dialtextfield.value){
+				Ti.Platform.openURL("tel:"+dialtextfield.value);
 			}
 		}
 	});
@@ -76,6 +77,7 @@ C.ui.createCrisisView = function(){
 		height: 30,
 		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
 		width: 160,
+		keyboardType:Titanium.UI.KEYBOARD_NUMBER_PAD,
 		visible: false
 	});
 	view.add(dialtextfield);
@@ -85,8 +87,10 @@ C.ui.createCrisisView = function(){
 		right: 20,
 		width: 60,
 		zIndex: 100,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		k_click: function(){
 			if (editing){
+				C.content.setCrisisNumber(dialtextfield.value);
 				stopEditing();
 			} else {
 				startEditing();
@@ -95,7 +99,7 @@ C.ui.createCrisisView = function(){
 	});
 	view.add(editbtn);
 	
-	var chosencrisislistid,chosencrisisnumber;
+	var chosencrisislistid;
 	view.render = function(){
 		Ti.API.log("CRISIS RENDER!");
 		stopEditing();

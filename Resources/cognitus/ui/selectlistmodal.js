@@ -13,11 +13,14 @@ C.ui.createSelectListModal = function(){
 		selectedrow = null;
 		view.visible = true;
 		sellabel.text = C.content.getText("selectlistmodal_instruction");
-		cancelbtn.title = C.content.getText("selectlistmodal_btn_cancel");
+		//cancelbtn.title = C.content.getText("selectlistmodal_btn_cancel");
+		Ti.API.log("PREPARING TO SHOW LIST OF LISTS!");
 		view.k_children.panel.k_children.table.setData(C.content.getMyListsWithSkillCount().map(function(l){
 			var x = excluded.indexOf(l.ListId) != -1;
 			return K.create({
 				k_type: "TableViewRow",
+				className: x ? "excluded" : "available",
+				rightImage: x ? undefined : Ti.Filesystem.resourcesDirectory+"/images/icons/select.png",
 				ListId: l.ListId,
 				selected: false,
 				listtitle: l.title,
@@ -81,7 +84,8 @@ C.ui.createSelectListModal = function(){
 		k_type: "Button",
 		top: 40,
 		left: 10,
-		width: 70,
+		width: 30,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
 		k_click: cancel
 	});
 	view.k_children.panel.add(cancelbtn);

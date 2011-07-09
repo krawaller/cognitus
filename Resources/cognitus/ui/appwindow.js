@@ -1,3 +1,16 @@
+/*
+Creates main app window, and deals with navigation.
+Includes these files:
+  htmlview.js
+  title.js
+  helpmodal.js
+  notesmodal.js
+  tabstructure(2).js
+  selectskillmodal.js
+  selectlistmodal.js
+  controlpanel.js
+*/
+
 C.ui.createAppWindow = function(appstructure) {
 	var newlistid = (function(){
 		var max = 0;
@@ -43,6 +56,9 @@ C.ui.createAppWindow = function(appstructure) {
     var lists = {},
     	pages = {};
 	processContent(appstructure,lists,pages,newlistid(),[], [], 1);
+	C.state.pages = pages;
+	C.state.lists = lists;
+	
 
 
     // ***************** Creating the window object and adding the pages
@@ -51,9 +67,9 @@ C.ui.createAppWindow = function(appstructure) {
         exitOnClose: true,
         orientationModes: [
 			Titanium.UI.PORTRAIT,
-			Titanium.UI.UPSIDE_PORTRAIT,
+			/*Titanium.UI.UPSIDE_PORTRAIT,
 			Titanium.UI.LANDSCAPE_LEFT,
-			Titanium.UI.LANDSCAPE_RIGHT
+			Titanium.UI.LANDSCAPE_RIGHT*/
 		],
 		opacity: 1,
         fullscreen: true,
@@ -63,7 +79,7 @@ C.ui.createAppWindow = function(appstructure) {
 	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	//Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 	var swipedir;
-	var GRADIENTBREDTH = 30;
+	var GRADIENTBREDTH = 12;
 	var frame = K.create({
 		k_type: "View",
 		top: 40,
@@ -76,12 +92,12 @@ C.ui.createAppWindow = function(appstructure) {
 			height: 1,
 			top: 0,
 			backgroundColor: "#000"
-		},{
+		},/*{
 			k_type: "View",
 			width: 1,
 			left: 0,
 			backgroundColor: "#000"
-		},{
+		},*/{
 			visible: false,
 			k_type: "View",
 			k_id: "gradientportrait",
@@ -156,7 +172,7 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	function toggleControls(){
 		C.state.showingTabs = !C.state.showingTabs;
-		anchor.title = C.state.showingTabs ? "↑" : "↓";
+		//anchor.title = C.state.showingTabs ? "↑" : "↓";
 		pb.pub("/adjustframe");
 	}
 	
@@ -166,7 +182,8 @@ C.ui.createAppWindow = function(appstructure) {
 		width: 30,
 		left: 5,
 		top: 5,
-		title: "↓",
+		//title: "↓",
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/navigation.png",
 		k_click: toggleControls
 	});
 	
@@ -178,103 +195,31 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	win.showPageTitle = function(){titleview.visible = true;};
 	win.hidePageTitle = function(){titleview.visible = false;};
+	
+	// ******************** Help modal
+	
+	Ti.include("/cognitus/ui/helpmodal.js");
+	var helpmodal = C.ui.createHelpModal();
+	win.add(helpmodal);
+	
+	// ******************** Notes modal
+	
+	Ti.include("/cognitus/ui/notesmodal.js");
+	var notesmodal = C.ui.createNotesModal();
+	win.add(notesmodal);
+	
 
+	// ******************** Top-screen Control panel
 
-	var controlpanel = K.create({
+	Ti.include("/cognitus/ui/controlpanelview.js");
+	var controlpanel = C.ui.createControlPanelView();
+	
+	K.create({
 		k_type: "View",
 		width: Ti.Platform.displayCaps.platformWidth,
 		top: 0
 	});
 	win.add(controlpanel);
-
-
-	// ********************* Help func
-	
-	var helpbtn = C.ui.createButton({
-		width: 50,
-		left: 50,
-		top: 5,
-		title: "help",
-		k_click: function(){
-			if (C.state.currentHelp){
-				pb.pub("/showhelpmodal",C.state.currentHelp);
-			} else {
-				C.ui.showMessage("sys_nohelp");
-			}
-		}
-	});
-	function updateHelp(pageid){
-		var help = C.content.getHelpForPageId(pageid,C.state.lang);
-		if (help){
-			helpbtn.title = "HELP";
-			C.state.currentHelp = help;
-		} else {
-			helpbtn.title = "help";
-			delete C.state.currentHelp;
-		}
-	};
-	pb.sub("/navto",updateHelp);
-	pb.sub("/updatetext",function(){
-		updateHelp(C.state.currentPageId);
-	});
-	controlpanel.add(helpbtn);
-	
-	Ti.include("/cognitus/ui/helpmodal.js");
-	var helpmodal = C.ui.createHelpModal();
-	win.add(helpmodal);
-
-	// ********************* Size btn
-	
-	var sizebtn = C.ui.createButton({
-		width: 50,
-		top: 5,
-		left: 170,
-		title: "size",
-		k_click: function(){
-			var rowdefaultheight = 25, rowbigheight = 40;
-			var currenth = Ti.App.Properties.getInt("tabrowheight"),
-				newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
-			Ti.App.Properties.setInt("tabrowheight",newh);
-			pb.pub("/settabrowheight",newh);
-			pb.pub("/adjustframe");
-		}
-	});
-	controlpanel.add(sizebtn);
-
-	// ********************* Language test
-
-	var langtest = C.ui.createButton({
-		width: 50,
-		top: 5,
-		left: 230,
-		title: "lang",
-		k_click: function(e){
-			var lang = C.state.lang;
-			C.state.lang = (lang == "en" ? "sv" : lang == "sv" ? "textid" : "en");
-			C.state.currentTitle = C.content.getText(C.state.currentPageId+"_title");
-			pb.pub("/updatetext");
-		}
-	});
-	controlpanel.add(langtest);
-
-
-	// ********************* Note button
-	var notebutton = C.ui.createButton({
-		width: 50,
-		top: 5,
-		left: 110,
-		title: "note",
-		k_click: function(e){
-			pb.pub("/shownotesmodal");
-		}
-	});
-	controlpanel.add(notebutton);
-	pb.sub("/hasnote",function(note){
-		notebutton.title = note ? "NOTE" : "note";
-	});
-	Ti.include("/cognitus/ui/notesmodal.js");
-	var notesmodal = C.ui.createNotesModal();
-	win.add(notesmodal);
 
 
 
@@ -287,13 +232,13 @@ C.ui.createAppWindow = function(appstructure) {
 
 	// ******************* Frame adjustment
 	
-	Ti.Gesture.addEventListener('orientationchange', function(e){
+	/*Ti.Gesture.addEventListener('orientationchange', function(e){
 		pb.pub("/adjustframe");
-	});
+	});*/
 	
 	pb.sub("/adjustframe",function(){
 		if (C.state.showingTabs){
-			var tabheight = C.state.currentPage.listhistory.length * Ti.App.Properties.getInt("tabrowheight"),
+			var tabheight = C.state.currentPage.listhistory.length * (Ti.App.Properties.getBool("usingbigtabs") ? 40 : 25),
 				platformheight = Ti.Platform.displayCaps.platformHeight,
 				platformwidth = Ti.Platform.displayCaps.platformWidth;
 			if (C.state.orientation === "landscape"){
@@ -334,6 +279,30 @@ C.ui.createAppWindow = function(appstructure) {
 			frame.bottom = 0;
 		}
 	});
+
+
+	// ******************** Skill-related controls
+	Ti.include("/cognitus/ui/skillpanelview.js");
+	var skillpanel = C.ui.createSkillPanelView();
+	frame.add(skillpanel);
+
+
+	
+	// ********************* Skill selection panel logic *********************
+	Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
+	var selectskillmodal = C.ui.createSelectSkillModal();
+	win.add(selectskillmodal);
+	
+	
+	// ********************* List selection panel logic *********************
+	Ti.include("/cognitus/ui/selectlistmodal.js");
+	var selectlistmodal = C.ui.createSelectListModal();
+	win.add(selectlistmodal);
+
+	// ********************** Settings modal
+	Ti.include("/cognitus/ui/settingsmodal.js");
+	var settingsmodal = C.ui.createSettingsModal();
+	win.add(settingsmodal);
 
 
 
@@ -408,11 +377,11 @@ C.ui.createAppWindow = function(appstructure) {
 		
 		// skill crisis list btn
 		if (topage.using === "skill"){
-			listitembutton.visible = true;
+			skillpanel.visible = true;
 			//listitembutton.title = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
 		}
 		if (topage.using !== "skill"){
-			listitembutton.visible = false;
+			skillpanel.visible = false;
 		}
 		
 		if (topage.view.render){
@@ -424,37 +393,6 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/arrivedatnewpage",topage,argstouse);
 	});
 
-	// ******************** Add skill to list button
-	var listitembutton = C.ui.createButton({
-		top: 50,
-		right: 5,
-		height: 30,
-		width: 30,
-		visible: 0,
-		zIndex: 5,
-		k_click: function(e){
-			pb.pub("/showselectlistmodal",C.content.getListsIncludingSkill(C.state.lastArgs.SkillId),function(listid){
-				pb.pub("/navto","skillist",{ListId: listid, addSkillId: C.state.lastArgs.SkillId});
-			});
-		},
-		title: "+"
-	});
-	frame.add(listitembutton);
-
-
-	
-	// ********************* Skill selection panel logic *********************
-	Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
-	var selectskillmodal = C.ui.createSelectSkillModal();
-	win.add(selectskillmodal);
-	
-	// ********************* List selection panel logic *********************
-	Ti.include("/cognitus/ui/selectlistmodal.js");
-	var selectlistmodal = C.ui.createSelectListModal();
-	win.add(selectlistmodal);
-	
-	
-	
 
 	// ******************** Start logic
 
