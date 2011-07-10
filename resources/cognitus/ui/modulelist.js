@@ -1,10 +1,8 @@
 C.ui.createModuleListView = function(o){
 	var view = C.ui.createPage({});
-	view.add( C.ui.createLabel(function(){return "modulelist_description";},{height:100,top:20}) );
-	var table = K.create({
-		k_type: "TableView",
-		top: 100,
-		//style: Titanium.UI.iPhone.TableViewStyle.GROUPED,
+	view.add( C.ui.createLabel("modulelist_description",{top:0,k_class:"descriptionlabel"}) );
+	var table = C.ui.createTableView({
+		top: 30,
 		k_click: function(e){
 			pb.pub("/navto","moduleexplanation",{ModuleId:e.row.ModuleId});
 		}
@@ -12,12 +10,11 @@ C.ui.createModuleListView = function(o){
 	view.add(table);
 	view.render = function(arg){
 		table.setData(C.content.getAllSkillModules().map(function(m){
-			return {
-				//hasChild: true,
+			return C.ui.createTableViewRow({	
 				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				ModuleId: m,
-				title: C.content.getText("module_"+m+"_title")
-			};
+				rowmainlabel: C.content.getText("module_"+m+"_title")
+			});
 		}));
 	};
 	return view;

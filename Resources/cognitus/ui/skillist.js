@@ -1,10 +1,15 @@
 C.ui.createSkillListView = function() {
 	var view = C.ui.createPage({});
-	var table = K.create({
-		k_type: "TableView",
+	
+	view.add(C.ui.createLabel("skillist_label_description",{
+		top: 3,
+		k_class: "descriptionlabel"
+	}));
+	
+	var table = C.ui.createTableView({
 		editable: true,
 		moveable: true,
-		top: 100,
+		top: 80,
 		k_events: {
 			"delete": function(e) {
 				C.content.removeSkillFromList(e.row.ListItemId, e.row.priority);
@@ -26,7 +31,7 @@ C.ui.createSkillListView = function() {
 	
 	var listsbtn = C.ui.createButton({
 		width: 70,
-		top: 45,
+		top: 25,
 		left: 10,
 		title: C.content.getText("skillist_btn_backtolists"),
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
@@ -38,7 +43,7 @@ C.ui.createSkillListView = function() {
 	
 	var addbtn = C.ui.createButton({
 		width: 110,
-		top: 45,
+		top: 25,
 		right: 90,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
 		k_click: function(){
@@ -58,7 +63,7 @@ C.ui.createSkillListView = function() {
 	var editbtn = C.ui.createButton({
 		height: 30,
 		width: 70,
-		top: 45,
+		top: 25,
 		right: 10,
 		zIndex: 5,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
@@ -72,59 +77,52 @@ C.ui.createSkillListView = function() {
 	});
 	view.add(editbtn);
 	
+	var newtitleval,prevtitleval;
+	pb.sub("/newtitleeditvalue",function(v){
+		if (editing) {newtitleval = v;}
+	});
+	
 	function stopEditing(){
 		table.editing = false;
 		editing = false;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
-			if (r.k_children.usagetextfield.oldvalue != r.k_children.usagetextfield.value){
-				r.k_children.usagetextfield.oldvalue = r.k_children.usagetextfield.value;
-				//Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.k_children.usagetextfield.value]);
-				C.content.updateSkillUsageText(r.ListItemId,r.k_children.usagetextfield.value);
+			if (r.textfield.oldvalue != r.textfield.value){
+				r.textfield.oldvalue = r.textfield.value;
+				//Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.textfield.value]);
+				C.content.updateSkillUsageText(r.ListItemId,r.textfield.value);
 			}
 		});
 		setTimeout(function(){
 			renderTable();
 		},300);
-		if (titletextfield.value !== titletextfield.oldvalue){
-			C.content.updateListTitle(listid,titletextfield.value);
-			pb.pub("/setnewtitle",titletextfield.value);
-			titletextfield.oldvalue = titletextfield.value;
+		if (newtitleval !== prevtitleval){
+			C.content.updateListTitle(listid,newtitleval);
+			pb.pub("/setnewtitle",newtitleval);
 		}
-		titletextfield.blur();
-		titletextfield.visible = false;
-		pb.pub("/showtitle");
+		pb.pub("/hidetitleedit");
 		updateButtons();
 	}
-	
-	var titletextfield = K.create({
-		k_type: "TextField",
-		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-		height: 30,
-		width: 230,
-		k_id: "titletextfield",
-		top: 10,
-		visible: false,
-		zIndex: 5
-	});
-	view.add(titletextfield);
 	
 	function startEditing(focusfirst){
 		/*if (!(table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length)){
 			C.ui.showMessage("need items!","error"); // TODO - lang!
 			return;
 		}*/
-		titletextfield.visible = true;
-		pb.pub("/hidetitle");
+		prevtitleval = C.content.getListTitle(listid);
+		newtitleval = prevtitleval;
+		pb.pub("/showtitleedit",prevtitleval,C.content.getText("mylists_field_namehint"));
 		editing = true;
 		table.editing = true;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			setTimeout(function(){
 				/*r.k_children.modulelabel.visible = false;
 				r.k_children.skillabel.visible = false;*/
-				r.k_children.usagelabel.visible = false; 
-				r.k_children.usagetextfield.visible = true;
+				r.visible = false; 
+				r.textfield.visible = true;
 				if (!i && focusfirst){
-					r.k_children.usagetextfield.focus();
+					setTimeout(function(){
+						r.textfield.focus();
+					},50);
 				}
 			},300);
 		});
@@ -137,21 +135,18 @@ C.ui.createSkillListView = function() {
 		listsbtn.title = C.content.getText("skillist_btn_backtolists");
 		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("skillist_btn_addskill");
-		titletextfield.hintText = C.content.getText("mylists_field_namehint");
 		addbtn.opacity = (editing ? 0.5 : 1);
 	}
 	
 	function renderTable(){
 		table.setData(C.content.getListSkills(listid).map(function(r,i){
-			return K.create({
-				//hasChild: true,
+			var row = C.ui.createTableViewRow({
 				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 				SkillId: r.SkillId,
 				ModuleId: r.ModuleId,
 				ListItemId: r.ListItemId,
 				priority: r.priority,
-				height: 60,
-				k_type: "TableViewRow",
+				height: 60/*,
 				k_children: [{
 					k_type: "View",
 					height: 22,
@@ -210,16 +205,44 @@ C.ui.createSkillListView = function() {
 					value: r.usagetext,
 					oldvalue: r.usagetext,
 					visible: false
-				}]
+				}]*/
 			});
+			var toplabelcontainer = Ti.UI.createView({top: 0,height: 22,layout:"horizontal",width:"auto",left: 5});
+			toplabelcontainer.add(C.ui.createLabel(undefined,{
+				k_class: "rowtopleftlabel",
+				text: C.content.getText("module_"+r.ModuleId+"_title")+" -"
+			}));
+			toplabelcontainer.add(C.ui.createLabel(undefined,{
+				k_class: "rowtoprightlabel",
+				text: C.content.getText("skill_"+r.SkillId+"_title")
+			}));
+			row.add(toplabelcontainer);
+			row.toplabelcontainer = toplabelcontainer;
+			var usagelabel = C.ui.createLabel(undefined,{
+				k_class: "rowmainwrittenlabel",
+				text: r.usagetext
+			});
+			row.add(usagelabel);
+			row.usagelabel = usagelabel;
+			var textfield = C.ui.createTextField({
+				width: 230,
+				k_id: "usagetextfield",
+				hintText: C.content.getText("skillist_field_usagehint"),
+				top: 20,
+				left: 15,
+				visible: false,
+				value: r.usagetext,
+				oldvalue: r.usagetext
+			});
+			row.add(textfield);
+			row.textfield = textfield;
+			return row;
 		}));
 	}
 	
 	var listid; 
 	view.render = function(args){
 		listid = args.ListId;
-		titletextfield.value = C.content.getListTitle(listid);
-		titletextfield.oldvalue = titletextfield.value;
 		if (editing){
 			stopEditing();
 		}

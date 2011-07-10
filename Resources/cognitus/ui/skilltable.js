@@ -33,29 +33,20 @@ C.ui.createSkillTable = function(o, callback) {
 				var section = Ti.UI.createTableViewSection();
 				if (numberofsubmodules > 1) { //submoduleid !== "NONE") {
 					headers++;
-					var header = K.create({
-						k_type: "View",
-						height: headerheight,
-						backgroundColor: "#red",
-						k_children: [{
-							k_type: "Label",
-							text: C.content.getText(submoduleid === "NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid + "_title")
-						}]
-					});
-					section.headerView = header;
+					section.headerView = C.ui.createTableSectionHeader(C.content.getText(submoduleid === "NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid + "_title"));
 				}
 				submodules[submoduleid].forEach(function(skillid) {
 					Ti.API.log("---- --- ---- " + skillid);
 					var x = excluded.indexOf(skillid) != -1;
 					rows++;
-					section.add(Ti.UI.createTableViewRow({
+					section.add(C.ui.createTableViewRow({
 						rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 						skillid: skillid,
-						height: rowheight,
+						//height: rowheight,
 						moduleid: moduleid,
 						submoduleid: submoduleid,
 						selected: false,
-						title: (x ? "(" : "") + C.content.getText("skill_" + skillid + "_title") + (x ? ")" : ""),
+						rowmainlabel: (x ? "(" : "") + C.content.getText("skill_" + skillid + "_title") + (x ? ")" : ""),
 						backgroundColor: x ? "#CCC" : "#FFF",
 						excluded: x
 					}));

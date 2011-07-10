@@ -11,15 +11,64 @@
         return view;
     }
 	
+	function createTextArea(o){
+		var textarea = K.create(K.merge(o||{},{
+			k_type: "TextArea"
+		}));
+		return textarea;
+	}
 	
+	function createTableView(o){
+		var table = K.create(K.merge(o||{},{
+			k_type: "TableView"
+		}));
+		return table;
+	}
 	
-    function createLabel(id, o) {
+	function createTextField(o){
+		var textfield = K.create(K.merge(o||{},{
+			k_type: "TextField"
+		}));
+		return textfield;
+	}
+	
+	function createTableSectionHeader(text){
+		var header = K.create({
+			k_type: "View",
+			k_class: "tableheaderview"
+		});
+		header.add(createLabel(undefined,{
+			text: text,
+			k_class: "tableheaderlabel"
+		}));
+		return header;
+	}
+	
+	function createTableViewRow(o){
+		var row = K.create(K.merge(o||{},{
+			k_type: "TableViewRow",
+			height: 50
+		}));
+		if (o.rowtoplabel){
+			row.add(createLabel(undefined,{
+				k_class: "rowtoplabel",
+				text: o.rowtoplabel
+			}));
+		}
+		if (o.rowmainlabel){
+			row.add(createLabel(undefined,{
+				k_class: "rowmainlabel",
+				text: o.rowmainlabel
+			}));
+		}
+		return row;
+	}
+	
+    function createLabel(id,o) {
         var label = K.create(K.merge(o || {},{
             k_type: "Label",
-			textAlign: "left",
-			verticalAlign: "top",
-			left: 10,
-			k_class: "textLabel"
+			k_class: "descriptionlabel"
+			//,top: 0
         }));
 		if (id){
         	C.content.setObjectText(label, id);
@@ -55,6 +104,11 @@
         createPage: createPage,
         createLabel: createLabel,
 		createButton: createButton,
+		createTableView: createTableView,
+		createTableViewRow: createTableViewRow,
+		createTextField: createTextField,
+		createTableSectionHeader: createTableSectionHeader,
+		createTextArea: createTextArea
     };
 
 })();

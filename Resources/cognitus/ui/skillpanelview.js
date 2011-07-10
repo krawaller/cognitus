@@ -1,7 +1,7 @@
 (function(){
 	C.ui.createSkillPanelView = function(){
 		var panel = Ti.UI.createView({
-			top: 50,
+			top: 0,
 			height: 50,
 			zIndex: 5,
 			visible: 0

@@ -2,8 +2,13 @@ C.ui.createCrisisView = function(){
 	var view = C.ui.createPage({});
 	
 	view.add(C.ui.createLabel("crisis_gotolist",{
-		top: 40,
-		left: 20
+		k_class: "descriptionlabel",
+		top: 30
+	}));
+	
+	view.add(C.ui.createLabel("crisis_number",{
+		k_class: "descriptionlabel",
+		top: 130
 	}));
 	
 	function stopEditing(){
@@ -33,8 +38,7 @@ C.ui.createCrisisView = function(){
 	}
 	
 	var gotolistbtn = C.ui.createButton({
-		top: 60,
-		left:20,
+		top: 50,
 		width: 160,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 		k_click: function(){
@@ -52,15 +56,10 @@ C.ui.createCrisisView = function(){
 	view.add(gotolistbtn);
 	
 	var editing = false;
-	
-	view.add(C.ui.createLabel("crisis_number",{
-		top: 100,
-		left: 20
-	}));
+
 	
 	var dialbtn = C.ui.createButton({
-		top: 120,
-		left: 20,
+		top: 150,
 		width: 160,
 		k_click: function(){
 			if (dialtextfield.value){
@@ -70,12 +69,8 @@ C.ui.createCrisisView = function(){
 	});
 	view.add(dialbtn);
 	
-	var dialtextfield = K.create({
-		k_type: "TextField",
-		top: 120,
-		left: 20,
-		height: 30,
-		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+	var dialtextfield = C.ui.createTextField({
+		top: 150,
 		width: 160,
 		keyboardType:Titanium.UI.KEYBOARD_NUMBER_PAD,
 		visible: false
@@ -83,8 +78,7 @@ C.ui.createCrisisView = function(){
 	view.add(dialtextfield);
 	
 	var editbtn = C.ui.createButton({
-		top: 100,
-		right: 20,
+		top: 230,
 		width: 60,
 		zIndex: 100,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",

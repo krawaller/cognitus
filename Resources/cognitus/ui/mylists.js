@@ -4,34 +4,12 @@ C.ui.createMyListsView = function(o) {
 	
 	function renderTable() {
 		table.setData(C.content.getMyListsWithSkillCount().map(function(r, i) {
-			return K.create({
-				//hasChild: true,
+			var row = C.ui.createTableViewRow({
 				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
-				k_type: "TableViewRow",
 				list: r,
 				ListId: r.ListId,
 				priority: r.priority,
 				k_children: [{
-					k_class: "rowMainLabel",
-					text: r.title + " (" + r.skillcount + ")",
-					height: 30,
-					width: 230,
-					left: 15,
-					visible: true
-				},
-				{
-					k_type: "TextField",
-					borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-					height: 30,
-					width: 195,
-					left: 15,
-					bottom: 5,
-					visible: false,
-					hintText: C.content.getText("mylists_field_namehint"),
-					value: r.title,
-					oldvalue: r.title,
-					visible: false
-				},{
 					k_type: "Button",
 					k_id: "crisisbutton",
 					height: 25,
@@ -51,15 +29,38 @@ C.ui.createMyListsView = function(o) {
 					}
 				}]
 			});
+			var mainlabel = C.ui.createLabel(undefined,{
+				k_class: "rowmainlabel",
+				text: r.title + " (" + r.skillcount + ")",
+			});
+			row.add(mainlabel);
+			row.mainlabel = mainlabel;
+			
+			var textfield = C.ui.createTextField({
+				width: 195,
+				left: 15,
+				bottom: 5,
+				visible: false,
+				hintText: C.content.getText("mylists_field_namehint"),
+				value: r.title,
+				oldvalue: r.title,
+				visible: false
+			});
+			row.add(textfield);
+			row.textfield = textfield;
+			
+			return row;
 		}));
 	}
 
-	var view = C.ui.createPage(o || {}),
-		table = K.create({
-		k_type: "TableView",
+	var view = C.ui.createPage({});
+	
+	view.add(C.ui.createLabel("mylists_label_description",{top:3,k_class:"descriptionlabel"}));
+	
+	var table = C.ui.createTableView({
 		editable: true,
 		moveable: true,
-		top: 100,
+		top: 60,
 		k_events: {
 			"delete": function(e) {
 				C.content.removeList(e.row.ListId, e.row.priority);
@@ -77,12 +78,14 @@ C.ui.createMyListsView = function(o) {
 	});
 	view.add(table);
 
+	
+
 	var editing = false;
 	var btn = C.ui.createButton({
 		height: 30,
 		width: 70,
-		top: 45,
-		right: 10,
+		top: 25,
+		left: 80,
 		zIndex: 5,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		k_click: function() {
@@ -97,7 +100,7 @@ C.ui.createMyListsView = function(o) {
 
 	var addbtn = C.ui.createButton({
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
-		width: 70, top: 45, right: 100, k_click: function(){
+		width: 70, top: 25, right: 80, k_click: function(){
 			if (!editing){
 				C.content.addNewList();
 				renderTable();
@@ -111,9 +114,9 @@ C.ui.createMyListsView = function(o) {
 		table.editing = false;
 		editing = false;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
-			if (r.k_children[1].oldvalue != r.k_children[1].value){
-				r.k_children[1].oldvalue = r.k_children[1].value;
-				C.content.updateListTitle(r.ListId,r.k_children[1].value);
+			if (r.textfield.oldvalue != r.textfield.value){
+				r.textfield.oldvalue = r.textfield.value;
+				C.content.updateListTitle(r.ListId,r.textfield.value);
 			}
 		});
 		setTimeout(function(){
@@ -131,8 +134,8 @@ C.ui.createMyListsView = function(o) {
 		table.editing = true;
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			setTimeout(function(){
-				r.k_children[0].visible = false;
-				r.k_children[1].visible = true;
+				r.mainlabel.visible = false;
+				r.textfield.visible = true;
 				r.k_children.crisisbutton.visible = true;
 				r.k_children.crisisbutton.enabled = true;
 				if (added && !i){

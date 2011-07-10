@@ -99,7 +99,7 @@
 			top: 170,
 			width: 140,
 			height: 60,
-			left: 40,
+			//left: 40,
 			selectionIndicator: true
 		});
 		panel.add(picker);

@@ -79,7 +79,7 @@ C.ui.createAppWindow = function(appstructure) {
 	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	//Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 	var swipedir;
-	var GRADIENTBREDTH = 12;
+	var GRADIENTBREDTH = 15;
 	var frame = K.create({
 		k_type: "View",
 		top: 40,
@@ -92,18 +92,23 @@ C.ui.createAppWindow = function(appstructure) {
 			height: 1,
 			top: 0,
 			backgroundColor: "#000"
+		},{
+			k_type: "View",
+			top: 60,
+			k_id: "pagecontainer"
 		},/*{
 			k_type: "View",
 			width: 1,
 			left: 0,
 			backgroundColor: "#000"
 		},*/{
-			visible: false,
+			visible: true,
 			k_type: "View",
 			k_id: "gradientportrait",
 			height: GRADIENTBREDTH,
 			bottom: 0,
-			backgroundGradient: {
+			backgroundImage: Ti.Filesystem.resourcesDirectory+"/images/gradient6.png"
+			/*backgroundGradient: {
 				type: 'linear',
 				colors: [{
 					color: 'transparent',
@@ -112,7 +117,7 @@ C.ui.createAppWindow = function(appstructure) {
 					color: '#ffffff',
 					position: 1.0
 				}]
-			}
+			}*/
 		},{
 			visible: false,
 			k_type: "View",
@@ -149,13 +154,14 @@ C.ui.createAppWindow = function(appstructure) {
 	});
 	win.add(frame);
 	var gradientportrait = frame.k_children.gradientportrait,
-		gradientlandscape = frame.k_children.gradientlandscape;
+		gradientlandscape = frame.k_children.gradientlandscape,
+		pagecontainer = frame.k_children.pagecontainer;
 
     for (var pid in pages) {
         var page = pages[pid];
 		if (page.view){
         	page.view.visible = false;
-        	frame.add(page.view);
+        	pagecontainer.add(page.view);
 		}
     }
 	C.state.frame = frame;
@@ -165,7 +171,7 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	Ti.include("/cognitus/ui/htmlview.js");
 	var textview = C.ui.createHtmlView({});
-	frame.add(textview);
+	pagecontainer.add(textview);
 
 	// controls
 	
@@ -284,7 +290,7 @@ C.ui.createAppWindow = function(appstructure) {
 	// ******************** Skill-related controls
 	Ti.include("/cognitus/ui/skillpanelview.js");
 	var skillpanel = C.ui.createSkillPanelView();
-	frame.add(skillpanel);
+	pagecontainer.add(skillpanel);
 
 
 	

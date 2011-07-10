@@ -1,7 +1,7 @@
 C.ui.createModuleTrainSessionListView = function(o){
 	var view = C.ui.createPage({}), pageargs;
 	var newbtn = C.ui.createButton({
-		top: 50,
+		top: 30,
 		width: 120,
 		left: 20,
 		textid: "moduletrainsessionlist_btn_new",
@@ -18,14 +18,14 @@ C.ui.createModuleTrainSessionListView = function(o){
 		table.editing = false;
 	}
 	var deletebtn = C.ui.createButton({
-		top: 50,
+		top: 30,
 		width: 120,
 		right: 20,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		textid: "moduletrainsessionlist_btn_delete"
 	});
 	var savebtn = C.ui.createButton({
-		top: 50,
+		top: 30,
 		width: 120,
 		right: 20,
 		visible: false,
@@ -45,11 +45,10 @@ C.ui.createModuleTrainSessionListView = function(o){
 	view.add(deletebtn);
 	view.add(newbtn);
 	view.add(C.ui.createLabel("moduletrainsessionlist_label",{
-		top: 80,
-		height: 20
+		top: 0
 	}));
-	var table = Ti.UI.createTableView({
-		top: 100,
+	var table = C.ui.createTableView({
+		top: 60,
 		editable: true
 	});
 	table.addEventListener("delete",function(e){
@@ -68,11 +67,11 @@ C.ui.createModuleTrainSessionListView = function(o){
 		var rowheight = 50;
 		Ti.API.log(C.content.getModuleQuizSessions(args.ModuleId));
 		table.setData(C.content.getModuleQuizSessions(args.ModuleId).map(function(q){
-			return Ti.UI.createTableViewRow({
+			return C.ui.createTableViewRow({
 				hasChild: true,
 				height: rowheight,
 				className: "session",
-				title: q.quizdate,
+				rowmainlabel: q.quizdate,
 				quizdate: q.quizdate
 			});
 		}));

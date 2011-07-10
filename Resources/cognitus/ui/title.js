@@ -3,30 +3,45 @@
 	C.ui.createTitleView = function(){
 		var titleview = K.create({
 	        k_type: "View",
-	        height: 35,
-	        top: 5,
-	        width: 200,
-	        left: 50,
-	        borderWidth: 1,
+	        height: 60,
+	        top: 1,
+			backgroundColor: "yellow",
 			zIndex: 5,
-	        borderColor: "#000",
-	        backgroundColor: "#CCC",
-	        k_children: [,{
-				k_id: "supertitle",
-				k_type: "Label",
-				font: {fontSize:10},
-				top: 0
-			},{
-				top: 12,
-				k_type: "Label",
-				k_id: "maintitle",
-	            font: {fontSize:14,fontWeight:"bold"}
-	        }]
+	        k_children: [{
+				k_type: "ImageView",
+				image: Ti.Filesystem.resourcesDirectory +"/images/headline3.png",
+				height: 15,
+				bottom: 10
+			}]
 	    });
+	
+		var supertitle = C.ui.createLabel(undefined,{
+			top: 0,
+			k_class: "titlesuperlabel"
+		});
+		titleview.add(supertitle);
+		
+		var maintitle = C.ui.createLabel(undefined,{
+			top: 14,
+			k_class: "titlemainlabel"
+		});
+		titleview.add(maintitle);
+	
+		var editfield = C.ui.createTextField({
+			visible: false,
+			top: 2,
+			width: 230,
+		});
+		titleview.add(editfield);
+		editfield.addEventListener("change",function(e){
+			Ti.API.log("new value: "+e.value);
+			pb.pub("/newtitleeditvalue",e.value);
+		});
+	
 		function setTitle(main,sup){
-			titleview.k_children.maintitle.text = main;
-			titleview.k_children.supertitle.text = sup;
-			titleview.k_children.maintitle.top = (sup ? 12 : 7);
+			maintitle.text = main;
+			supertitle.text = sup;
+			//titleview.k_children.maintitle.top = (sup ? 12 : 7);
 		};
 		function generateNewTitle(){
 			var newtitle = C.utils.getPageTitle();
@@ -37,6 +52,19 @@
 	    pb.sub("/setnewtitle", setTitle);
 		pb.sub("/showtitle",function(){titleview.visible = true;});
 		pb.sub("/hidetitle",function(){titleview.visible = false;});
+		pb.sub("/showtitleedit",function(val,hint){
+			editfield.value = val;
+			editfield.hintText = hint;
+			editfield.visible = true;
+			supertitle.visible = false;
+			maintitle.visible = false;
+		});
+		pb.sub("/hidetitleedit",function(){
+			editfield.blur();
+			editfield.visible = false;
+			supertitle.visible = true;
+			maintitle.visible = true;
+		});
 		return titleview;
 	};
 	

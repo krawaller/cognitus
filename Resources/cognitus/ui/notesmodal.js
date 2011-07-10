@@ -54,8 +54,7 @@ C.ui.createNotesModal = function(){
 				a = C.utils.pageNameToArgs(n.pagename),
 				pageid = a[0],
 				args = a[1];
-			return K.create({
-				k_type: "TableViewRow",
+			return C.ui.createTableViewRow({
 				hasChild: true,
 				//title: (title.sup?title.sup+" - ":"")+title.main,
 				pagename: n.pagename,
@@ -64,24 +63,8 @@ C.ui.createNotesModal = function(){
 				args: args,
 				pageid: pageid,
 				note: n.note,
-				k_children: [{
-					k_type: "Label",
-					text: title.sup,
-					textAlign: "left",
-					left: 25,
-					top: 2,
-					height: 12,
-					font: {fontSize: 10},
-					color: "#666"
-				},{
-					k_type: "Label",
-					text: title.main,
-					textAlign: "left",
-					left: 5,
-					bottom: 0,
-					height: 30,
-					font: {fontSize: 16, fontWeight: "bold"}
-				}]
+				rowtoplabel: title.sup,
+				rowmainlabel: title.main
 			});
 		}));
 	}
@@ -114,48 +97,39 @@ C.ui.createNotesModal = function(){
 				bottom: 0,
 				top: 0,
 			//	backgroundColor: "blue",
-				k_children: [{
-					k_type: "TextArea",
-					top: 140,
-					bottom: 50,
-					left: 10,
-					right: 10,
-					k_id: "textarea",
-					borderWidth: 2
-				}]
 			},{
 				k_id: "notelist",
 				k_type: "View",
-				visible: false,
-				k_children: [{
-					k_type: "TableView",
-					k_id: "table",
-					editable: true,
-					top: 90
-				}]
+				visible: false
 			}]
 		}]
 	});
 	
 	var panel = view.k_children.panel,
 		note = panel.k_children.note,
-		notelist = panel.k_children.notelist,
-		textarea = note.k_children.textarea,
-		table = notelist.k_children.table;
+		notelist = panel.k_children.notelist;
+
+	var textarea = C.ui.createTextArea({
+		top: 160, bottom: 50, left: 10, right: 10
+	});
+	note.add(textarea);
+
+	var table = C.ui.createTableView({top:110});
+	notelist.add(table);
 
 	
 	var titlesuplabel = C.ui.createLabel(undefined,{
-		top: 100, textAlign: "center", height: 15, font: {fontSize: 10}, text: "FOO", color: "#666" //, backgroundColor: "blue"
+		top: 110, k_class: "inpagesuptitlelabel"
 	});
 	note.add(titlesuplabel);
 	
 	var titlemainlabel = C.ui.createLabel(undefined,{
-		top: 115, textAlign: "center", height: 25, font: {fontSize: 14, fontWeight: "bold"}, text: "FOO" //, backgroundColor: "green"
+		top: 125, k_class: "inpagemaintitlelabel"
 	});
 	note.add(titlemainlabel)
 	
 	var gotobtn = C.ui.createButton({
-		top: 60, left: 10, width: 120,
+		top: 70, left: 10, width: 120,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 		textid: "notesmodal_btn_goto"
 	});
@@ -184,7 +158,7 @@ C.ui.createNotesModal = function(){
 	});
 	
 	var seelistbtn = C.ui.createButton({
-		top: 60, right: 10, width: 120,
+		top: 70, right: 10, width: 120,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/list.png",
 		textid: "notesmodal_btn_seelist"
 	});
@@ -194,11 +168,11 @@ C.ui.createNotesModal = function(){
 	});
 	
 	notelist.add(C.ui.createLabel("notesmodal_label_list",{
-		top: 50
+		top: 40
 	}));
 	
 	note.add(C.ui.createLabel("notesmodal_label_instruction",{
-		top: 5, left: 50
+		top: 40
 	}));
 	
 	
@@ -233,7 +207,7 @@ C.ui.createNotesModal = function(){
 	
 	
 	var editbtn = C.ui.createButton({
-		top: 60,
+		top: 70,
 		width: 100,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		right: 10,
@@ -243,7 +217,7 @@ C.ui.createNotesModal = function(){
 	editbtn.addEventListener("click",startEdit);
 	
 	var donebtn = C.ui.createButton({
-		top: 60,
+		top: 70,
 		width: 100,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/done.png",
 		right: 10,

@@ -3,7 +3,7 @@
 var webviewmaster = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/master.html").read().text;
 /*function updateWebView(w,html){
 	w.html = webviewmaster.replace(/XXXCONTENTXXX/,html);
-	/*Ti.API.log("webviewheight: "+w.evalJS("document.height;"));
+	Ti.API.log("webviewheight: "+w.evalJS("document.height;"));
 	w.height = Math.max(w.evalJS("document.height;"),200)+50;
 }*/
 
@@ -15,7 +15,7 @@ C.ui.createHtmlView = function(){
 		scalesPageToFit:true,
 	   // contentWidth:'auto',
 	    contentHeight:'auto',
-		top: 30
+		top: 1
 	});
 	webview.addEventListener("load",function(e){
 		var newheight = Math.max(webview.evalJS("document.height;"),200); // TODO - make this change!
@@ -29,7 +29,7 @@ C.ui.createHtmlView = function(){
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
 		view.scrollTo(0,0);
-		webview.top = (topage.using === "skill" ? 80 : 30);
+		webview.top = (topage.using === "skill" ? 40 : 0);
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
 				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 
@@ -39,6 +39,6 @@ C.ui.createHtmlView = function(){
 		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,C.content.getText(id));
 	};
 	return view;
-}
+};
 
 })();

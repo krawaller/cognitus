@@ -17,7 +17,8 @@ C.ui.createTestView = function(o){
 		top: 200,
 		style: Ti.UI.iPhone.ActivityIndicatorStyle.DARK
 	});
-	view.add(spinner);
+	Ti.API.log(["SHIT",view,view.add,typeof view.add]);
+	//view.add(spinner);
 	var btn = K.create({
 		k_type: "Button",
 		top: 60,

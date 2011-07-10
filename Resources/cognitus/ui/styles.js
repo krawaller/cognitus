@@ -27,15 +27,109 @@
 			height: "auto",
 			textAlign: "center",
 			verticalAlign: "top",
-			verticalTextAlign: "top"
+			verticalTextAlign: "center"
 		},
-		rowMainLabel: {
+		TextArea: {
+			borderWidth: 2
+		},
+		TextField: {
+			borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
+			height: 30	
+		},
+		// styleclasses
+		titlesuperlabel: {
+			font: {fontSize:13},
+			color: "#113a6f"	
+		},
+		titlemainlabel: {
+			color: "#113a6f",
+            font: {fontSize:17,fontWeight:"bold"}
+		},
+		descriptionlabel: {
+			height: 15,
+			color: "blue",
+			textAlign: "center",
+			font: {
+				fontFamily: theme.fontFamily,
+				fontSize: 14
+			}
+		},
+		rowtoplabel: {
+			top: 0,
+			left: 20,
 			textAlign: "left",
 			font: {
-				fontWeight: "bold",
-				fontFamily: theme.fontFamily,
-				fontSize: 15
+				fontSize: 10
 			}
+		},
+		quizswitch: { // only used in moduletrainsession
+			
+		},
+		quizslider: { // only used in moduletrainsession
+			
+		},
+		quizquestionlabel: { // used in moduletrainsession, headlining each question
+			left: 10,
+			height: 20,
+			top: 5,
+			color: "green"	
+		},
+		rowmainlabel: {
+			top: 18,
+			left: 5,
+			textAlign: "left",
+			color: "#000",
+			font: {
+				fontSize: 16,
+				fontWeight: "bold"
+			}
+		},
+		rowmainwrittenlabel: {
+			top: 20,
+			left: 25,
+			height: 30,
+			textAlign: "left",
+			font: {
+				fontSize: 14,
+				fontStyle: "italic"
+			}
+		},
+		rowtopleftlabel: {
+			top: 0,
+			left: 0,
+			height: 20,
+			width: "auto",
+			font: {
+				fontSize: 10
+			},
+			color: "#666"
+		},
+		rowtoprightlabel: {
+			top: 0,
+			height: 20,
+			left: 5,
+			width: "auto",
+			color: "#444",
+			font: {
+				fontSize: 12,
+				fontWeight: "normal",//"bold",
+				textDecoration: "underline"
+			}
+		},
+		tableheaderlabel: {
+			color: "#FFF",
+			textAlign: "left",
+			left: 20
+		},
+		tableheaderview: {
+			height: 20,
+			backgroundColor: "#red"
+		},
+		inpagesuptitlelabel: { // used in notesmodal
+			textAlign: "center", height: 15, font: {fontSize: 10}, color: "#666"
+		},
+		inpagemaintitlelabel: { // used in notesmodal
+			textAlign: "center", height: 25, font: {fontSize: 14, fontWeight: "bold"}
 		}
 	};
 })();
