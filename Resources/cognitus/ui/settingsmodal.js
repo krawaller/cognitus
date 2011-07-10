@@ -59,10 +59,15 @@
 			top: 85,
 			width: 50,
 			height: 30,
-			value: !Ti.App.Properties.getBool("usingbigtabs")
+			value: Ti.App.Properties.getBool("usingbigtabs")
 		});
 		panel.add(bigswitch);
+		var startchange = true;
 		bigswitch.addEventListener("change",function(e){
+			if (startchange){
+				startchange = false;
+				return;
+			}
 			Ti.API.log("CHANGE!!!!");
 			Ti.App.Properties.setBool("usingbigtabs",!Ti.App.Properties.getBool("usingbigtabs"));
 			pb.pub("/settabrowheight",Ti.App.Properties.getBool("usingbigtabs") ? 40 : 25);
