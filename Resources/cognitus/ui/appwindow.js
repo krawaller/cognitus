@@ -286,13 +286,6 @@ C.ui.createAppWindow = function(appstructure) {
 		}
 	});
 
-
-	// ******************** Skill-related controls
-	Ti.include("/cognitus/ui/skillpanelview.js");
-	var skillpanel = C.ui.createSkillPanelView();
-	pagecontainer.add(skillpanel);
-
-
 	
 	// ********************* Skill selection panel logic *********************
 	Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
@@ -380,7 +373,7 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/updatetitle");
 		pb.pub("/updatetabs",pageid);
 		pb.pub("/adjustframe");
-		
+		/*
 		// skill crisis list btn
 		if (topage.using === "skill"){
 			skillpanel.visible = true;
@@ -388,7 +381,7 @@ C.ui.createAppWindow = function(appstructure) {
 		}
 		if (topage.using !== "skill"){
 			skillpanel.visible = false;
-		}
+		}*/
 		
 		if (topage.view.render){
 			topage.view.render(argstouse,topage);

@@ -26,10 +26,21 @@ C.ui.createHtmlView = function(){
 	});
 	view.add(webview);
 
+	// ******************** Skill-related controls
+	Ti.include("/cognitus/ui/skillpanelview.js");
+	var skillpanel = C.ui.createSkillPanelView();
+	view.add(skillpanel);
+
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
+		if (topage.using === "skill"){
+			skillpanel.visible = true;
+			webview.top = 40;
+		} else {
+			skillpanel.visible = false;
+			webview.top = 0;
+		}
 		view.scrollTo(0,0);
-		webview.top = (topage.using === "skill" ? 40 : 0);
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
 				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 
