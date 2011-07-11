@@ -130,6 +130,20 @@
 		},
 		inpagemaintitlelabel: { // used in notesmodal
 			textAlign: "center", height: 25, font: {fontSize: 14, fontWeight: "bold"}
+		},
+		keyboardtoolbarbutton: { // used in ui.js for textfield and textarea
+			k_type: "Button"
+		},
+		keyboardtoolbarlabel: { // used in ui.js for textfield and textarea
+			k_type: "Label",
+			width: 200,
+			height: 20,
+			font: {
+				fontSize: 14,
+				fontWeight: "bold"
+			},
+			backgroundColor: "#12BC0F",
+			color: "#FFF"
 		}
 	};
 })();

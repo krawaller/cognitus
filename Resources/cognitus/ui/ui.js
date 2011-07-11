@@ -1,5 +1,9 @@
 (function() {
 
+	var flexSpace = Titanium.UI.createButton({
+		systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
+	});
+
     function createPage(o) {
 		o = K.merge({
 			k_type:"ScrollView",
@@ -12,10 +16,7 @@
     }
 	
 	function createTextArea(o){
-		var textarea = K.create(K.merge(o||{},{
-			k_type: "TextArea"
-		}));
-		return textarea;
+		return createTextField(o,true);
 	}
 	
 	function createTableView(o){
@@ -25,9 +26,27 @@
 		return table;
 	}
 	
-	function createTextField(o){
+	function createTextField(o,area){
+		var donebtn = K.create({
+			k_class: "keyboardtoolbarbutton",
+			title: "!!!",
+			k_click: function(e){
+				textfield.blur();
+			}
+		});
+		var toolbartitle = K.create({
+			k_class: "keyboardtoolbarlabel",
+			text: o.hintText || o.toolbarTitle
+		});
 		var textfield = K.create(K.merge(o||{},{
-			k_type: "TextField"
+			k_type: area ? "TextArea" : "TextField",
+			keyboardToolbar:[flexSpace,toolbartitle,flexSpace, donebtn],
+			k_events: {
+				focus: function(e){
+					Ti.API.log(["ok!",textfield.hintText,textfield.toolbarTitle,(textfield.hintText || textfield.toolbarTitle || "XXX")]);
+					toolbartitle.text = (textfield.hintText || textfield.toolbarTitle || "");
+				}
+			}
 		}));
 		return textfield;
 	}

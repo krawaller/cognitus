@@ -17,6 +17,9 @@
 		var db = Ti.Database.open(DBNAME),
 			res = db.execute(sql,varargs || []),
 			ret;
+		if (!res){
+			throw "Error! Error! "+sql+" ||| "+prop;
+		}
 		if(res.isValidRow()){
 			ret = res.fieldByName(prop);
 		}
