@@ -12,8 +12,6 @@ C.ui.createSelectSkillModal = function(){
 		selectcb = a_selectcb;
 		selectedrow = null;
 		view.visible = true;
-		sellabel.text = C.content.getText("selectskillmodal_instruction");
-		//cancelbtn.title = C.content.getText("selectskillmodal_btn_cancel");
 		var lastoffset = 50, totaloffset = 50;
 		table.render(undefined,excluded);
 	}
@@ -56,14 +54,7 @@ C.ui.createSelectSkillModal = function(){
 	var table = C.ui.createSkillTable({top:50,left: 0},click);
 	panel.add(table);
 	
-	var sellabel = Ti.UI.createLabel({
-		top: 10,
-		height: 30,
-		right: 10,
-		width: 180,
-		text: "MOO"
-	});
-	panel.add(sellabel);
+	panel.add(C.ui.createLabel("selectskillmodal_instruction",{top:10}));
 	
 	var cancelbtn = C.ui.createButton({
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",

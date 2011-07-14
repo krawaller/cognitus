@@ -121,9 +121,19 @@
 			textAlign: "left",
 			left: 20
 		},
+		tableheaderheavylabel: {
+			color: "#FFF",
+			textAlign: "left",
+			left: 30,
+			font: {fontWeight:"bold"}
+		},
 		tableheaderview: {
 			height: 20,
 			backgroundColor: "#red"
+		},
+		tableheaderheavyview: { // used in skilltable.js, where we have double section levels
+			height: 30,
+			backgroundColor: "#blue"
 		},
 		inpagesuptitlelabel: { // used in notesmodal
 			textAlign: "center", height: 15, font: {fontSize: 10}, color: "#666"

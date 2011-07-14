@@ -51,14 +51,14 @@
 		return textfield;
 	}
 	
-	function createTableSectionHeader(text){
+	function createTableSectionHeader(text,heavy){
 		var header = K.create({
 			k_type: "View",
-			k_class: "tableheaderview"
+			k_class: (heavy ? "tableheaderheavyview" : "tableheaderview")
 		});
 		header.add(createLabel(undefined,{
 			text: text,
-			k_class: "tableheaderlabel"
+			k_class: "tableheader"+(heavy?"heavy":"")+"label"
 		}));
 		return header;
 	}

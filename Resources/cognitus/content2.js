@@ -8,14 +8,18 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00104';
+		DBNAME = 'COGNITUS_00107';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
 	
 	function dbSinglePropQuery(sql,prop,varargs){
-		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql,varargs || []),
+		var db = Ti.Database.open(DBNAME);
+		if (!db || typeof db.execute !== "function"){
+			Ti.API.log(sql);
+			Ti.API.log("GADDÄMMM!");
+		}
+		var res = db.execute(sql,varargs || []),
 			ret;
 		if (!res){
 			throw "Error! Error! "+sql+" ||| "+prop;
@@ -242,18 +246,28 @@
 			return dbQuery(sql,mould);
 		},
 		getListTitle: function(listid){
-			return dbSinglePropQuery("SELECT lists.title FROM lists WHERE listid = '"+listid+"'","title");
+			return !!listid.match(/PRELIST/)
+				? dbSinglePropQuery("SELECT prelistswithdetails."+C.state.lang+" as title FROM prelistswithdetails WHERE listid = '"+listid+"'","title")
+			 	: dbSinglePropQuery("SELECT lists.title FROM lists WHERE listid = '"+listid+"'","title");
 		},
 		addNewList: function(){
 			dbOperation("UPDATE lists SET priority = priority+1");
 			dbOperation("INSERT INTO lists (listid,title,priority) VALUES ('list"+Date.now()+"', '"+C.content.getText("mylists_btn_newlist")+"', 0)");
 		},
 		getMyListsWithSkillCount: function(){
-			var VIEWSsql = "SELECT listid, title, priority, skillcount FROM mylists ORDER BY priority",
-				NOVIEWSsql = "SELECT listid, title, priority, skillcount FROM (SELECT listid, title, priority, (SELECT COUNT(skillid) FROM listitems WHERE listitems.listid = lists.listid) AS 'skillcount' FROM lists WHERE listid NOT LIKE 'PRELIST%') as mylists ORDER BY priority",
+			var sql = "SELECT listid, title, priority, skillcount FROM mylists ORDER BY priority",
 				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"};
-			Ti.API.log("WOO!");
-			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould);
+			return dbQuery(sql,mould);
+		},
+		getPreListsWithDetails: function(lang){
+			var sql = "SELECT skillcount, listid, "+lang+" as title, priority FROM prelistswithdetails",
+				mould = {ListId: "listid",title:"title",priority:"priority",skillcount:"skillcount"};
+			return dbQuery(sql,mould);
+		},
+		getPreListSkills: function(listid,lang){
+			var sql = "SELECT listid, skillid, moduleid, priority, listitemid, "+lang+" as usagetext FROM prelistitemswithdetails",
+				mould = {ListId:"listid",priority:"priority",usagetext:"usagetext",SkillId:"skillid",ModuleId:"moduleid",ListItemId:"listitemid"};
+			return dbQuery(sql,mould);
 		},
 		getNewsItem: function(created){
 			var sql = "SELECT created, title_sv, title_en, title_de, title_es, title_fr, html_sv, html_en, html_de, html_es, html_fr FROM newswithdetails WHERE created = ?",

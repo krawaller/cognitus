@@ -2,40 +2,63 @@ C.ui.createMyListsView = function(o) {
 	
 	var crisislistid;
 	
-	function renderTable() {
-		table.setData(C.content.getMyListsWithSkillCount().map(function(r, i) {
-			var row = C.ui.createTableViewRow({
-				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
-				list: r,
+	
+	function createRow(r,i,locked){
+		var row = C.ui.createTableViewRow({
+			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			list: r,
+			ListId: r.ListId,
+			locked: locked,
+			priority: r.priority/*,
+			k_children: [{
+				k_type: "Button",
+				k_id: "crisisbutton",
+				height: 25,
+				width: 25,
+				right: 15,
+				top: 10,
+				visible: r.ListId === crisislistid,
+				enabled: false,
 				ListId: r.ListId,
-				priority: r.priority,
-				k_children: [{
-					k_type: "Button",
-					k_id: "crisisbutton",
-					height: 25,
-					width: 25,
-					right: 15,
-					top: 10,
-					visible: r.ListId === crisislistid,
-					enabled: false,
-					ListId: r.ListId,
-					title: r.ListId === crisislistid ? "K" : "-",
-					k_click: function(e){
-						crisislistid = e.source.ListId;
-						C.content.setCrisisList(e.source.ListId);
-						table.data[0].rows.forEach(function(r){
-							r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
-						});
-					}
-				}]
+				title: r.ListId === crisislistid ? "K" : "-",
+				k_click: function(e){
+					crisislistid = e.source.ListId;
+					C.content.setCrisisList(e.source.ListId);
+					table.data[0].rows.forEach(function(r){
+						r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
+					});
+				}
+			}]*/
+		});
+		var mainlabel = C.ui.createLabel(undefined,{
+			k_class: "rowmainlabel",
+			text: r.title + " (" + r.skillcount + ")"
+		});
+		row.add(mainlabel);
+		row.mainlabel = mainlabel;
+		
+		if (!locked){
+			var crisisbutton = K.create({
+				k_type: "Button",
+				height: 25,
+				width: 25,
+				right: 15,
+				top: 10,
+				visible: r.ListId === crisislistid,
+				enabled: false,
+				ListId: r.ListId,
+				title: r.ListId === crisislistid ? "K" : "-",
+				k_click: function(e){
+					crisislistid = e.source.ListId;
+					C.content.setCrisisList(e.source.ListId);
+					table.data[0].rows.forEach(function(r){
+						r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
+					});
+				}
 			});
-			var mainlabel = C.ui.createLabel(undefined,{
-				k_class: "rowmainlabel",
-				text: r.title + " (" + r.skillcount + ")",
-			});
-			row.add(mainlabel);
-			row.mainlabel = mainlabel;
-			
+			row.add(crisisbutton);
+			row.crisisbutton = crisisbutton;
+
 			var textfield = C.ui.createTextField({
 				width: 195,
 				left: 15,
@@ -48,9 +71,33 @@ C.ui.createMyListsView = function(o) {
 			});
 			row.add(textfield);
 			row.textfield = textfield;
-			
-			return row;
-		}));
+		}
+		
+		
+		if (locked){
+			row.editable = false;
+			row.moveable = false;
+		}
+		return row;
+	}
+	
+	function renderTable() {
+		var prelists = Ti.UI.createTableViewSection({
+			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_prelists")),
+			editable: false,
+			moveable: false
+		});
+		C.content.getPreListsWithDetails(C.state.lang).forEach(function(r,i){
+			prelists.add(createRow(r,i,true));
+		});
+		var mylists = Ti.UI.createTableViewSection({
+			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))			
+		});
+		C.content.getMyListsWithSkillCount().forEach(function(r,i){
+			mylists.add(createRow(r,i));
+		});
+		table.setData([prelists,mylists]);
+		//table.setData((C.content.getMyListsWithSkillCount()/*C.content.getPreListsWithDetails(C.state.lang)*/).map(createRow));
 	}
 
 	var view = C.ui.createPage({});
@@ -113,7 +160,8 @@ C.ui.createMyListsView = function(o) {
 	function stopEditing(){
 		table.editing = false;
 		editing = false;
-		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
+		table.data && table.data[1] && table.data[1].rows && table.data[1].rows.forEach(function(r,i){
+			if (r.locked) return;
 			if (r.textfield.oldvalue != r.textfield.value){
 				r.textfield.oldvalue = r.textfield.value;
 				C.content.updateListTitle(r.ListId,r.textfield.value);
@@ -126,20 +174,21 @@ C.ui.createMyListsView = function(o) {
 	}
 	
 	function startEditing(added){
-		if ((!table.data[0]) || (!table.data[0].rows) || (table.data[0].rows.length == 0)){
+		if ((!table.data[1]) || (!table.data[1].rows) || (table.data[1].rows.length == 0)){
 			C.ui.showMessage("Hey! Need to add rows first!");
 			return;
 		}
 		editing = true;
 		table.editing = true;
-		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
+		table.data && table.data[1] && table.data[1].rows && table.data[1].rows.forEach(function(r,i){
+			if (r.locked) return;
 			setTimeout(function(){
 				r.mainlabel.visible = false;
 				r.textfield.visible = true;
-				r.k_children.crisisbutton.visible = true;
-				r.k_children.crisisbutton.enabled = true;
+				r.crisisbutton.visible = true;
+				r.crisisbutton.enabled = true;
 				if (added && !i){
-					r.k_children[1].focus();
+					r.textfield.focus();
 				}
 			},300);
 		});

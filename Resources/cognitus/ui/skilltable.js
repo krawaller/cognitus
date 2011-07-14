@@ -17,7 +17,7 @@ C.ui.createSkillTable = function(o, callback) {
 		modules.forEach(function(moduleid) {
 			if (showmoduleheader){
 				var modulesection = Ti.UI.createTableViewSection({
-					headerTitle: C.content.getText(moduleid+"_title")
+					headerView: C.ui.createTableSectionHeader(C.content.getText("module_"+moduleid+"_title"),true)
 				});
 				sections.push(modulesection);
 			}

@@ -136,113 +136,61 @@ C.ui.createSkillListView = function() {
 		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("skillist_btn_addskill");
 		addbtn.opacity = (editing ? 0.5 : 1);
+		addbtn.visible = !isprelist;
+		editbtn.visible = !isprelist;
+	}
+	
+	function createRow(r){
+		var row = C.ui.createTableViewRow({
+			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			SkillId: r.SkillId,
+			ModuleId: r.ModuleId,
+			ListItemId: r.ListItemId,
+			priority: r.priority,
+			height: 60
+		});
+		var toplabelcontainer = Ti.UI.createView({top: 0,height: 22,layout:"horizontal",width:"auto",left: 5});
+		toplabelcontainer.add(C.ui.createLabel(undefined,{
+			k_class: "rowtopleftlabel",
+			text: C.content.getText("module_"+r.ModuleId+"_title")+" -"
+		}));
+		toplabelcontainer.add(C.ui.createLabel(undefined,{
+			k_class: "rowtoprightlabel",
+			text: C.content.getText("skill_"+r.SkillId+"_title")
+		}));
+		row.add(toplabelcontainer);
+		row.toplabelcontainer = toplabelcontainer;
+		var usagelabel = C.ui.createLabel(undefined,{
+			k_class: "rowmainwrittenlabel",
+			text: r.usagetext
+		});
+		row.add(usagelabel);
+		row.usagelabel = usagelabel;
+		var textfield = C.ui.createTextField({
+			width: 230,
+			k_id: "usagetextfield",
+			hintText: C.content.getText("skillist_field_usagehint"),
+			top: 20,
+			left: 15,
+			visible: false,
+			value: r.usagetext,
+			oldvalue: r.usagetext
+		});
+		row.add(textfield);
+		row.textfield = textfield;
+		return row;
 	}
 	
 	function renderTable(){
-		table.setData(C.content.getListSkills(listid).map(function(r,i){
-			var row = C.ui.createTableViewRow({
-				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
-				SkillId: r.SkillId,
-				ModuleId: r.ModuleId,
-				ListItemId: r.ListItemId,
-				priority: r.priority,
-				height: 60/*,
-				k_children: [{
-					k_type: "View",
-					height: 22,
-					layout: "horizontal",
-					top: 0,
-					width: "auto",
-					left: 5,
-					k_children: [{
-						k_type: "Label",
-						k_id: "modulelabel",
-						left: 0,
-						height: 20,
-						width: "auto",
-						font: {
-							fontSize: 10
-						},
-						color: "#666",
-						text: C.content.getText("module_"+r.ModuleId+"_title")+" -"
-					},{
-						k_type: "Label",
-						k_id: "skillabel",
-						height: 20,
-						left: 5,
-						width: "auto",
-						color: "#444",
-						font: {
-							fontSize: 12,
-							fontWeight: "normal",//"bold",
-							textDecoration: "underline"
-						},
-						text: C.content.getText("skill_"+r.SkillId+"_title")
-					}]
-				},{
-					k_type: "Label",
-					top: 20,
-					left: 25,
-					height: 30,
-					textAlign: "left",
-					k_id: "usagelabel",
-					width: $$.platformWidth,
-					font: {
-						fontSize: 14,
-						fontStyle: "italic"
-					},
-					text: r.usagetext
-				},{
-					k_type: "TextField",
-					borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-					height: 30,
-					width: 230,
-					k_id: "usagetextfield",
-					hintText: C.content.getText("skillist_field_usagehint"),
-					top: 20,
-					left: 15,
-					visible: false,
-					value: r.usagetext,
-					oldvalue: r.usagetext,
-					visible: false
-				}]*/
-			});
-			var toplabelcontainer = Ti.UI.createView({top: 0,height: 22,layout:"horizontal",width:"auto",left: 5});
-			toplabelcontainer.add(C.ui.createLabel(undefined,{
-				k_class: "rowtopleftlabel",
-				text: C.content.getText("module_"+r.ModuleId+"_title")+" -"
-			}));
-			toplabelcontainer.add(C.ui.createLabel(undefined,{
-				k_class: "rowtoprightlabel",
-				text: C.content.getText("skill_"+r.SkillId+"_title")
-			}));
-			row.add(toplabelcontainer);
-			row.toplabelcontainer = toplabelcontainer;
-			var usagelabel = C.ui.createLabel(undefined,{
-				k_class: "rowmainwrittenlabel",
-				text: r.usagetext
-			});
-			row.add(usagelabel);
-			row.usagelabel = usagelabel;
-			var textfield = C.ui.createTextField({
-				width: 230,
-				k_id: "usagetextfield",
-				hintText: C.content.getText("skillist_field_usagehint"),
-				top: 20,
-				left: 15,
-				visible: false,
-				value: r.usagetext,
-				oldvalue: r.usagetext
-			});
-			row.add(textfield);
-			row.textfield = textfield;
-			return row;
-		}));
+		table.setData((isprelist ? C.content.getPreListSkills(listid,C.state.lang) : C.content.getListSkills(listid)).map(createRow));
 	}
 	
-	var listid; 
+	var listid, 
+		isprelist;
+		
 	view.render = function(args){
 		listid = args.ListId;
+		isprelist = !!(listid.match(/PRELIST/));
 		if (editing){
 			stopEditing();
 		}
