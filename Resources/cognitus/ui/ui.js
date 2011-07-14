@@ -4,6 +4,49 @@
 		systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 	});
 
+	function createModal(o){
+		o = o || {};
+		var closefun = function(){
+			if (o.onClose){
+				o.onClose();
+			}
+			modal.visible = false;
+		};
+		var showfun = function(arg){
+			if (o.onShow){
+				o.onShow(arg);
+			}
+			modal.visible = true;
+		};
+		var modal = K.create({
+			k_class: "modalbackgroundview",
+			visible: false,
+			k_click: function(e){
+				if (e.source === modal){
+					closefun();
+				}
+			}
+		});
+		var panel = K.create({
+			k_class: "modalpanelview"
+		});
+		modal.add(panel);
+		var closebtn = C.ui.createButton({
+			k_type: "Button",
+			top: 10,
+			left: 10,
+			width: 30,
+			zIndex: 1000,
+			image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
+			k_click: closefun
+		});
+		panel.add(closebtn);
+		modal.close = closefun;
+		modal.show = showfun;
+		modal.panel = panel;
+		return modal;
+	}
+
     function createPage(o) {
 		o = K.merge({
 			k_type:"ScrollView",
@@ -43,7 +86,7 @@
 			keyboardToolbar:[flexSpace,toolbartitle,flexSpace, donebtn],
 			k_events: {
 				focus: function(e){
-					toolbartitle.text = (textfield.hintText || textfield.toolbarTitle || "");
+					toolbartitle.text = ((textfield.hintText) || (textfield.toolbarTitle) || "");
 				}
 			}
 		}));
@@ -52,9 +95,8 @@
 				o.containingTable && o.containingTable.scrollToIndex(o.rowIndex);
 			});
 			textfield.addEventListener("blur",function(e){
-				Ti.API.log("ADJUSTING!");
 				o.containingView && o.containingView.scrollTo(0,0);
-				o.containingTable && o.containingTable.scrollToIndex(0)
+				o.containingTable && o.containingTable.scrollToIndex(0);
 			});
 		}
 		return textfield;
@@ -136,7 +178,8 @@
 		createTableViewRow: createTableViewRow,
 		createTextField: createTextField,
 		createTableSectionHeader: createTableSectionHeader,
-		createTextArea: createTextArea
+		createTextArea: createTextArea,
+		createModal: createModal
     };
 
 })();

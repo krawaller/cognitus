@@ -1,56 +1,13 @@
 C.ui.createHelpModal = function(){
 	
-	var view = K.create({
-		k_type: "View",
-		backgroundColor: "rgba(0,0,0,0.8)",
-		visible: false,
-		zIndex: 150,
-		k_id: "modal",
-		k_click: function(e) {
-			if (e.source.k_id === "modal") {
-				close();
-			}
-		},
-		k_children: [{
-			k_type: "View",
-			borderSize: 1,
-			borderColor: "#000",
-			backgroundColor: "#FFF",
-			top: 20,
-			left: 20,
-			right: 20,
-			bottom: 20,
-			k_id: "panel"
-		}]
-	});
-		
-	function close(){
-		view.visible = false;
-	}
+	var modal = C.ui.createModal();
+
 	
 	
 	function show(helptext){
-		panel.left = 10;
-		panel.right = 10;
-		panel.bottom = 10;
-		view.visible = true;
 		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,helptext);
+		modal.show();
 	}
-	
-	var panel = view.k_children.panel;
-	
-	var closebtn = C.ui.createButton({
-		k_type: "Button",
-		top: 10,
-		height: 30,
-		left: 10,
-		width: 30,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
-		//textid: "helpmodal_btn_close",
-		k_click: close
-	});
-
-	panel.add(closebtn); 
 	
 	//try {
 		Ti.API.log("LDSAÄDLSAPÄDLSA"); // row below crashes if not this line. WTF?!?!
@@ -69,11 +26,11 @@ C.ui.createHelpModal = function(){
 		var newheight = Math.max(webview.evalJS("document.height;"),200); // TODO - make this change!
 		//Ti.API.log("UPDATED WEBVIEW!! LOADDDD! "+newheight);
 		webview.height = newheight;
-		view.contentHeight = newheight;
-		view.contentHeight = "auto";
+		modal.contentHeight = newheight;
+		modal.contentHeight = "auto";
 	});
-	panel.add(webview);
+	modal.panel.add(webview);
 
 
-	return view;
+	return modal;
 };

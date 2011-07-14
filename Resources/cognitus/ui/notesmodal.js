@@ -1,30 +1,10 @@
 C.ui.createNotesModal = function(){
 	
-	function close(){
-		pb.pub("/hasnote",(textarea.value || "").length);
-		view.visible = false;
-	}
+	var modal = C.ui.createModal({
+		onClose: function(){ pb.pub("/hasnote",(textarea.value || "").length); }
+	});
 	
 	var originalnotepagename, currentnotepagename, currentnoteargs, nonotefororiginal;
-	
-	function show(){
-		panel.left = 10;
-		panel.right = 10;
-		panel.bottom = 10;
-		originalnotepagename = C.utils.currentPageName();
-		usernote = C.content.getNoteForPage(originalnotepagename);
-		nonotefororiginal = !usernote;
-		title = C.utils.pageNameToTitle(originalnotepagename);
-		setNote({
-			pageid: C.state.currentPageId,
-			pagename: originalnotepagename,
-			note: usernote,
-			titlemain:title.main,
-			titlesup:title.sup,
-			args: C.state.lastArgs
-		});
-		view.visible = true;
-	}
 	
 	function setNote(o){
 		note.visible = true;
@@ -69,45 +49,11 @@ C.ui.createNotesModal = function(){
 		}));
 	}
 	
-	var view = K.create({
-		k_type: "View",
-		backgroundColor: "rgba(0,0,0,0.8)",
-		visible: false,
-		zIndex: 150,
-		k_id: "modal",
-		k_click: function(e) {
-			if (e.source.k_id === "modal") {
-				close();
-			}
-		},
-		k_children: [{
-			k_type: "View",
-			borderSize: 1,
-			borderColor: "#000",
-			backgroundColor: "#FFF",
-		/*	top: 20,
-			left: 20,
-			right: 20,
-			bottom: 20,*/
-		//	layout: "vertical",
-			k_id: "panel",
-			k_children: [{
-				k_id: "note",
-				k_type: "View",
-				bottom: 0,
-				top: 0,
-			//	backgroundColor: "blue",
-			},{
-				k_id: "notelist",
-				k_type: "View",
-				visible: false
-			}]
-		}]
-	});
-	
-	var panel = view.k_children.panel,
-		note = panel.k_children.note,
-		notelist = panel.k_children.notelist;
+	var panel = modal.panel,
+		note = K.create({k_type:"View",bottom:0,top:0}),
+		notelist = K.create({k_type:"View",bottom:0,top:0,visible:false});
+	panel.add(note);
+	panel.add(notelist);
 
 	var textarea = C.ui.createTextArea({
 		top: 160, bottom: 50, left: 10, right: 10
@@ -126,7 +72,7 @@ C.ui.createNotesModal = function(){
 	var titlemainlabel = C.ui.createLabel(undefined,{
 		top: 125, k_class: "inpagemaintitlelabel"
 	});
-	note.add(titlemainlabel)
+	note.add(titlemainlabel);
 	
 	var gotobtn = C.ui.createButton({
 		top: 70, left: 10, width: 120,
@@ -135,7 +81,7 @@ C.ui.createNotesModal = function(){
 	});
 	note.add(gotobtn);
 	gotobtn.addEventListener("click",function(e){
-		view.visible = false;
+		modal.close();
 		if (currentnotepagename !== originalnotepagename){
 			pb.pub("/navto",currentnotepageid,currentnoteargs);
 		}
@@ -193,19 +139,6 @@ C.ui.createNotesModal = function(){
 		C.content.deleteNote(e.row.pagename);
 	});
 	
-	var closebtn = C.ui.createButton({
-		k_type: "Button",
-		top: 10,
-		height: 30,
-		left: 10,
-		width: 30,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
-		//textid: "notesmodal_btn_close",
-		k_click: close
-	});
-	panel.add(closebtn); 
-	
-	
 	var editbtn = C.ui.createButton({
 		top: 70,
 		width: 100,
@@ -240,7 +173,22 @@ C.ui.createNotesModal = function(){
 	}
 	
 	
-	pb.sub("/shownotesmodal",show);
+	pb.sub("/shownotesmodal",function(){
+		Ti.API.log("WOOOOO!");
+		originalnotepagename = C.utils.currentPageName();
+		usernote = C.content.getNoteForPage(originalnotepagename);
+		nonotefororiginal = !usernote;
+		title = C.utils.pageNameToTitle(originalnotepagename);
+		setNote({
+			pageid: C.state.currentPageId,
+			pagename: originalnotepagename,
+			note: usernote,
+			titlemain:title.main,
+			titlesup:title.sup,
+			args: C.state.lastArgs
+		});
+		modal.show();
+	});
 	
-	return view;
+	return modal;
 };

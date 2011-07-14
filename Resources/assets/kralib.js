@@ -119,6 +119,7 @@
         }
         if (!o.k_type){
             //Ti.API.log(o);
+			Ti.API.log(o);
             throw "What the heck, no type!";
         }
         o.k_children = o.k_children || [];

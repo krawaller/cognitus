@@ -1,55 +1,8 @@
 (function(){
 	C.ui.createSettingsModal = function(){
-		var modal = K.create({
-			k_type: "View",
-			backgroundColor: "rgba(0,0,0,0.8)",
-			visible: false,
-			zIndex: 150,
-			k_id: "modal",
-			k_click: function(e) {
-				if (e.source.k_id === "modal") {
-					close();
-				}
-			},
-			k_children: [{
-				k_type: "View",
-				borderSize: 1,
-				borderColor: "#000",
-				backgroundColor: "#FFF",
-				top: 20,
-				left: 20,
-				right: 20,
-				bottom: 20,
-				k_id: "panel"
-			}]
-		});
-
-		function close(){
-			modal.visible = false;
-		}
+		var modal = C.ui.createModal({});
 		
-		var panel = modal.k_children.panel;
-		
-		var closebtn = C.ui.createButton({
-			k_type: "Button",
-			top: 10,
-			height: 30,
-			left: 10,
-			width: 30,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
-			//textid: "helpmodal_btn_close",
-			k_click: close
-		});
-
-		panel.add(closebtn);
-
-		function show(){
-			panel.left = 10;
-			panel.right = 10;
-			panel.bottom = 10;
-			picker.setSelectedRow(0,{"sv":1,"en":0,"textid":3}[C.state.lang],false);
-			modal.visible = true;
-		}
+		var panel = modal.panel;
 		
 		panel.add(C.ui.createLabel("sys_bigtabs",{
 			top: 60
@@ -76,25 +29,10 @@
 		
 		
 		
-		pb.sub("/showsettingsmodal",show);
-		
-		/*
-		var settingsbtn = C.ui.createButton({
-			width: 30,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/settings.png",
-			top: 5,
-			left: 170,
-			//title: "size",
-			k_click: function(){
-				var rowdefaultheight = 25, rowbigheight = 40;
-				var currenth = Ti.App.Properties.getInt("tabrowheight"),
-					newh = (currenth===rowdefaultheight?rowbigheight:rowdefaultheight);
-				Ti.App.Properties.setInt("tabrowheight",newh);
-				pb.pub("/settabrowheight",newh);
-				pb.pub("/adjustframe");
-			}
+		pb.sub("/showsettingsmodal",function(){
+			picker.setSelectedRow(0,{"sv":1,"en":0,"textid":3}[C.state.lang],false);
+			modal.show();
 		});
-		*/
 		
 		panel.add(C.ui.createLabel("sys_langselect",{
 			top: 140
