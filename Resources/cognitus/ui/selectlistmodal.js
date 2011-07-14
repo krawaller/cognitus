@@ -12,19 +12,19 @@ C.ui.createSelectListModal = function(){
 		selectcb = a_selectcb;
 		selectedrow = null;
 		view.visible = true;
-		sellabel.text = C.content.getText("selectlistmodal_instruction");
+		//sellabel.text = C.content.getText("selectlistmodal_instruction");
 		//cancelbtn.title = C.content.getText("selectlistmodal_btn_cancel");
 		Ti.API.log("PREPARING TO SHOW LIST OF LISTS!");
 		view.k_children.panel.k_children.table.setData(C.content.getMyListsWithSkillCount().map(function(l){
 			var x = excluded.indexOf(l.ListId) != -1;
-			return K.create({
+			return C.ui.createTableViewRow({
 				k_type: "TableViewRow",
 				className: x ? "excluded" : "available",
 				rightImage: x ? undefined : Ti.Filesystem.resourcesDirectory+"/images/icons/select.png",
 				ListId: l.ListId,
 				selected: false,
 				listtitle: l.title,
-				title: (x ? "(" : "")+l.title+" ("+l.skillcount+")"+(x?")":""),
+				rowmainlabel: "SHIT"+(x ? "(" : "")+l.title+" ("+l.skillcount+")"+(x?")":""),
 				backgroundColor: x ? "#CCC" : "#FFF",
 				excluded: x
 			});
@@ -71,14 +71,17 @@ C.ui.createSelectListModal = function(){
 		}]
 	});
 	
-	var sellabel = Ti.UI.createLabel({
+	/*var sellabel = Ti.UI.createLabel({
 		top: 40,
 		height: 30,
 		right: 10,
 		width: 180,
 		text: "..."
 	});
-	view.k_children.panel.add(sellabel);
+	view.k_children.panel.add(sellabel);*/
+	view.k_children.panel.add(C.ui.createLabel("selectlistmodal_instruction",{
+		top:40
+	}));
 	
 	var cancelbtn = C.ui.createButton({
 		k_type: "Button",

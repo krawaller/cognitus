@@ -9,26 +9,7 @@ C.ui.createMyListsView = function(o) {
 			list: r,
 			ListId: r.ListId,
 			locked: locked,
-			priority: r.priority/*,
-			k_children: [{
-				k_type: "Button",
-				k_id: "crisisbutton",
-				height: 25,
-				width: 25,
-				right: 15,
-				top: 10,
-				visible: r.ListId === crisislistid,
-				enabled: false,
-				ListId: r.ListId,
-				title: r.ListId === crisislistid ? "K" : "-",
-				k_click: function(e){
-					crisislistid = e.source.ListId;
-					C.content.setCrisisList(e.source.ListId);
-					table.data[0].rows.forEach(function(r){
-						r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
-					});
-				}
-			}]*/
+			priority: r.priority
 		});
 		var mainlabel = C.ui.createLabel(undefined,{
 			k_class: "rowmainlabel",
@@ -67,10 +48,16 @@ C.ui.createMyListsView = function(o) {
 				hintText: C.content.getText("mylists_field_namehint"),
 				value: r.title,
 				oldvalue: r.title,
-				visible: false
+				visible: false,
+				adjustscroll: true,
+				containingView: view,
+				containingTable: table,
+				rowIndex: i
 			});
 			row.add(textfield);
 			row.textfield = textfield;
+			textfield.index = i;
+			textfield.row = row;
 		}
 		
 		
@@ -80,7 +67,6 @@ C.ui.createMyListsView = function(o) {
 		}
 		return row;
 	}
-	
 	function renderTable() {
 		var prelists = Ti.UI.createTableViewSection({
 			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_prelists")),
@@ -96,7 +82,7 @@ C.ui.createMyListsView = function(o) {
 		C.content.getMyListsWithSkillCount().forEach(function(r,i){
 			mylists.add(createRow(r,i));
 		});
-		table.setData([prelists,mylists]);
+		table.setData([mylists,prelists]);
 		//table.setData((C.content.getMyListsWithSkillCount()/*C.content.getPreListsWithDetails(C.state.lang)*/).map(createRow));
 	}
 
@@ -160,7 +146,7 @@ C.ui.createMyListsView = function(o) {
 	function stopEditing(){
 		table.editing = false;
 		editing = false;
-		table.data && table.data[1] && table.data[1].rows && table.data[1].rows.forEach(function(r,i){
+		table.data[0].rows.forEach(function(r,i){
 			if (r.locked) return;
 			if (r.textfield.oldvalue != r.textfield.value){
 				r.textfield.oldvalue = r.textfield.value;
@@ -174,13 +160,14 @@ C.ui.createMyListsView = function(o) {
 	}
 	
 	function startEditing(added){
-		if ((!table.data[1]) || (!table.data[1].rows) || (table.data[1].rows.length == 0)){
-			C.ui.showMessage("Hey! Need to add rows first!");
+		var mylistsection = table.data[0];
+		if ((!mylistsection.rows) || (mylistsection.rows.length == 0)){
+			C.ui.showMessage("mylists_msg_mustaddrowsfirst");
 			return;
 		}
 		editing = true;
 		table.editing = true;
-		table.data && table.data[1] && table.data[1].rows && table.data[1].rows.forEach(function(r,i){
+		mylistsection.rows.forEach(function(r,i){
 			if (r.locked) return;
 			setTimeout(function(){
 				r.mainlabel.visible = false;

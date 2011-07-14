@@ -66,7 +66,7 @@ C.ui.createModuleTrainSessionView = function(o){
 					control = Ti.UI.createSwitch({height: 30, width: 40, value: false,k_class:"quizswitch"});
 					break;
 				case "textfield":
-					control = C.ui.createTextField({height: 35, left: 15, right: 15 });
+					control = C.ui.createTextField({height: 35, left: 15, right: 15, adjustscroll:true,containingTable:table,containingView:view });
 			}
 			control.top = 35;
 			r.control = control;

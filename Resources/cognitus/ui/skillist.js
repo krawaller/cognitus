@@ -140,7 +140,7 @@ C.ui.createSkillListView = function() {
 		editbtn.visible = !isprelist;
 	}
 	
-	function createRow(r){
+	function createRow(r,i){
 		var row = C.ui.createTableViewRow({
 			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 			SkillId: r.SkillId,
@@ -174,10 +174,15 @@ C.ui.createSkillListView = function() {
 			left: 15,
 			visible: false,
 			value: r.usagetext,
-			oldvalue: r.usagetext
+			oldvalue: r.usagetext,
+			adjustscroll: true,
+			containingView: view,
+			containingTable: table,
+			rowIndex: i
 		});
 		row.add(textfield);
 		row.textfield = textfield;
+		textfield.index = i;
 		return row;
 	}
 	

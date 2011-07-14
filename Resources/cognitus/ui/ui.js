@@ -43,11 +43,20 @@
 			keyboardToolbar:[flexSpace,toolbartitle,flexSpace, donebtn],
 			k_events: {
 				focus: function(e){
-					Ti.API.log(["ok!",textfield.hintText,textfield.toolbarTitle,(textfield.hintText || textfield.toolbarTitle || "XXX")]);
 					toolbartitle.text = (textfield.hintText || textfield.toolbarTitle || "");
 				}
 			}
 		}));
+		if (o.adjustscroll){
+			textfield.addEventListener("focus",function(e){
+				o.containingTable && o.containingTable.scrollToIndex(o.rowIndex);
+			});
+			textfield.addEventListener("blur",function(e){
+				Ti.API.log("ADJUSTING!");
+				o.containingView && o.containingView.scrollTo(0,0);
+				o.containingTable && o.containingTable.scrollToIndex(0)
+			});
+		}
 		return textfield;
 	}
 	
