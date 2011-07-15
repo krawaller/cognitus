@@ -97,7 +97,6 @@ C.ui.createMyListsView = function(o) {
 		k_events: {
 			"delete": function(e) {
 				C.content.removeList(e.row.ListId, e.row.priority);
-				Ti.API.log("Deleting "+e.row.ListId+"!!");
 			},
 			move: function(e) {
 				C.content.updateListPosition(e.row.ListId, e.index, e.fromIndex);

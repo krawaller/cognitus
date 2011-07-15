@@ -77,7 +77,6 @@ C.ui.createAppWindow = function(appstructure) {
     });
 	win.backgroundColor = "transparent";
 	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
-	//Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 	var swipedir;
 	var GRADIENTBREDTH = 15;
 	var frame = K.create({
@@ -308,7 +307,6 @@ C.ui.createAppWindow = function(appstructure) {
 	// ******************* Stuff
 
 	pb.sub("/updatetext",function(){
-		Ti.API.log("Textupdate! Calling render in the current view!");
 		if (C.state.currentPageView.render){
 			C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
 		}
@@ -387,8 +385,6 @@ C.ui.createAppWindow = function(appstructure) {
 			topage.view.render(argstouse,topage);
 		}
 		pb.pub("/hasnote",C.content.testIfPageHasNote(C.utils.currentPageName()));
-		Ti.API.log("Name: "+C.utils.currentPageName());
-		Ti.API.log(C.utils.pageNameToArgs(C.utils.currentPageName()));
 		pb.pub("/arrivedatnewpage",topage,argstouse);
 	});
 

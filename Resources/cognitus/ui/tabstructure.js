@@ -40,12 +40,11 @@ C.ui.createTabStructure = function(lists,pages){
 	var bgcolours = ["#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"];
 	Ti.App.Properties.setInt("tabrowheight",Ti.App.Properties.getInt("tabrowheight") || rowbigheight);
 	rowheight = Ti.App.Properties.getInt("tabrowheight");
-Ti.API.log("creating container");
 	container = K.create({
 		k_type: "View",
 		bottom: 0,
 		k_click: function(e){
-			Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
+			//Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
 			if (e.source && e.source.navto){ // && !e.source.selected){
 				pb.pub("/navto",e.source.navto);
 			}

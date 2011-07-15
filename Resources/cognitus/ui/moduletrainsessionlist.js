@@ -55,7 +55,6 @@ C.ui.createModuleTrainSessionListView = function(o){
 		C.content.deleteQuizSession(e.row.quizdate);
 	});
 	table.addEventListener("click",function(e){
-		Ti.API.log([e,e.row,e.rowData]);
 		if (e.row){
 			pb.pub("/navto","moduletrainsession",{quizdate:e.row.quizdate,ModuleId:C.state.lastArgs.ModuleId});
 		}
@@ -65,7 +64,6 @@ C.ui.createModuleTrainSessionListView = function(o){
 	
 	view.render = function(args){
 		var rowheight = 50;
-		Ti.API.log(C.content.getModuleQuizSessions(args.ModuleId));
 		table.setData(C.content.getModuleQuizSessions(args.ModuleId).map(function(q){
 			return C.ui.createTableViewRow({
 				hasChild: true,

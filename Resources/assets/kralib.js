@@ -72,11 +72,9 @@
 			throw("K.merge called without any arguments!");
 		}
 		if (typeof arguments[0] !== "object"){
-			Ti.API.log(arguments[0]);
 			throw("K.merge called with non-object first argument!");
 		}
 		if (typeof arguments[1] !== "object"){
-			Ti.API.log(arguments[1]);
 			throw("K.merge called with non-object argument!");
 		}
         for (var property in arguments[1]) {
@@ -118,8 +116,6 @@
             }
         }
         if (!o.k_type){
-            //Ti.API.log(o);
-			Ti.API.log(o);
             throw "What the heck, no type!";
         }
         o.k_children = o.k_children || [];

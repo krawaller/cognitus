@@ -34,7 +34,7 @@
 		});
 		titleview.add(editfield);
 		editfield.addEventListener("change",function(e){
-			Ti.API.log("new value: "+e.value);
+			//Ti.API.log("new value: "+e.value);
 			pb.pub("/newtitleeditvalue",e.value);
 		});
 	

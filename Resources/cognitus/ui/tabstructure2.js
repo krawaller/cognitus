@@ -153,7 +153,7 @@ C.ui.createTabStructure = function(lists, pages) {
 					}
 				});
 		//		frame.bottom = rowsshowing*Ti.App.Properties.getInt("tabrowheight");
-		Ti.API.log("CHANGED TABS IN " + (Date.now() - start));
+		//Ti.API.log("CHANGED TABS IN " + (Date.now() - start));
 	}
 			
 	var showingtabs = true;

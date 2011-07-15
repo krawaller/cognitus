@@ -45,9 +45,9 @@ C.ui.createHtmlView = function(){
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
 				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 
 				  topage.pageid) + (topage.using === "news" ? "" : "_html");
-		Ti.API.log(["webview",id]);
+		//Ti.API.log(["webview",id]);
 		//updateWebView(webview,C.content.getText(id));
-		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,C.content.getText(id));
+		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,C.content.getText(id)).replace(/_LANG/g,"_lang_"+C.state.lang);
 	};
 	return view;
 };

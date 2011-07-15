@@ -8,16 +8,15 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00107';
+		DBNAME = 'COGNITUS_00108';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
 	
 	function dbSinglePropQuery(sql,prop,varargs){
 		var db = Ti.Database.open(DBNAME);
-		if (!db || typeof db.execute !== "function"){
-			Ti.API.log(sql);
-			Ti.API.log("GADDÄMMM!");
+		if (!db || !db.execute || typeof db.execute !== "function"){
+			throw "No DB available for: "+sql;
 		}
 		var res = db.execute(sql,varargs || []),
 			ret;
@@ -86,10 +85,8 @@
 			skilltomodule[skill] = module;
 			moduleskills[module].push(skill);
 			if ((sub !== prevsub) || (prevmodule !== module)){
-				//Ti.API.log("New submodule "+sub+" (last was "+prevsub+")");
 				moduleswithsubs[module][sub] = [];
 			}
-			//Ti.API.log([skill,module,sub]);
 			moduleswithsubs[module][sub].push(skill);
 			prevmodule = module;
 			prevsub = sub;
@@ -127,7 +124,6 @@
 					updated: "updated"
 				},
 				res = dbQuery(sql,mould);
-			Ti.API.log(res);
 			return dbQuery(sql,mould);
 		},
 		testIfPageHasNote: function(pagename){
@@ -147,7 +143,7 @@
 			}
 		},
 		deleteQuizSession: function(quizdate){
-			Ti.API.log("WOO "+dbSinglePropQuery("SELECT COUNT(*) as c FROM quizanswers WHERE quizdate = ?","c",[quizdate]));
+			//Ti.API.log("WOO "+dbSinglePropQuery("SELECT COUNT(*) as c FROM quizanswers WHERE quizdate = ?","c",[quizdate]));
 			dbOperation("DELETE FROM quizanswers WHERE quizdate = ?",[quizdate]);
 		},
 		storeQuizSession: function(quizdate,answers){
@@ -175,8 +171,7 @@
 			return dbQuery(sql,mould,[quizdate]);
 		},
 		getModuleQuestions: function(moduleid){
-			var NOVIEWSsql = "SELECT * FROM (SELECT quizquestionid, moduleid, priority, type, en, sv, fr, de, es FROM quizquestions INNER JOIN texts ON textid = 'quizquestion_' || moduleid || '_' || quizquestionid) as q WHERE moduleid = ? ORDER BY priority",
-				VIEWSsql = "SELECT * FROM quizquestionswithtexts WHERE moduleid = ? ORDER BY priority",
+			var sql = "SELECT * FROM quizquestionswithtexts WHERE moduleid = ? ORDER BY priority",
 				mould = {
 					quizquestionid: "quizquestionid",
 					moduleid: "moduleid",
@@ -184,7 +179,7 @@
 					priority: "priority",
 					en: "en", sv: "sv", de: "de", es: "es", fr: "fr"
 				};
-			return dbQuery(USEVIEWS ? VIEWSsql : NOVIEWSsql,mould,[moduleid]);
+			return dbQuery(sql,mould,[moduleid]);
 		},
 		getMaxLastUpdated: function(){
 			return dbSinglePropQuery("SELECT MAX(lastupdated) as max FROM TEXTS","max");
@@ -193,10 +188,8 @@
 			if (!o || o.error || !o.forEach){
 				return;
 			}
-			Ti.API.log("WOO! "+o.length);
 			var db = Ti.Database.open(DBNAME),res;
 			o.forEach(function(text){
-				Ti.API.log("Updating "+text.textid+" ("+text.lastupdated+")");
 				res = db.execute("REPLACE INTO texts (textid, lastupdated, sv, en, fr, es, de, created) VALUES (?,?,?,?,?,?,?,?)",
 					text.textid,
 					text.lastupdated,
@@ -231,9 +224,7 @@
 			var sql = "SELECT mylists.listid as listid, title, mylists.priority as priority, skillcount FROM mylists INNER JOIN listitems ON mylists.listid = listitems.listid WHERE listitems.skillid = '"+skillid+"'",
 				mould = {ListId:"listid",title:"title",priority:"priority",skillcount:"skillcount"},
 				result;
-			Ti.API.log("Going to get lists including skill!");
 			result = dbQuery(sql,mould);
-			Ti.API.log("GOt sills!");
 			return result;
 		},
 		addSkillToList: function(listid,skillid){
@@ -303,19 +294,11 @@
 				};
 			return dbQuery(sql,mould);
 		},
-		getMyCrisisSkills: function(){
-			var sql = "SELECT skillid, freetext, priority FROM crisislistobjects ORDER BY priority ASC",
-				mould = {SkillId:"skillid",freetext:"freetext",priority:"priority"};
-			return dbQuery(sql,mould);
-		},
 		getAllSkillModules: function(){
 			return allmodules;
 		},
 		getModuleForSkill: function(skillid){
 			return skilltomodule[skillid];
-		},
-		testIfSkillOnCrisisList: function(skillid){
-			return dbSinglePropQuery("SELECT COUNT(skillid) as count FROM crisislistobjects WHERE skillid = '"+skillid+"'","count");
 		},
 		removeSkillFromList: function(listitemid,delprio){
 			dbOperation("DELETE FROM listitems WHERE listitemid = '"+listitemid+"'");
@@ -339,7 +322,6 @@
 			if (newpriority === oldpriority){
 				return;
 			}
-			Ti.API.log(["MOVE",listitemid,newpriority,oldpriority]);
 			if (newpriority > oldpriority){
 				dbOperation("UPDATE listitems SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
 			} else {
@@ -351,49 +333,12 @@
 			if (newpriority === oldpriority){
 				return;
 			}
-			Ti.API.log(["MOVE",listid,newpriority,oldpriority]);
 			if (newpriority > oldpriority){
 				dbOperation("UPDATE lists SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
 			} else {
 				dbOperation("UPDATE lists SET priority = priority+1 WHERE priority>="+newpriority+" AND priority<"+oldpriority+"");
 			}
 			dbOperation("UPDATE lists SET priority = "+newpriority+" WHERE listid = '"+listid+"'");
-		},
-		removeSkillFromCrisisList: function(skillid){
-			var delprio = dbSinglePropQuery("SELECT priority FROM crisislistobjects WHERE skillid = '"+skillid+"'","priority");
-			dbOperation("DELETE FROM crisislistobjects WHERE skillid = '"+skillid+"'");
-			dbOperation("UPDATE crisislistobjects SET priority = priority-1 WHERE priority > "+delprio);
-		},
-		updateSkillUsageTextOnCrisisList: function(skillid,freetext){
-			dbOperation("UPDATE crisislistobjects SET freetext = '"+freetext+"' WHERE skillid = '"+skillid+"'");
-		},
-		addSkillToCrisisList: function(skillid,freetext){
-			dbOperation("UPDATE crisislistobjects SET priority = priority+1");
-			dbOperation("INSERT INTO crisislistobjects (skillid,freetext,priority) VALUES ('"+skillid+"','"+(freetext||"")+"',0)");
-		},
-		getCrisisListItemUsageText: function(skillid){
-			return dbSinglePropQuery("SELECT freetext FROM crisislistobjects WHERE skillid = '"+skillid+"'","freetext");
-		},
-		updateSkillPositionOnCrisisList: function(skillid,newpriority,oldpriority){
-			if (newpriority > oldpriority){
-				dbOperation("UPDATE crisislistobjects SET priority = priority-1 WHERE priority<="+newpriority+" AND priority>"+oldpriority+"");
-			} else {
-				dbOperation("UPDATE crisislistobjects SET priority = priority+1 WHERE priority>="+newpriority+" AND priority<"+oldpriority+"");
-			}
-			dbOperation("UPDATE crisislistobjects SET priority = "+newpriority+" WHERE skillid = '"+skillid+"'");
-		},
-		toggleSkillOnCrisisList: function(skillid){
-			var res;
-			if (C.content.testIfSkillOnCrisisList(skillid)){
-				Ti.API.log("Deleting skillid "+skillid+" from crisis list!");
-				alert("Removed!");
-				C.content.removeSkillFromCrisisList(skillid);
-			} else { // TODO fix text here woooo
-				Ti.API.log("Adding skillid "+skillid+" to crisis list!");
-				alert("Added!");
-				C.content.addSkillToCrisisList(skillid);
-			}
-			pb.pub("/updatedcrisislist");
 		},
 		getSkillsForModule: function(moduleid){
 			return moduleskills[moduleid];
@@ -412,25 +357,6 @@
 		},
         getText: function(id) {
 			return (dbSinglePropQuery("SELECT "+C.state.lang+" FROM texts WHERE textid = '"+id+"'",C.state.lang)) || ("(no "+id+")");
-			/*var lang = C.state.lang,
-				db = Ti.Database.open(DBNAME),
-				rows = db.execute("SELECT "+lang+" FROM texts WHERE textid = '"+id+"'"),
-				ret = rows.fieldByName(lang);
-			rows.close();
-			db.close();
-			return ret || "(no "+id+")";*/
-        },
-		test: function(){
-			var db = Ti.Database.open(DBNAME),
-				res = db.execute("SELECT * FROM texts WHERE textid = 'moduleexplanation_distresstolerance_hmtl'");
-			Ti.API.log("COUNT: "+res.rowCount);
-			if (res.isValidRow()){
-				Ti.API.log(res.fieldByName("textid"));
-				Ti.API.log(res.fieldByName("sv"));
-			}
-			res.close();
-			db.close();
-			Ti.API.log(C.content.getText("moduleexplanation_distresstolerance_hmtl"));
-		}
+        }
     };
 })();

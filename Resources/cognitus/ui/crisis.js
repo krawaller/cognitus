@@ -95,7 +95,6 @@ C.ui.createCrisisView = function(){
 	
 	var chosencrisislistid;
 	view.render = function(){
-		Ti.API.log("CRISIS RENDER!");
 		stopEditing();
 	};
 	

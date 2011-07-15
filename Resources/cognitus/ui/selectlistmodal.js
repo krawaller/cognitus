@@ -41,7 +41,6 @@ C.ui.createSelectListModal = function(){
 		top: 100,
 		k_events: {
 			click: function(e){
-				Ti.API.log(["Clicked list!",e.row, e.row.ListId, e.row.excluded,selectedrow && selectedrow.ListId]);
 				if (e.row && !e.row.excluded){
 					selectcb(e.row.ListId);
 					modal.close();

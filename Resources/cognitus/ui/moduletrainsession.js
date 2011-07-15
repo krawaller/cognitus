@@ -1,5 +1,4 @@
 C.ui.createModuleTrainSessionView = function(o){
-	Ti.API.log("MDOASD");
 	var view = C.ui.createPage({}),
 		table = C.ui.createTableView({top: 70});
 	view.add(table);
@@ -40,10 +39,8 @@ C.ui.createModuleTrainSessionView = function(o){
 	var old;
 	view.render = function(args){
 	    old = (args.quizdate !== "NEW");
-		Ti.API.log("Render! quizdate:"+args.quizdate+", old:"+old);
 		pb.pub("/setnewtitle", old ? args.quizdate : C.content.getText("moduletrainsession_title_new"),C.content.getText("module_"+args.ModuleId+"_title"));
 		questions = !old ? C.content.getModuleQuestions(args.ModuleId) : C.content.getQuizSessionAnswers(args.quizdate);
-		Ti.API.log(questions);
 		var rowheight = 80;
 		table.setData(questions.map(function(q){
 			var control, r = Ti.UI.createTableViewRow({

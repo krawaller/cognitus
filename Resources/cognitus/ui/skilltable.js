@@ -13,7 +13,7 @@ C.ui.createSkillTable = function(o, callback) {
 		rowheight = 40,
 		headers = 0,
 		rows = 0;
-		Ti.API.log("RENDERING table!");
+		//Ti.API.log("RENDERING table!");
 		modules.forEach(function(moduleid) {
 			if (showmoduleheader){
 				var modulesection = Ti.UI.createTableViewSection({
@@ -21,7 +21,7 @@ C.ui.createSkillTable = function(o, callback) {
 				});
 				sections.push(modulesection);
 			}
-			Ti.API.log("---- module "+moduleid);
+			//Ti.API.log("---- module "+moduleid);
 			var submodules = C.content.getModuleWithSubModules(moduleid),
 				numberofsubmodules = 0,
 				submoduleid;
@@ -29,14 +29,14 @@ C.ui.createSkillTable = function(o, callback) {
 				numberofsubmodules++;
 			}
 			for (submoduleid in submodules) {
-				Ti.API.log("---- ---- submodule " + submoduleid);
+				//Ti.API.log("---- ---- submodule " + submoduleid);
 				var section = Ti.UI.createTableViewSection();
 				if (numberofsubmodules > 1) { //submoduleid !== "NONE") {
 					headers++;
 					section.headerView = C.ui.createTableSectionHeader(C.content.getText(submoduleid === "NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid + "_title"));
 				}
 				submodules[submoduleid].forEach(function(skillid) {
-					Ti.API.log("---- --- ---- " + skillid);
+					//Ti.API.log("---- --- ---- " + skillid);
 					var x = excluded.indexOf(skillid) != -1;
 					rows++;
 					section.add(C.ui.createTableViewRow({
@@ -55,8 +55,8 @@ C.ui.createSkillTable = function(o, callback) {
 			}
 		});
 		table.setData(sections);
-		Ti.API.log("rendered table!!");
-		Ti.API.log(table.data);
+		//Ti.API.log("rendered table!!");
+		//Ti.API.log(table.data);
 		return headers * headerheight + rows * rowheight;
 	};
 

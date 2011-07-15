@@ -13,7 +13,6 @@ C.ui.createSkillListView = function() {
 		k_events: {
 			"delete": function(e) {
 				C.content.removeSkillFromList(e.row.ListItemId, e.row.priority);
-				Ti.API.log("Deleting "+e.row.ListItemId+"!!");
 			},
 			move: function(e) {
 				C.content.updateSkillPositionOnList(e.row.ListItemId, e.index, e.fromIndex);
@@ -88,7 +87,6 @@ C.ui.createSkillListView = function() {
 		table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
 			if (r.textfield.oldvalue != r.textfield.value){
 				r.textfield.oldvalue = r.textfield.value;
-				//Ti.API.log(["UPDATING LISTITEM TEXT!!! ",r.ListId,r.textfield.value]);
 				C.content.updateSkillUsageText(r.ListItemId,r.textfield.value);
 			}
 		});

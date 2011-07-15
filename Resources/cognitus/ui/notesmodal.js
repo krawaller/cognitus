@@ -28,7 +28,6 @@ C.ui.createNotesModal = function(){
 	
 	function updateTable(){
 		var listofnotes = C.content.getNoteList();
-		Ti.API.log(listofnotes);
 		table.setData(listofnotes.map(function(n){
 			var title = C.utils.pageNameToTitle(n.pagename),
 				a = C.utils.pageNameToArgs(n.pagename),
@@ -174,7 +173,6 @@ C.ui.createNotesModal = function(){
 	
 	
 	pb.sub("/shownotesmodal",function(){
-		Ti.API.log("WOOOOO!");
 		originalnotepagename = C.utils.currentPageName();
 		usernote = C.content.getNoteForPage(originalnotepagename);
 		nonotefororiginal = !usernote;

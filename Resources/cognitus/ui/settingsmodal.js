@@ -21,7 +21,6 @@
 				startchange = false;
 				return;
 			}
-			Ti.API.log("CHANGE!!!!");
 			Ti.App.Properties.setBool("usingbigtabs",!Ti.App.Properties.getBool("usingbigtabs"));
 			pb.pub("/settabrowheight",Ti.App.Properties.getBool("usingbigtabs") ? 40 : 25);
 			pb.pub("/adjustframe");
@@ -51,8 +50,10 @@
 		Ti.UI.createPickerRow({title:"[system]",value:"textid"})]);
 
 		picker.addEventListener("change",function(e){
-			C.state.lang = e.row.value;
-			pb.pub("/updatetext");
+			if (e && e.row && e.row.value){
+				C.state.lang = e.row.value;
+				pb.pub("/updatetext");
+			}
 		});
 		
 		return modal;
