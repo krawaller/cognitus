@@ -2,7 +2,7 @@ C.ui.createSkillListView = function() {
 	var view = C.ui.createPage({});
 	
 	view.add(C.ui.createLabel("skillist_label_description",{
-		top: 3,
+		top: 5,
 		k_class: "descriptionlabel"
 	}));
 	

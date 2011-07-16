@@ -2,7 +2,7 @@ C.ui.createModuleTrainSessionView = function(o){
 	var view = C.ui.createPage({}),
 		table = C.ui.createTableView({top: 70});
 	view.add(table);
-	view.add(C.ui.createLabel("moduletrainsession_label_description",{top:0,k_class:"descriptionlabel"}));
+	view.add(C.ui.createLabel("moduletrainsession_label_description",{top:10,k_class:"descriptionlabel"}));
 	
 	var savebtn = C.ui.createButton({
 		textid: "moduletrainsession_btn_save",
