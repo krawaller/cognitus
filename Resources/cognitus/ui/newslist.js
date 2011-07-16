@@ -1,10 +1,6 @@
 C.ui.createNewsListView = function(o){
 	var view = C.ui.createPage({});
-	view.add( C.ui.createLabel("newslist_description",{
-		k_class: "descriptionlabel",
-		left: 10,
-		top:5
-	}));
+	//view.add( C.ui.createLabel("newslist_description",{ k_class: "descriptionlabel", left: 10, top:5 }));
 	var table = C.ui.createTableView({
 		k_type: "TableView",
 		top: 30,

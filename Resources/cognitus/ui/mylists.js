@@ -86,7 +86,7 @@ C.ui.createMyListsView = function(o) {
 			mylists.add(createRow(r,i));
 		});
 		table.setData([mylists,prelists]);
-		table.height = Math.max(400,20*2+rows*50);
+		//table.height = Math.max(400,20*2+rows*50);
 		//table.setData((C.content.getMyListsWithSkillCount()/*C.content.getPreListsWithDetails(C.state.lang)*/).map(createRow));
 	}
 

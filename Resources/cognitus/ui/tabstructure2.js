@@ -42,7 +42,7 @@ C.ui.createTabStructure = function(lists, pages) {
 		var tabrow = K.create({
 			k_type: "View",
 			height: rowheight,
-			backgroundColor: ["#AAA", "#BBB", "#CCC", "#DDD", "#EEE"][row],
+			//backgroundColor: ["#AAA", "#BBB", "#CCC", "#DDD", "#EEE"][row],
 			bottom: row * rowheight,
 			k_children: [{
 				k_type: "View",
@@ -108,6 +108,7 @@ C.ui.createTabStructure = function(lists, pages) {
 		if (!page) {return;}
 		var start = Date.now();
 				var bgcolours = ["#666","#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
+					//bgcolours = ["#024D9E","#005ABA","#1C70C9","#2D7ACC","#4187D1","#639AD6","#84B2E3","#A4C6EB","#D6E1F2","#FFF"],
 					numrows = page.listhistory.length;
 				//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 				tabrows.forEach(function(tabrow,i){

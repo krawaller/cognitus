@@ -1,12 +1,12 @@
 C.ui.createModuleSkillListView = function(o){
 	var view = C.ui.createPage({});
-	view.add( C.ui.createLabel("moduleskillist_description",{k_class:"descriptionlabel",top:5}) );
+	//view.add( C.ui.createLabel("moduleskillist_description",{k_class:"descriptionlabel",top:5}) );
 	
 	function tableclick(skillid,moduleid){
 		pb.pub("/navto","skillrational",{SkillId:skillid,ModuleId:moduleid});
 	}
 	
-	var table = C.ui.createSkillTable({top:40},tableclick);
+	var table = C.ui.createSkillTable({top:30},tableclick);
 	view.add(table);
 	view.render = function(arg){
 		table.height = table.render(arg.ModuleId,[]);
