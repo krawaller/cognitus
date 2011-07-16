@@ -18,7 +18,7 @@ C.ui.createSelectListModal = function(){
 		selectedrow = null;
 		table.setData(C.content.getMyListsWithSkillCount().map(function(l){
 			var x = excluded.indexOf(l.ListId) != -1;
-			return C.ui.createTableViewRow({
+			return C.ui.createTableViewRow(K.merge(x?{k_class:"blockedrow"}:{},{
 				k_type: "TableViewRow",
 				className: x ? "excluded" : "available",
 				rightImage: x ? undefined : Ti.Filesystem.resourcesDirectory+"/images/icons/select.png",
@@ -26,9 +26,8 @@ C.ui.createSelectListModal = function(){
 				selected: false,
 				listtitle: l.title,
 				rowmainlabel: (x ? "(" : "")+l.title+" ("+l.skillcount+")"+(x?")":""),
-				backgroundColor: x ? "#CCC" : "#FFF",
 				excluded: x
-			});
+			}));
 		}));
 		modal.show();
 	});
@@ -48,7 +47,7 @@ C.ui.createSelectListModal = function(){
 			}
 		}
 	});
-	panel.add(table)
+	panel.add(table);
 	
 	panel.add(C.ui.createLabel("selectlistmodal_instruction",{
 		top:40

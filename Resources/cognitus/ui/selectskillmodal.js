@@ -15,7 +15,7 @@ C.ui.createSelectSkillModal = function(){
 		selectcb = a_selectcb;
 		selectedrow = null;
 		var lastoffset = 50, totaloffset = 50;
-		table.render(undefined,excluded);
+		table.render(undefined,excluded,true);
 		modal.show();
 	});
 	

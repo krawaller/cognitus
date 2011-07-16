@@ -33,7 +33,7 @@ C.ui.createNotesModal = function(){
 				a = C.utils.pageNameToArgs(n.pagename),
 				pageid = a[0],
 				args = a[1];
-			return C.ui.createTableViewRow({
+			return C.ui.createTableViewRow(K.merge(n.pagename === currentnotepagename ? {k_class:"markedrow"} : {}, {
 				hasChild: true,
 				//title: (title.sup?title.sup+" - ":"")+title.main,
 				pagename: n.pagename,
@@ -44,7 +44,7 @@ C.ui.createNotesModal = function(){
 				note: n.note,
 				rowtoplabel: title.sup,
 				rowmainlabel: title.main
-			});
+			}));
 		}));
 	}
 	

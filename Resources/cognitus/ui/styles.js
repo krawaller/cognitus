@@ -169,6 +169,12 @@
 			left: 20,
 			right: 20,
 			bottom: 20,
+		},
+		markedrow: { // marking the current row in the history table and notes table
+			backgroundColor: "red"
+		},
+		blockedrow: { // marking unavailable rows in list- and skillselection
+			backgroundColor: "#CCC"
 		}
 	};
 })();

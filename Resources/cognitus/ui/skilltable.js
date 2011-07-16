@@ -5,7 +5,7 @@ C.ui.createSkillTable = function(o, callback) {
 			callback(e.row.skillid, e.row.moduleid);
 		}
 	});
-	table.render = function(a_moduleid, excluded) {
+	table.render = function(a_moduleid, excluded, adding) {
 		var height, modules = a_moduleid ? [a_moduleid] : C.content.getAllSkillModules(),
 		showmoduleheader = !a_moduleid,
 		sections = [],
@@ -37,19 +37,24 @@ C.ui.createSkillTable = function(o, callback) {
 				}
 				submodules[submoduleid].forEach(function(skillid) {
 					//Ti.API.log("---- --- ---- " + skillid);
-					var x = excluded.indexOf(skillid) != -1;
+					var x = (excluded.indexOf(skillid) != -1);
 					rows++;
-					section.add(C.ui.createTableViewRow({
-						rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+					var rowdef = {
 						skillid: skillid,
 						//height: rowheight,
 						moduleid: moduleid,
 						submoduleid: submoduleid,
 						selected: false,
-						rowmainlabel: (x ? "(" : "") + C.content.getText("skill_" + skillid + "_title") + (x ? ")" : ""),
-						backgroundColor: x ? "#CCC" : "#FFF",
-						excluded: x
-					}));
+						rowmainlabel: /*(x ? "((" : "") +*/ C.content.getText("skill_" + skillid + "_title") /* + (x ? "))" : "")*/,
+						excluded: x,
+						className: x ? "blocked" : "available"
+					};
+					if (x){
+						rowdef.k_class = "blockedrow";
+					} else {
+						rowdef.rightImage = Ti.Filesystem.resourcesDirectory+"/images/icons/" + (adding ? "add.png" : "goto.png");
+					}
+					section.add(C.ui.createTableViewRow(rowdef));
 				});
 				sections.push(section);
 			}

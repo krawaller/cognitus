@@ -287,7 +287,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	
 	// ********************* Skill selection panel logic *********************
-	Ti.include("/cognitus/ui/selectskillmodal.js");   // TODO - observe choice!
+	Ti.include("/cognitus/ui/selectskillmodal.js"); 
 	var selectskillmodal = C.ui.createSelectSkillModal();
 	win.add(selectskillmodal);
 	
@@ -297,11 +297,15 @@ C.ui.createAppWindow = function(appstructure) {
 	var selectlistmodal = C.ui.createSelectListModal();
 	win.add(selectlistmodal);
 
-	// ********************** Settings modal
+	// ********************** Settings modal ********************************
 	Ti.include("/cognitus/ui/settingsmodal.js");
 	var settingsmodal = C.ui.createSettingsModal();
 	win.add(settingsmodal);
 
+	// ********************** History modal ********************************
+	Ti.include("/cognitus/ui/historymodal.js");
+	var historymodal = C.ui.createHistoryModal();
+	win.add(historymodal);
 
 
 	// ******************* Stuff
@@ -316,29 +320,32 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	pb.sub("/navto",function(pageid,args){
 		titleview.visible = true;
+		// arguments
+		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
 		args = args || {};
+		var argstouse = K.merge(args || {},C.state.lastArgs || {});
+		if (argstouse.SkillId && !argstouse.ModuleId){
+			argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
+		}
 		if (!pages[pageid]){
 			throw "WTF, couldn't find "+pageid+" in tree!";
 		}
 		var lastpage = pages[C.state.currentPageId],
 			topage = pages[pageid],
 			historymax = 25;
+			
 		// HISTORY
-		
 		if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)){
 			C.state.historyposition++;
 			C.state.history.splice(C.state.historyposition);
-			C.state.history.push({pageid:pageid,args:args});
+			C.state.history.push({pageid:pageid,args:args,titles:C.utils.getPageTitle(topage,args),historyposition:C.state.historyposition});
+			if (C.state.history.length>historymax){
+				C.state.history = C.state.history.splice(C.state.history.length-historymax);
+				C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
+			}
 		}
+		pb.pub("/changedhistoryposition");
 		delete args.dontadjusthistory;
-		/* TODO - decide if we want back-forward func
-		backbtn.opacity = C.state.historyposition ? 1 : 0.5;
-		forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
-		*/
-		if (C.state.history.length>historymax){
-			C.state.history = C.state.history.splice(C.state.history.length-historymax);
-			C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
-		}
 		
 		// textview
 		if (topage.basic){
@@ -353,13 +360,6 @@ C.ui.createAppWindow = function(appstructure) {
 			topage.view.visible = true;
 		}
 		// render stuff
-		
-		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
-		
-		var argstouse = K.merge(args || {},C.state.lastArgs || {});
-		if (argstouse.SkillId && !argstouse.ModuleId){
-			argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
-		}
 
 		C.state.currentPageView = topage.view;
 		C.state.currentPage = topage;
@@ -371,15 +371,6 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/updatetitle");
 		pb.pub("/updatetabs",pageid);
 		pb.pub("/adjustframe");
-		/*
-		// skill crisis list btn
-		if (topage.using === "skill"){
-			skillpanel.visible = true;
-			//listitembutton.title = (C.content.testIfSkillOnCrisisList(args.SkillId) ? "-" : "+");
-		}
-		if (topage.using !== "skill"){
-			skillpanel.visible = false;
-		}*/
 		
 		if (topage.view.render){
 			topage.view.render(argstouse,topage);

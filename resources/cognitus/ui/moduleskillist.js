@@ -31,6 +31,6 @@ C.ui.createModuleSkillListView = function(o){
 			};
 		}));
 	};*/
-	view.using = "ModuleId";
+//	view.using = "ModuleId";
 	return view;
 };

@@ -7,11 +7,70 @@
 			top: 0
 		});
 
+		var btnspace = 5, btnwidth = 30;
+
+		// ********************* Back functionality
+		var backbtnsx = 70;
+		
+		var backbtn = C.ui.createButton({
+			top: 5,
+			left: backbtnsx,
+			image: Ti.Filesystem.resourcesDirectory+"/images/icons/back.png",
+			width: btnwidth,
+			height: 30,
+			k_click: function(){
+				if (C.state.historyposition>0){
+					var to = C.state.history[--C.state.historyposition];
+					pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+				}
+			}
+		});
+		controlpanel.add(backbtn);
+		
+		var historybtn = C.ui.createButton({
+			top: 5,
+			left: backbtnsx+btnspace+btnwidth,
+			image: Ti.Filesystem.resourcesDirectory+"/images/icons/history.png",
+			width: btnwidth,
+			height: 30,
+			k_click: function(){
+				if (C.state.history.length){
+					pb.pub("/showhistorymodal");
+				}
+			}
+		});
+		controlpanel.add(historybtn);
+		
+		var forwardbtn = C.ui.createButton({
+			top: 5,
+			left: backbtnsx+btnspace*2+btnwidth*2,
+			image: Ti.Filesystem.resourcesDirectory+"/images/icons/forward.png",
+			width: btnwidth,
+			height: 30,
+			k_click: function(){
+				if (C.state.historyposition < C.state.history.length-1){
+					var to = C.state.history[++C.state.historyposition];
+					pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+				}
+			}
+		});
+		controlpanel.add(forwardbtn);
+
+		pb.sub("/changedhistoryposition",function(){
+			backbtn.opacity = C.state.historyposition ? 1 : 0.5;
+			forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
+			historybtn.opacity = C.state.history.length > 1 ? 1 : 0.5;
+		});
+
+
 		// ********************* Help functionality
+		
+		var otherbtnrightoffset = 20;
+		
 
 		var helpbtn = C.ui.createButton({
-			width: 30,
-			left: 50,
+			width: btnwidth,
+			right: otherbtnrightoffset + btnspace*2 + btnwidth*2,
 			top: 5,
 			//title: "help",
 			k_click: function(){
@@ -43,10 +102,10 @@
 		// ********************* Size btn
 
 		var settingsbtn = C.ui.createButton({
-			width: 30,
+			width: btnwidth,
 			image: Ti.Filesystem.resourcesDirectory+"/images/icons/settings.png",
 			top: 5,
-			left: 170,
+			right: otherbtnrightoffset,
 			//title: "size",
 			k_click: function(){
 				pb.pub("/showsettingsmodal");
@@ -56,9 +115,9 @@
 
 		// ********************* Note button
 		var notebutton = C.ui.createButton({
-			width: 30,
+			width: btnwidth,
 			top: 5,
-			left: 110,
+			right: otherbtnrightoffset+btnspace+btnwidth,
 			k_click: function(e){
 				pb.pub("/shownotesmodal");
 			}
