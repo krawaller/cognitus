@@ -76,7 +76,7 @@ C.ui.createAppWindow = function(appstructure) {
 		backgroundColor: "transparent"
     });
 	win.backgroundColor = "transparent";
-	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
+	//win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	var swipedir;
 	var GRADIENTBREDTH = 12;
 	var frame = K.create({

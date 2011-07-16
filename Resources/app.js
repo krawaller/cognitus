@@ -13,7 +13,7 @@ Ti.include("/assets/kralib.js",
 K.setStyles(C.ui.properties);
 
 //Ti.UI.setBackgroundColor('#00F');
-Ti.UI.setBackgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
+Ti.UI.setBackgroundImage('Default.png');
 //Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 
 
