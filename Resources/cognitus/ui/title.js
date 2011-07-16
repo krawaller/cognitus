@@ -5,13 +5,14 @@
 	        k_type: "View",
 	        height: 60,
 	        top: 1,
-			backgroundColor: "yellow",
+			backgroundColor: "#fff",
 			zIndex: 5,
 	        k_children: [{
 				k_type: "ImageView",
-				image: Ti.Filesystem.resourcesDirectory +"/images/headline3.png",
-				height: 15,
-				bottom: 10
+				image: "images/headline5.png",
+				height: 16,
+				width: 130,
+				bottom: 6
 			}]
 	    });
 	

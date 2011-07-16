@@ -36,9 +36,10 @@
 			k_type: "Button",
 			top: 10,
 			left: 10,
-			width: 30,
+			width: 34,
+			height: 34,
 			zIndex: 1000,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/close.png",
+			image: "images/icons/close.png",
 			k_click: closefun
 		});
 		panel.add(closebtn);
