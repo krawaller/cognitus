@@ -39,7 +39,7 @@
 			width: 34,
 			height: 34,
 			zIndex: 1000,
-			image: "images/icons/close.png",
+			backgroundImage: "images/icons/close.png",
 			k_click: closefun
 		});
 		panel.add(closebtn);
@@ -50,7 +50,11 @@
 		if (o.helptextid){
 			var helpbtn = C.ui.createButton({
 				zIndex: 1000,
-				height: 30, width: 30, top: 5, right: 5, image: Ti.Filesystem.resourcesDirectory+"/images/icons/information.png",
+				height: 34, 
+				width: 34, 
+				top: 10, 
+				right: 10, 
+				backgroundImage: "images/icons/information.png",
 				k_click: function(){
 					pb.pub("/showhelpmodal",C.content.getText(o.helptextid),true);
 				}
@@ -131,6 +135,7 @@
 	function createTableViewRow(o){
 		var row = K.create(K.merge(o||{},{
 			k_type: "TableViewRow",
+			selectedBackgroundImage: "images/rowselectedbackground.png",
 			height: 50
 		}));
 		if (o.rowtoplabel){
