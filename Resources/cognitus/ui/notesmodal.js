@@ -142,7 +142,10 @@ C.ui.createNotesModal = function(){
 	var editbtn = C.ui.createButton({
 		top: 70,
 		width: 100,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		height: 32,
+		backgroundImage: "images/button32.png",
+		backgroundLeftCap: 5,
+		image: "images/icons/done_plain.png",
 		right: 10,
 		textid: "notesmodal_btn_edit"
 	});

@@ -129,7 +129,6 @@ C.ui.createMyListsView = function(o) {
 		top: 25,
 		left: 80,
 		zIndex: 5,
-		//image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5,
 		k_click: function() {

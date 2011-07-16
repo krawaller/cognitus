@@ -65,7 +65,6 @@ C.ui.createSkillListView = function() {
 		top: 25,
 		right: 10,
 		zIndex: 5,
-		//image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5,
 		k_click: function() {
