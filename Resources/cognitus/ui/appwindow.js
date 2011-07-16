@@ -76,9 +76,9 @@ C.ui.createAppWindow = function(appstructure) {
 		backgroundColor: "transparent"
     });
 	win.backgroundColor = "transparent";
-	win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
+	//win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	var swipedir;
-	var GRADIENTBREDTH = 15;
+	var GRADIENTBREDTH = 12;
 	var frame = K.create({
 		k_type: "View",
 		top: 40,
@@ -101,22 +101,19 @@ C.ui.createAppWindow = function(appstructure) {
 			left: 0,
 			backgroundColor: "#000"
 		},*/{
-			visible: true,
 			k_type: "View",
 			k_id: "gradientportrait",
 			height: GRADIENTBREDTH,
 			bottom: 0,
-			backgroundImage: Ti.Filesystem.resourcesDirectory+"/images/gradient6.png"
-			/*backgroundGradient: {
-				type: 'linear',
-				colors: [{
-					color: 'transparent',
-					position: 0.0
-				}, {
-					color: '#ffffff',
-					position: 1.0
-				}]
-			}*/
+			zIndex: 1337,
+			backgroundImage: "images/gradient_bottom.png"
+		},{
+			k_type: "View",
+			k_id: "gradientportraittop",
+			height: GRADIENTBREDTH,
+			top: 60,
+			zIndex: 1337,
+			backgroundImage: "images/gradient_top.png"
 		},{
 			visible: false,
 			k_type: "View",
