@@ -119,7 +119,10 @@
 		tableheaderlabel: {
 			color: "#FFF",
 			textAlign: "left",
-			left: 20
+			shadowColor: '#333',
+			shadowOffset: { y: -1, x: 0 },
+			font: { fontWeight: 'bold', fontSize: 15 },
+			left: 10
 		},
 		tableheaderheavylabel: {
 			color: "#FFF",
@@ -129,7 +132,8 @@
 		},
 		tableheaderview: {
 			height: 20,
-			backgroundColor: "#red"
+			backgroundImage: "images/headerview.png"
+			//backgroundColor: "#red"
 		},
 		tableheaderheavyview: { // used in skilltable.js, where we have double section levels
 			height: 30,
