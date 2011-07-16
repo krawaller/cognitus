@@ -92,7 +92,6 @@ C.ui.createModuleTrainSessionListView = function(o){
 						subject: "Cognitus Application - "+headline,
 						messageBody: html,
 						html: true,
-						barColor: '#A3C51B'
 					}).open();
 				}
 			});

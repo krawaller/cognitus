@@ -31,6 +31,11 @@ C.ui.createHtmlView = function(){
 	var skillpanel = C.ui.createSkillPanelView();
 	view.add(skillpanel);
 
+	// ******************** About-app page controls
+	Ti.include("/cognitus/ui/aboutpanelview.js");
+	var aboutpanel = C.ui.createAboutPanelView();
+	view.add(aboutpanel);
+
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
 		if (topage.using === "skill"){
@@ -38,6 +43,13 @@ C.ui.createHtmlView = function(){
 			webview.top = 40;
 		} else {
 			skillpanel.visible = false;
+			webview.top = 0;
+		}
+		if (topage.pageid === "about"){
+			aboutpanel.visible = true;
+			webview.top = 40;
+		} else {
+			aboutpanel.visible = false;
 			webview.top = 0;
 		}
 		view.scrollTo(0,0);
