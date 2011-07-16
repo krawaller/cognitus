@@ -92,7 +92,7 @@ C.ui.createMyListsView = function(o) {
 
 	var view = C.ui.createPage({});
 	
-	view.add(C.ui.createLabel("mylists_label_description",{top:3,k_class:"descriptionlabel"}));
+	// view.add(C.ui.createLabel("mylists_label_description",{top:3,k_class:"descriptionlabel"}));
 	
 	var table = C.ui.createTableView({
 		editable: true,
@@ -126,7 +126,7 @@ C.ui.createMyListsView = function(o) {
 	var btn = C.ui.createButton({
 		height: 32,
 		width: 70,
-		top: 25,
+		top: 20,
 		left: 80,
 		zIndex: 5,
 		backgroundImage: "images/button32.png",
@@ -145,7 +145,7 @@ C.ui.createMyListsView = function(o) {
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add_plain.png",
 		width: 70, 
 		height: 32,
-		top: 25, 
+		top: 20, 
 		right: 80,
 		backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5, 
