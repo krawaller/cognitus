@@ -7,17 +7,17 @@
 			top: 0
 		});
 
-		var btnspace = 5, btnwidth = 30;
+		var btnspace = 5, btnwidth = 34;
 
 		// ********************* Back functionality
 		var backbtnsx = 70;
 		
 		var backbtn = C.ui.createButton({
-			top: 5,
+			top: 3,
 			left: backbtnsx,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/back.png",
+			backgroundImage: "images/icons/back.png",
 			width: btnwidth,
-			height: 30,
+			height: btnwidth,
 			k_click: function(){
 				if (C.state.historyposition>0){
 					var to = C.state.history[--C.state.historyposition];
@@ -28,11 +28,11 @@
 		controlpanel.add(backbtn);
 		
 		var historybtn = C.ui.createButton({
-			top: 5,
+			top: 3,
 			left: backbtnsx+btnspace+btnwidth,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/history.png",
+			backgroundImage: "images/icons/history.png",
 			width: btnwidth,
-			height: 30,
+			height: btnwidth,
 			k_click: function(){
 				if (C.state.history.length){
 					pb.pub("/showhistorymodal");
@@ -42,11 +42,11 @@
 		controlpanel.add(historybtn);
 		
 		var forwardbtn = C.ui.createButton({
-			top: 5,
+			top: 3,
 			left: backbtnsx+btnspace*2+btnwidth*2,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/forward.png",
+			backgroundImage: "images/icons/forward.png",
 			width: btnwidth,
-			height: 30,
+			height: btnwidth,
 			k_click: function(){
 				if (C.state.historyposition < C.state.history.length-1){
 					var to = C.state.history[++C.state.historyposition];
@@ -70,8 +70,10 @@
 
 		var helpbtn = C.ui.createButton({
 			width: btnwidth,
+			height: btnwidth,
 			right: otherbtnrightoffset + btnspace*2 + btnwidth*2,
-			top: 5,
+			top: 3,
+			selectedBackgroundImage: null,
 			//title: "help",
 			k_click: function(){
 				if (C.state.currentHelp){
@@ -84,11 +86,11 @@
 		function updateHelp(pageid){
 			var help = C.content.getHelpForPageId(pageid,C.state.lang);
 			if (help){
-				helpbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/information.png";
+				helpbtn.backgroundImage = "images/icons/information.png";
 				//helpbtn.title = "HELP";
 				C.state.currentHelp = help;
 			} else {
-				helpbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/information_none.png";
+				helpbtn.backgroundImage = "images/icons/information_none.png";
 				//helpbtn.title = "help";
 				delete C.state.currentHelp;
 			}
@@ -103,8 +105,9 @@
 
 		var settingsbtn = C.ui.createButton({
 			width: btnwidth,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/settings.png",
-			top: 5,
+			height: btnwidth,
+			backgroundImage: "images/icons/settings.png",
+			top: 3,
 			right: otherbtnrightoffset,
 			//title: "size",
 			k_click: function(){
@@ -116,7 +119,9 @@
 		// ********************* Note button
 		var notebutton = C.ui.createButton({
 			width: btnwidth,
-			top: 5,
+			height: btnwidth,
+			top: 3,
+			backgroundImage: "images/icons/note_none.png",
 			right: otherbtnrightoffset+btnspace+btnwidth,
 			k_click: function(e){
 				pb.pub("/shownotesmodal");
@@ -124,7 +129,7 @@
 		});
 		controlpanel.add(notebutton);
 		pb.sub("/hasnote",function(note){
-			notebutton.image = Ti.Filesystem.resourcesDirectory+"/images/icons/note"+ (note ? "" : "_none")+".png";
+			notebutton.backgroundImage = "images/icons/note"+ (note ? "" : "_none")+".png";
 		});		
 
 		

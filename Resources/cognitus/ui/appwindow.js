@@ -174,18 +174,18 @@ C.ui.createAppWindow = function(appstructure) {
 	
 	function toggleControls(){
 		C.state.showingTabs = !C.state.showingTabs;
-		anchor.image = Ti.Filesystem.resourcesDirectory+"/images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation")+".png";
+		anchor.backgroundImage = "images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation")+".png";
 		pb.pub("/adjustframe");
 	}
 	
 	var anchor = C.ui.createButton({
 		zIndex: 100,
-		height: 30,
-		width: 30,
+		height: 34,
+		width: 34,
 		left: 5,
-		top: 5,
+		top: 3,
 		//title: "↓",
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/fullscreen.png",
+		backgroundImage: "/images/icons/fullscreen.png",
 		k_click: toggleControls
 	});
 	
