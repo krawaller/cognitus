@@ -262,7 +262,9 @@ C.ui.createAppWindow = function(appstructure) {
 				frame.top = 40;
 				frame.left = 0;
 				frame.right = 0;
+			Ti.API.log("Adjusting the frame! depth="+C.state.currentPage.listhistory.length+", tabheight="+tabheight+", prev bottom="+frame.bottom);
 				frame.bottom = tabheight;
+			Ti.API.log("After adjustment, frame.bottom="+frame.bottom);
 
 				controlpanel.transform = Ti.UI.create2DMatrix({rotate:0});
 				//controlpanel.width = Ti.Platform.displayCaps.platformWidth;
@@ -279,6 +281,7 @@ C.ui.createAppWindow = function(appstructure) {
 			frame.top = 0;
 			frame.bottom = 0;
 		}
+		pb.pub("/frameadjustmentfinished");
 	});
 
 	
