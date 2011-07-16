@@ -30,7 +30,8 @@
 			verticalTextAlign: "center"
 		},
 		TextArea: {
-			borderWidth: 2
+			borderWidth: 2,
+			backgroundColor: "#FFF"
 		},
 		TextField: {
 			borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
