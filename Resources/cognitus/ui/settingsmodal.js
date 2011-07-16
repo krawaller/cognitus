@@ -27,9 +27,11 @@
 		});
 		
 		
-		
+		var adjust;
 		pb.sub("/showsettingsmodal",function(){
+			adjust = true;
 			picker.setSelectedRow(0,{"sv":1,"en":0,"textid":3}[C.state.lang],false);
+			adjust = false;
 			modal.show();
 		});
 		
@@ -50,7 +52,7 @@
 		Ti.UI.createPickerRow({title:"[system]",value:"textid"})]);
 
 		picker.addEventListener("change",function(e){
-			if (e && e.row && e.row.value){
+			if (!adjust && e && e.row && e.row.value){
 				C.state.lang = e.row.value;
 				pb.pub("/updatetext");
 			}
