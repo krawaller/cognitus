@@ -33,7 +33,7 @@ C.ui.createMyListsView = function(o) {
 					crisislistid = e.source.ListId;
 					C.content.setCrisisList(e.source.ListId);
 					table.data[0].rows.forEach(function(r){
-						r.k_children.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
+						r.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
 					});
 				}
 			});

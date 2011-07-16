@@ -34,8 +34,8 @@
 		modal.add(panel);
 		var closebtn = C.ui.createButton({
 			k_type: "Button",
-			top: 10,
-			left: 10,
+			top: 5,
+			left: 5,
 			width: 34,
 			height: 34,
 			zIndex: 1000,

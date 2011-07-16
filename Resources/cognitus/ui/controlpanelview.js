@@ -18,6 +18,7 @@
 			backgroundImage: "images/icons/back.png",
 			width: btnwidth,
 			height: btnwidth,
+			enabled: false,
 			k_click: function(){
 				if (C.state.historyposition>0){
 					var to = C.state.history[--C.state.historyposition];
@@ -33,8 +34,9 @@
 			backgroundImage: "images/icons/history.png",
 			width: btnwidth,
 			height: btnwidth,
+			enabled: false,
 			k_click: function(){
-				if (C.state.history.length){
+				if (C.state.history.length > 1){
 					pb.pub("/showhistorymodal");
 				}
 			}
@@ -47,6 +49,7 @@
 			backgroundImage: "images/icons/forward.png",
 			width: btnwidth,
 			height: btnwidth,
+			enabled: false,
 			k_click: function(){
 				if (C.state.historyposition < C.state.history.length-1){
 					var to = C.state.history[++C.state.historyposition];
@@ -58,8 +61,11 @@
 
 		pb.sub("/changedhistoryposition",function(){
 			backbtn.opacity = C.state.historyposition ? 1 : 0.5;
+			backbtn.enabled = C.state.historyposition > 0;
 			forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
+			forwardbtn.enabled = C.state.historyposition < C.state.history.length - 1;
 			historybtn.opacity = C.state.history.length > 1 ? 1 : 0.5;
+			historybtn.enabled = C.state.history.length > 1;
 		});
 
 

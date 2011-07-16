@@ -20,7 +20,7 @@ C.ui.createHistoryModal = function(){
 	}
 	
 	
-	var modal = C.ui.createModal();
+	var modal = C.ui.createModal({helptextid:"historymodal_help"});
 
 	pb.sub("/showhistorymodal",function(){
 		renderTable();
@@ -40,6 +40,9 @@ C.ui.createHistoryModal = function(){
 		}
 	});
 	modal.panel.add(table);
+	modal.panel.add(C.ui.createLabel("historymodal_label_instruction",{
+		top: 40
+	}));
 
 	return modal;
 };

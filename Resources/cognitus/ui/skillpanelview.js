@@ -39,7 +39,7 @@
 		});
 		
 		pb.sub("/updatetext",function(){
-			var moduleid = C.state.lastArgs.ModuleId || C.content.getModuleForSkill(args.SkillId);
+			var moduleid = C.state.lastArgs.ModuleId || C.content.getModuleForSkill(C.state.lastArgs.SkillId);
 			modulebutton.title = C.content.getText("module_"+moduleid+"_title");
 		});
 		

@@ -45,7 +45,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 	view.add(deletebtn);
 	view.add(newbtn);
 	view.add(C.ui.createLabel("moduletrainsessionlist_label",{
-		top: 0
+		top: 10
 	}));
 	var table = C.ui.createTableView({
 		top: 60,
@@ -55,7 +55,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		C.content.deleteQuizSession(e.row.quizdate);
 	});
 	table.addEventListener("click",function(e){
-		if (e.row){
+		if (e.row && !e.source.btn){
 			pb.pub("/navto","moduletrainsession",{quizdate:e.row.quizdate,ModuleId:C.state.lastArgs.ModuleId});
 		}
 	});
@@ -65,13 +65,39 @@ C.ui.createModuleTrainSessionListView = function(o){
 	view.render = function(args){
 		var rowheight = 50;
 		table.setData(C.content.getModuleQuizSessions(args.ModuleId).map(function(q){
-			return C.ui.createTableViewRow({
+			var row= C.ui.createTableViewRow({
 				hasChild: true,
 				height: rowheight,
 				className: "session",
 				rowmainlabel: q.quizdate,
 				quizdate: q.quizdate
 			});
+			var mailbtn = C.ui.createButton({
+				width: 30,
+				top: 10,
+				btn: true,
+				right: 30,
+				image: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png",
+				k_click: function(e){
+					var headline = C.content.getText("moduletrainsession_training")+" "+C.content.getText("module_"+args.ModuleId+"_title")+" "+q.quizdate,
+						html = "<h2>"+headline+"</h2><dl>",
+						answers =  C.content.getQuizSessionAnswers(q.quizdate);
+					answers.forEach(function(a){
+						html += "<dt>"+a[C.state.lang]+"</dt>";
+						html += "<dd>"+a.value+"</dd>";
+					});
+					html += "</dl>";
+					Ti.API.log(html);
+					Titanium.UI.createEmailDialog({
+						subject: "Cognitus Application - "+headline,
+						messageBody: html,
+						html: true,
+						barColor: '#A3C51B'
+					}).open();
+				}
+			});
+			row.add(mailbtn);
+			return row;
 		}));
 		if (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length){
 			table.height = (table.data[0].rows.length+3) * rowheight;
