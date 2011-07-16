@@ -5,7 +5,7 @@ C.ui.createMyListsView = function(o) {
 	
 	function createRow(r,i,locked){
 		var row = C.ui.createTableViewRow({
-			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			rightImage: "images/icons/goto_button.png",
 			list: r,
 			ListId: r.ListId,
 			locked: locked,

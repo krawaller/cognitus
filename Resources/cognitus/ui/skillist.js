@@ -141,7 +141,7 @@ C.ui.createSkillListView = function() {
 	
 	function createRow(r,i){
 		var row = C.ui.createTableViewRow({
-			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			rightImage: "images/icons/goto_button.png",
 			SkillId: r.SkillId,
 			ModuleId: r.ModuleId,
 			ListItemId: r.ListItemId,
