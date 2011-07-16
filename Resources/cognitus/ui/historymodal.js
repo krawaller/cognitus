@@ -7,7 +7,7 @@ C.ui.createHistoryModal = function(){
 				k_class: "markedrow"
 			}:{
 				k_class: "available",
-				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png"
+				rightImage: "images/icons/goto_button.png"
 			},{
 				historyposition: r.historyposition,
 				args: r.args,
