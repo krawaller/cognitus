@@ -38,6 +38,11 @@
 			}
 		});
 		
+		pb.sub("/updatetext",function(){
+			var moduleid = C.state.lastArgs.ModuleId || C.content.getModuleForSkill(args.SkillId);
+			modulebutton.title = C.content.getText("module_"+moduleid+"_title");
+		});
+		
 		return panel;
 	};
 })();

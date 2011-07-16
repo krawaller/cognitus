@@ -1,7 +1,8 @@
 C.ui.createNotesModal = function(){
 	
 	var modal = C.ui.createModal({
-		onClose: function(){ pb.pub("/hasnote",(textarea.value || "").length); }
+		onClose: function(){ pb.pub("/hasnote",(textarea.value || "").length); },
+		helptextid:"notesmodal_help"
 	});
 	
 	var originalnotepagename, currentnotepagename, currentnoteargs, nonotefororiginal;

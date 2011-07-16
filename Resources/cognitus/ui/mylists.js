@@ -73,16 +73,20 @@ C.ui.createMyListsView = function(o) {
 			editable: false,
 			moveable: false
 		});
+		rows = 0;
 		C.content.getPreListsWithDetails(C.state.lang).forEach(function(r,i){
+			rows++;
 			prelists.add(createRow(r,i,true));
 		});
 		var mylists = Ti.UI.createTableViewSection({
 			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))			
 		});
 		C.content.getMyListsWithSkillCount().forEach(function(r,i){
+			rows++;
 			mylists.add(createRow(r,i));
 		});
 		table.setData([mylists,prelists]);
+		table.height = Math.max(400,20*2+rows*50);
 		//table.setData((C.content.getMyListsWithSkillCount()/*C.content.getPreListsWithDetails(C.state.lang)*/).map(createRow));
 	}
 
@@ -94,6 +98,7 @@ C.ui.createMyListsView = function(o) {
 		editable: true,
 		moveable: true,
 		top: 60,
+		bottom: 0,
 		k_events: {
 			"delete": function(e) {
 				C.content.removeList(e.row.ListId, e.row.priority);
@@ -110,7 +115,12 @@ C.ui.createMyListsView = function(o) {
 	});
 	view.add(table);
 
-	
+	pb.sub("/frameadjustmentfinished",function(){
+		table.bottom = 1;
+		table.bottom = 0;
+		table.height = table.height+1;
+		table.height = table.height-1;
+	})
 
 	var editing = false;
 	var btn = C.ui.createButton({
