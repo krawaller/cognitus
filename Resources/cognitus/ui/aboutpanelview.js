@@ -18,7 +18,7 @@
 				}).open();
 			},
 			textid: "about_btn_mail",
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png"
+			image: Ti.Filesystem.resourcesDirectory+"/images/icons/mail_plain.png"
 		});
 		panel.add(mailbtn);
 		

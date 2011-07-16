@@ -143,9 +143,9 @@ C.ui.createNotesModal = function(){
 		top: 70,
 		width: 100,
 		height: 32,
-		backgroundImage: "images/button32.png",
+	//	backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5,
-		image: "images/icons/done_plain.png",
+		image: "images/icons/edit.png",
 		right: 10,
 		textid: "notesmodal_btn_edit"
 	});
@@ -155,7 +155,7 @@ C.ui.createNotesModal = function(){
 	var donebtn = C.ui.createButton({
 		top: 70,
 		width: 100,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/done.png",
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/done_plain.png",
 		right: 10,
 		visible: false,
 		textid: "notesmodal_btn_done"

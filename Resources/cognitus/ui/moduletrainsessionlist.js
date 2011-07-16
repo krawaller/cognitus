@@ -72,11 +72,11 @@ C.ui.createModuleTrainSessionListView = function(o){
 				quizdate: q.quizdate
 			});
 			var mailbtn = C.ui.createButton({
-				width: 30,
 				top: 10,
 				btn: true,
 				right: 30,
-				image: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png",
+				width: 32,
+				backgroundImage: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png",
 				k_click: function(e){
 					var headline = C.content.getText("moduletrainsession_training")+" "+C.content.getText("module_"+args.ModuleId+"_title")+" "+q.quizdate,
 						html = "<h2>"+headline+"</h2><dl>",
