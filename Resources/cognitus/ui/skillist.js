@@ -26,7 +26,7 @@ C.ui.createSkillListView = function() {
 	view.add(table);
 	
 	var listsbtn = C.ui.createButton({
-		width: 70,
+		width: 90,
 		top: 25,
 		left: 10,
 		title: C.content.getText("skillist_btn_backtolists"),
@@ -38,7 +38,7 @@ C.ui.createSkillListView = function() {
 	view.add(listsbtn);
 	
 	var addbtn = C.ui.createButton({
-		width: 110,
+		width: 120,
 		top: 25,
 		right: 90,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",

@@ -28,7 +28,7 @@ C.ui.createAppWindow = function(appstructure) {
                 lists[listid].push({
                     navtextid: (page.navtextid) || (page.pageid+"_nav"),
 					suffix: page.sub ? !page.view ? " ↑" : " •" : "",
-                    navto: (page.navto) || (page.pageid),
+                    navto: (page.navto) || (page.pageid),
 					level: level
                 });
 				processContent(page, lists, pages, listid, [].concat(listhistory).concat(listid), [].concat(listpositions).concat([i]), level);
