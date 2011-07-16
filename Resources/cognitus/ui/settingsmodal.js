@@ -1,6 +1,6 @@
 (function(){
 	C.ui.createSettingsModal = function(){
-		var modal = C.ui.createModal({});
+		var modal = C.ui.createModal({helptextid:"settingsmodal_help"});
 		
 		var panel = modal.panel;
 		

@@ -25,7 +25,8 @@
 				if (e.source === modal){
 					closefun();
 				}
-			}
+			},
+			zIndex: ((o.zIndex) || (500))
 		});
 		var panel = K.create({
 			k_class: "modalpanelview"
@@ -44,6 +45,18 @@
 		modal.close = closefun;
 		modal.show = showfun;
 		modal.panel = panel;
+		// helptextid provided?
+		if (o.helptextid){
+			var helpbtn = C.ui.createButton({
+				zIndex: 1000,
+				height: 30, width: 30, top: 10, right: 10, image: Ti.Filesystem.resourcesDirectory+"/images/icons/information.png",
+				k_click: function(){
+					pb.pub("/showhelpmodal",C.content.getText(o.helptextid),true);
+				}
+			});
+			modal.panel.add(helpbtn);
+		}
+		// finish
 		return modal;
 	}
 

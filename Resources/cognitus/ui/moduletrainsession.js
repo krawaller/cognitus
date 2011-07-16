@@ -44,7 +44,7 @@ C.ui.createModuleTrainSessionView = function(o){
 		var rowheight = 80;
 		table.setData(questions.map(function(q){
 			var control, r = Ti.UI.createTableViewRow({
-				className: q.type,
+				className: q.type + q["help"+C.state.lang] ? "withhelp" : "",
 				height: rowheight,
 				quizquestionid: q.quizquestionid
 			});
@@ -55,6 +55,15 @@ C.ui.createModuleTrainSessionView = function(o){
 				top: 5,
 				k_class: "quizquestionlabel"
 			}));
+			if (q["help"+C.state.lang]){
+				var helpbtn = C.ui.createButton({
+					height: 30, width: 30, top: 1, right: 1, image: Ti.Filesystem.resourcesDirectory+"/images/icons/information.png",
+					k_click: function(){
+						pb.pub("/showhelpmodal",q["help"+C.state.lang]);
+					}
+				});
+				r.add(helpbtn);
+			}
 			switch(q.type){
 				case "slider": 
 					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 15,k_class:"quizslider"});

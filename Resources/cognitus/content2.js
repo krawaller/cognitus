@@ -8,14 +8,14 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00108';
+		DBNAME = 'COGNITUS_00109';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
 	
 	function dbSinglePropQuery(sql,prop,varargs){
 		var db = Ti.Database.open(DBNAME);
-		if (!db || !db.execute || typeof db.execute !== "function"){
+		if (!db || !db.execute || (typeof db.execute !== "function")){
 			throw "No DB available for: "+sql;
 		}
 		var res = db.execute(sql,varargs || []),
@@ -166,7 +166,8 @@
 					priority: "priority",
 					en: "en", sv: "sv", de: "de", es: "es", fr: "fr",
 					quizdate: "quizdate",
-					value: "value"
+					value: "value",
+					helpen: "helpen", helpsv:"helpsv",helpde:"helpde",helpes:"helpes",helpfr:"helpfr"
 				};
 			return dbQuery(sql,mould,[quizdate]);
 		},
@@ -177,7 +178,8 @@
 					moduleid: "moduleid",
 					type: "type",
 					priority: "priority",
-					en: "en", sv: "sv", de: "de", es: "es", fr: "fr"
+					en: "en", sv: "sv", de: "de", es: "es", fr: "fr",
+					helpen: "helpen", helpsv:"helpsv",helpde:"helpde",helpes:"helpes",helpfr:"helpfr"
 				};
 			return dbQuery(sql,mould,[moduleid]);
 		},

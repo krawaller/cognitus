@@ -1,10 +1,20 @@
 C.ui.createHelpModal = function(){
 	
-	var modal = C.ui.createModal();
+	var modal = C.ui.createModal({zIndex:1000}),
+		panel = modal.panel;
 
 	
 	
-	function show(helptext){
+	function show(helptext,fromanothermodal){
+		if (!fromanothermodal){
+			panel.top = 20;
+			panel.left = 20;
+			panel.right= 20;
+		} else {
+			panel.top = 40;
+			panel.left = 10;
+			panel.right = 10;
+		}
 		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,helptext);
 		modal.show();
 	}
