@@ -1,0 +1,45 @@
+C.ui.createHistoryModal = function(){
+	
+	function renderTable(){
+		table.setData(C.state.history.reverse().map(function(r){
+			return C.ui.createTableViewRow(K.merge(C.state.historyposition === r.historyposition? {
+				className: "currentRow",
+				k_class: "markedrow"
+			}:{
+				k_class: "available",
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png"
+			},{
+				historyposition: r.historyposition,
+				args: r.args,
+				titles: r.titles,
+				rowtoplabel: r.titles.sup,
+				rowmainlabel: r.titles.main
+			}));
+		}));
+		C.state.history.reverse(); // put it back! :)
+	}
+	
+	
+	var modal = C.ui.createModal();
+
+	pb.sub("/showhistorymodal",function(){
+		renderTable();
+		modal.show();
+	});
+	
+	var table = K.create({
+		top: 60,
+		k_type: "TableView",
+		k_click: function(e){
+			Ti.API.log([e.row.args,e.row.historyposition,e.row.titles]);
+			if (e.row.historyposition !== C.state.historyposition){
+				var to = C.state.history[C.state.historyposition = e.row.historyposition];
+				pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
+				modal.close();
+			}
+		}
+	});
+	modal.panel.add(table);
+
+	return modal;
+};
