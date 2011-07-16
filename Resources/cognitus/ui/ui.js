@@ -175,7 +175,9 @@
 			font: {
 				fontSize: 11
 			},
-			height: 30
+			height: 32,
+			backgroundImage: "images/button32.png",
+			backgroundLeftCap: 5
 		}));
 		if (o.textid){
 			C.content.setObjectText(btn,o.textid,"title");

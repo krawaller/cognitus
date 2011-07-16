@@ -62,7 +62,6 @@ C.ui.createSkillListView = function() {
 		top: 25,
 		right: 10,
 		zIndex: 5,
-		//image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5,
 		k_click: function() {
@@ -139,7 +138,7 @@ C.ui.createSkillListView = function() {
 	
 	function createRow(r,i){
 		var row = C.ui.createTableViewRow({
-			rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			rightImage: "images/icons/goto_button.png",
 			SkillId: r.SkillId,
 			ModuleId: r.ModuleId,
 			ListItemId: r.ListItemId,
