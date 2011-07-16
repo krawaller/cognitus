@@ -38,20 +38,9 @@ C.ui.createHtmlView = function(){
 
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
-		if (topage.using === "skill"){
-			skillpanel.visible = true;
-			webview.top = 40;
-		} else {
-			skillpanel.visible = false;
-			webview.top = 0;
-		}
-		if (topage.pageid === "about"){
-			aboutpanel.visible = true;
-			webview.top = 40;
-		} else {
-			aboutpanel.visible = false;
-			webview.top = 0;
-		}
+		webview.top = (topage.using === "skill" || topage.using === "about") ? 40 : 0;
+		skillpanel.visible = topage.using === "skill";
+		aboutpanel.visible = topage.pageid === "about";
 		view.scrollTo(0,0);
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 

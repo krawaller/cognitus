@@ -114,11 +114,11 @@ C.ui.createNotesModal = function(){
 	});
 	
 	notelist.add(C.ui.createLabel("notesmodal_label_list",{
-		top: 40
+		top: 50
 	}));
 	
 	note.add(C.ui.createLabel("notesmodal_label_instruction",{
-		top: 40
+		top: 50
 	}));
 	
 	
