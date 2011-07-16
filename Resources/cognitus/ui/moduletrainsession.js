@@ -50,29 +50,29 @@ C.ui.createModuleTrainSessionView = function(o){
 			});
 			r.add(C.ui.createLabel(undefined,{
 				text: q[C.state.lang],
-				left: 10,
+				right: 20,
 				height: 20,
 				top: 5,
 				k_class: "quizquestionlabel"
 			}));
 			if (q["help"+C.state.lang]){
 				var helpbtn = C.ui.createButton({
-					height: 30, width: 30, top: 1, right: 1, image: Ti.Filesystem.resourcesDirectory+"/images/icons/information.png",
+					height: 30, width: 30, top: 25, right: 5, image: Ti.Filesystem.resourcesDirectory+"/images/icons/information.png",
 					k_click: function(){
-						pb.pub("/showhelpmodal",q["help"+C.state.lang]);
+						pb.pub("/showhelpmodal","<h3>"+q[C.state.lang]+"</h3>"+q["help"+C.state.lang]);
 					}
 				});
 				r.add(helpbtn);
 			}
 			switch(q.type){
 				case "slider": 
-					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 15,k_class:"quizslider"});
+					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 50,k_class:"quizslider"});
 					break;
 				case "switch":
 					control = Ti.UI.createSwitch({height: 30, width: 40, value: false,k_class:"quizswitch"});
 					break;
 				case "textfield":
-					control = C.ui.createTextField({height: 35, left: 15, right: 15, adjustscroll:true,containingTable:table,containingView:view });
+					control = C.ui.createTextField({height: 35, left: 15, right: 50, adjustscroll:true,containingTable:table,containingView:view });
 			}
 			control.top = 35;
 			r.control = control;
