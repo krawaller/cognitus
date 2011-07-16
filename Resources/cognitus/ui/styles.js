@@ -134,11 +134,10 @@
 		tableheaderview: {
 			height: 20,
 			backgroundImage: "images/headerview.png"
-			//backgroundColor: "#red"
 		},
 		tableheaderheavyview: { // used in skilltable.js, where we have double section levels
 			height: 30,
-			backgroundColor: "#blue"
+			backgroundImage: "images/headerviewlarge.png"
 		},
 		inpagesuptitlelabel: { // used in notesmodal
 			textAlign: "center", height: 15, font: {fontSize: 10}, color: "#666"
