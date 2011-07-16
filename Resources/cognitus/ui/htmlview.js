@@ -38,7 +38,7 @@ C.ui.createHtmlView = function(){
 
 	view.render = function(argstouse,topage){
 		//Ti.API.log(["Updating web view",argstouse,topage]);
-		webview.top = (topage.using === "skill" || topage.using === "about") ? 40 : 0;
+		webview.top = (topage.using === "skill" || topage.pageid === "about") ? 40 : 0;
 		skillpanel.visible = topage.using === "skill";
 		aboutpanel.visible = topage.pageid === "about";
 		view.scrollTo(0,0);

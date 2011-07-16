@@ -1,6 +1,6 @@
 C.ui.createModuleListView = function(o){
 	var view = C.ui.createPage({});
-	view.add( C.ui.createLabel("modulelist_description",{top:5,k_class:"descriptionlabel"}) );
+	//view.add( C.ui.createLabel("modulelist_description",{top:5,k_class:"descriptionlabel"}) );
 	var table = C.ui.createTableView({
 		top: 30,
 		k_click: function(e){

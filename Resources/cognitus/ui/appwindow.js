@@ -243,7 +243,7 @@ C.ui.createAppWindow = function(appstructure) {
 				platformheight = Ti.Platform.displayCaps.platformHeight,
 				platformwidth = Ti.Platform.displayCaps.platformWidth;
 			if (C.state.orientation === "landscape"){
-				gradientlandscape.visible = true;
+				/*gradientlandscape.visible = true;
 				gradientportrait.visible = false;
 				
 				frame.bottom = 0;
@@ -254,7 +254,7 @@ C.ui.createAppWindow = function(appstructure) {
 				controlpanel.transform = Ti.UI.create2DMatrix({rotate:-90});
 				//controlpanel.width = Ti.Platform.displayCaps.platformHeight;
 				controlpanel.bottom = 0;
-				controlpanel.left = 0;
+				controlpanel.left = 0;*/
 			} else {
 				gradientportrait.visible = true;
 				gradientlandscape.visible = false;

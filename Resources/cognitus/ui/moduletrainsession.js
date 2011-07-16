@@ -2,11 +2,11 @@ C.ui.createModuleTrainSessionView = function(o){
 	var view = C.ui.createPage({}),
 		table = C.ui.createTableView({top: 70});
 	view.add(table);
-	view.add(C.ui.createLabel("moduletrainsession_label_description",{top:10,k_class:"descriptionlabel"}));
+	//view.add(C.ui.createLabel("moduletrainsession_label_description",{top:10,k_class:"descriptionlabel"}));
 	
 	var savebtn = C.ui.createButton({
 		textid: "moduletrainsession_btn_save",
-		title:"MOO!", right: 20, width: 120, top: 30,
+		title:"MOO!", right: 20, width: 120, top: 25,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/save.png"
 	});
 	savebtn.addEventListener("click",function(e){
@@ -28,7 +28,7 @@ C.ui.createModuleTrainSessionView = function(o){
 		textid: "moduletrainsession_btn_backtolist",
 		left: 20,
 		width: 120,
-		top: 30,
+		top: 25,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png"
 	});
 	backbtn.addEventListener("click",function(){

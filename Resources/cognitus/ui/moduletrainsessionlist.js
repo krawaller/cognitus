@@ -44,9 +44,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 	view.add(savebtn);
 	view.add(deletebtn);
 	view.add(newbtn);
-	view.add(C.ui.createLabel("moduletrainsessionlist_label",{
-		top: 10
-	}));
+	//view.add(C.ui.createLabel("moduletrainsessionlist_label",{top: 10}));
 	var table = C.ui.createTableView({
 		top: 60,
 		editable: true
@@ -63,8 +61,9 @@ C.ui.createModuleTrainSessionListView = function(o){
 	
 	
 	view.render = function(args){
-		var rowheight = 50;
+		var rowheight = 50, numrows = 0;
 		table.setData(C.content.getModuleQuizSessions(args.ModuleId).map(function(q){
+			numrows++;
 			var row= C.ui.createTableViewRow({
 				hasChild: true,
 				height: rowheight,
@@ -102,6 +101,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 			table.height = (table.data[0].rows.length+3) * rowheight;
 		}
 		stopEditing();
+		deletebtn.visible = !!numrows;
 	};
 	
 	return view;
