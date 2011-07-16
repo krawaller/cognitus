@@ -60,12 +60,14 @@ C.ui.createSkillListView = function() {
 	var editing = false;
 	
 	var editbtn = C.ui.createButton({
-		height: 30,
+		height: 32,
 		width: 70,
 		top: 25,
 		right: 10,
 		zIndex: 5,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		//image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		backgroundImage: "images/button32.png",
+		backgroundLeftCap: 5,
 		k_click: function() {
 			if (editing) {
 				stopEditing();

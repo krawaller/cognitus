@@ -175,7 +175,7 @@
 			bottom: 20,
 		},
 		markedrow: { // marking the current row in the history table and notes table
-			backgroundColor: "red"
+			backgroundImage: "images/rowselectedbackground.png" 
 		},
 		blockedrow: { // marking unavailable rows in list- and skillselection
 			backgroundColor: "#CCC"

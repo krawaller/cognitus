@@ -124,12 +124,14 @@ C.ui.createMyListsView = function(o) {
 
 	var editing = false;
 	var btn = C.ui.createButton({
-		height: 30,
+		height: 32,
 		width: 70,
 		top: 25,
 		left: 80,
 		zIndex: 5,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		//image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		backgroundImage: "images/button32.png",
+		backgroundLeftCap: 5,
 		k_click: function() {
 			if (editing) {
 				stopEditing();
@@ -141,8 +143,14 @@ C.ui.createMyListsView = function(o) {
 	view.add(btn);
 
 	var addbtn = C.ui.createButton({
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
-		width: 70, top: 25, right: 80, k_click: function(){
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add_plain.png",
+		width: 70, 
+		height: 32,
+		top: 25, 
+		right: 80,
+		backgroundImage: "images/button32.png",
+		backgroundLeftCap: 5, 
+		k_click: function(){
 			if (!editing){
 				C.content.addNewList();
 				renderTable();
@@ -193,7 +201,7 @@ C.ui.createMyListsView = function(o) {
 
 	function updateButtons(){
 		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
-		btn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+ (editing ? "save" : "edit") +".png";
+		btn.image = "images/icons/"+ (editing ? "done" : "list") +"_plain.png";
 		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("mylists_btn_newlist");
 		addbtn.opacity = (editing ? 0.5 : 1);
