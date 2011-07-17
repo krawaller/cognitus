@@ -11,7 +11,7 @@ C.ui.createSelectListModal = function(){
 	
 	var panel = modal.panel;
 
-	pb.sub("/showselectlistmodal",function(excluded,a_selectcb,a_cancelcb){
+	pb.sub("/showselectlistmodal",function(excluded,a_selectcb,a_cancelcb,crisislistid){
 		excluded = excluded.map(function(r){return r.ListId;});
 		cancelcb = a_cancelcb;
 		selectcb = a_selectcb;
@@ -21,7 +21,7 @@ C.ui.createSelectListModal = function(){
 			return C.ui.createTableViewRow(K.merge(x?{k_class:"blockedrow"}:{},{
 				k_type: "TableViewRow",
 				className: x ? "excluded" : "available",
-				rightImage: x ? undefined : Ti.Filesystem.resourcesDirectory+"/images/icons/select.png",
+				rightImage: x ? undefined : Ti.Filesystem.resourcesDirectory+"/images/icons/"+ (crisislistid ? (crisislistid===l.ListId?"skull_button.png":"noskull2_button.png") : "select.png"),
 				ListId: l.ListId,
 				selected: false,
 				listtitle: l.title,

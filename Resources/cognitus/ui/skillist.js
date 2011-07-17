@@ -6,7 +6,7 @@ C.ui.createSkillListView = function() {
 	var table = C.ui.createTableView({
 		editable: true,
 		moveable: true,
-		top: 80,
+		top: 90,
 		bottom: 0,
 		k_events: {
 			"delete": function(e) {
@@ -27,8 +27,8 @@ C.ui.createSkillListView = function() {
 	view.add(table);
 	
 	var listsbtn = C.ui.createButton({
-		width: 90,
-		top: 25,
+		width: 120,
+		top: 10,
 		left: 10,
 		title: C.content.getText("skillist_btn_backtolists"),
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
@@ -39,9 +39,9 @@ C.ui.createSkillListView = function() {
 	view.add(listsbtn);
 	
 	var addbtn = C.ui.createButton({
-		width: 120,
-		top: 25,
-		right: 90,
+		width: 155,
+		top: 50,
+		left: 10,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
 		k_click: function(){
 			if (!editing){
@@ -59,12 +59,12 @@ C.ui.createSkillListView = function() {
 	
 	var editbtn = C.ui.createButton({
 		height: 32,
-		width: 70,
-		top: 25,
+		width: 120,
+		top: 50,
 		right: 10,
 		zIndex: 5,
-		backgroundImage: "images/button32.png",
-		backgroundLeftCap: 5,
+		//backgroundImage: "images/button32.png",
+		//backgroundLeftCap: 5,
 		k_click: function() {
 			if (editing) {
 				stopEditing();
@@ -74,6 +74,17 @@ C.ui.createSkillListView = function() {
 		}
 	});
 	view.add(editbtn);
+	
+	var crisisbtn = C.ui.createButton({
+		top: 10,
+		right: 10,
+		width: 155,
+		k_click: function(){
+			Ti.App.Properties.setString("crisislistid",listid === C.content.getCrisisList() ? "" : listid);
+			updateButtons();
+		}
+	});
+	view.add(crisisbtn);
 	
 	var newtitleval,prevtitleval;
 	pb.sub("/newtitleeditvalue",function(v){
@@ -135,6 +146,9 @@ C.ui.createSkillListView = function() {
 		addbtn.opacity = (editing ? 0.5 : 1);
 		addbtn.visible = !isprelist;
 		editbtn.visible = !isprelist;
+		var crisislist = C.content.getCrisisList();
+		crisisbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(listid === crisislist ? "skull_plain":"noskull2_plain")+".png";
+		crisisbtn.title = C.content.getText("skillist_btn_"+(crisislist===listid?"dontuseforcrisis":"useforcrisis"));
 	}
 	
 	function createRow(r,i){
@@ -193,6 +207,7 @@ C.ui.createSkillListView = function() {
 	view.render = function(args){
 		listid = args.ListId;
 		isprelist = !!(listid.match(/PRELIST/));
+		table.top = isprelist ? 50 : 90;
 		if (editing){
 			stopEditing();
 		}

@@ -32,14 +32,14 @@ C.ui.createCrisisView = function(){
 		editbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing?"save":"edit")+".png";
 		gotolistbtn.title = editing ? C.content.getText("crisis_btn_changelist") : chosencrisislistid ? C.content.getListTitle(chosencrisislistid) : C.content.getText("crisis_nolist");
 		gotolistbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing ? "list" : "goto")+".png";
-		gotolistbtn.opacity = chosencrisislistid ? 1 : 0.5;
+		gotolistbtn.opacity = editing || chosencrisislistid ? 1 : 0.5;
 		dialbtn.title = dialtextfield.value || C.content.getText("crisis_nonumber");
 		dialbtn.opacity = dialtextfield.value ? 1 : 0.5;
 	}
 	
 	var gotolistbtn = C.ui.createButton({
 		top: 50,
-		width: 160,
+		width: 180,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
 		k_click: function(){
 			if (!editing && chosencrisislistid){
@@ -49,7 +49,7 @@ C.ui.createCrisisView = function(){
 					C.content.setCrisisList(listid);
 					C.content.setCrisisNumber(dialtextfield.value);
 					stopEditing();
-				});
+				},undefined,chosencrisislistid||" ");
 			}
 		}
 	});
@@ -60,7 +60,8 @@ C.ui.createCrisisView = function(){
 	
 	var dialbtn = C.ui.createButton({
 		top: 150,
-		width: 160,
+		width: 180,
+		image: Ti.Filesystem.resourcesDirectory+"/images/icons/dial_plain.png",
 		k_click: function(){
 			if (dialtextfield.value){
 				Ti.Platform.openURL("tel:"+dialtextfield.value);

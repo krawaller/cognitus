@@ -24,7 +24,7 @@ C.ui.createHtmlView = function(){
 	view.add(aboutpanel);
 
 	view.render = function(argstouse,topage){
-		webview.top = (topage.using === "skill" || topage.pageid === "about") ? 40 : 0;
+		webview.top = (topage.using === "skill" || topage.pageid === "about") ? 45 : 0;
 		skillpanel.visible = topage.using === "skill";
 		aboutpanel.visible = topage.pageid === "about";
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :

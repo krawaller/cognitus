@@ -19,21 +19,21 @@ C.ui.createMyListsView = function(o) {
 		row.mainlabel = mainlabel;
 		
 		if (!locked){
-			var crisisbutton = K.create({
-				k_type: "Button",
-				height: 25,
-				width: 25,
+			var crisisbutton = C.ui.createButton({
+				width: 32,
 				right: 15,
 				top: 10,
 				visible: r.ListId === crisislistid,
 				enabled: false,
 				ListId: r.ListId,
-				title: r.ListId === crisislistid ? "K" : "-",
+				image: "images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png"),
+				//title: r.ListId === crisislistid ? "K" : "-",
 				k_click: function(e){
 					crisislistid = e.source.ListId;
 					C.content.setCrisisList(e.source.ListId);
 					table.data[0].rows.forEach(function(r){
-						r.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
+						r.crisisbutton.image = "images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png");
+						//r.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
 					});
 				}
 			});
@@ -41,9 +41,9 @@ C.ui.createMyListsView = function(o) {
 			row.crisisbutton = crisisbutton;
 
 			var textfield = C.ui.createTextField({
-				width: 195,
+				width: 185,
 				left: 15,
-				bottom: 5,
+				bottom: 10,
 				visible: false,
 				hintText: C.content.getText("mylists_field_namehint"),
 				value: r.title,
