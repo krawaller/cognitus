@@ -383,7 +383,9 @@ C.ui.createAppWindow = function(appstructure) {
 
 	pb.sub("/appstart",function(){
 		pb.pub("/navto","home"); // TODO - fix dynamically!
-		frame.animate({opacity:1,duration:400},function(){pb.pub("/navto","home");});
+		frame.animate({opacity:1,duration:1000},function(){
+		//	pb.pub("/navto","home");
+		});
 	});
 
     // ******************* All done, returning the window!

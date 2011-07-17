@@ -46,7 +46,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 	view.add(newbtn);
 	//view.add(C.ui.createLabel("moduletrainsessionlist_label",{top: 10}));
 	var table = C.ui.createTableView({
-		top: 60,
+		top: 70,
 		editable: true
 	});
 	table.addEventListener("delete",function(e){

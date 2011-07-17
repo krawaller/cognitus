@@ -200,7 +200,7 @@ C.ui.createMyListsView = function(o) {
 
 	function updateButtons(){
 		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
-		btn.image = "images/icons/"+ (editing ? "done" : "list") +"_plain.png";
+		btn.image = "images/icons/"+ (editing ? "done" : "edit") +"_plain.png";
 		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("mylists_btn_newlist");
 		addbtn.opacity = (editing ? 0.5 : 1);
