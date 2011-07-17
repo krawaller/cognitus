@@ -132,7 +132,8 @@ C.ui.createAppWindow = function(appstructure) {
 			}
 		}],
 		k_events: {
-			doubletap: toggleControls/*, TODO - decide if we want Back-forward!
+			//doubletap: toggleControls
+			/*, TODO - decide if we want Back-forward!
 			swipe: function(e){
 				swipedir = e.direction;
 			},

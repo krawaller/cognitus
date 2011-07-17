@@ -6,7 +6,7 @@ C.ui.createSkillTable = function(o, callback) {
 		}
 	});
 	table.render = function(a_moduleid, excluded, adding) {
-		var height, modules = a_moduleid ? [a_moduleid] : C.content.getAllSkillModules(),
+		var modules = a_moduleid ? [a_moduleid] : C.content.getAllSkillModules(),
 		showmoduleheader = !a_moduleid,
 		sections = [],
 		headerheight = 20,
@@ -62,7 +62,7 @@ C.ui.createSkillTable = function(o, callback) {
 		table.setData(sections);
 		//Ti.API.log("rendered table!!");
 		//Ti.API.log(table.data);
-		return headers * headerheight + rows * rowheight;
+		//return headers * headerheight + rows * rowheight;
 	};
 
 	return table;

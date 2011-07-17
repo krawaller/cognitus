@@ -1,6 +1,6 @@
 C.ui.createModuleTrainSessionView = function(o){
 	var view = C.ui.createPage({}),
-		table = C.ui.createTableView({top: 70});
+		table = C.ui.createTableView({top: 70,bottom:0});
 	view.add(table);
 	//view.add(C.ui.createLabel("moduletrainsession_label_description",{top:10,k_class:"descriptionlabel"}));
 	
@@ -83,7 +83,6 @@ C.ui.createModuleTrainSessionView = function(o){
 			}
 			return r;
 		}));
-		setTimeout(function(){table.height = table.data[0].rows.length * rowheight;},100);
 	};
 	return view;
 };

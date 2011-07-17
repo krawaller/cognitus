@@ -73,16 +73,13 @@ C.ui.createMyListsView = function(o) {
 			editable: false,
 			moveable: false
 		});
-		rows = 0;
 		C.content.getPreListsWithDetails(C.state.lang).forEach(function(r,i){
-			rows++;
 			prelists.add(createRow(r,i,true));
 		});
 		var mylists = Ti.UI.createTableViewSection({
 			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))			
 		});
 		C.content.getMyListsWithSkillCount().forEach(function(r,i){
-			rows++;
 			mylists.add(createRow(r,i));
 		});
 		table.setData([mylists,prelists]);
@@ -97,7 +94,7 @@ C.ui.createMyListsView = function(o) {
 	var table = C.ui.createTableView({
 		editable: true,
 		moveable: true,
-		top: 60,
+		top: 50,
 		bottom: 0,
 		k_events: {
 			"delete": function(e) {
@@ -115,18 +112,11 @@ C.ui.createMyListsView = function(o) {
 	});
 	view.add(table);
 
-	pb.sub("/frameadjustmentfinished",function(){
-		table.bottom = 1;
-		table.bottom = 0;
-		table.height = table.height+1;
-		table.height = table.height-1;
-	})
-
 	var editing = false;
 	var btn = C.ui.createButton({
 		height: 32,
 		width: 70,
-		top: 20,
+		top: 10,
 		left: 80,
 		zIndex: 5,
 		backgroundImage: "images/button32.png",
@@ -145,7 +135,7 @@ C.ui.createMyListsView = function(o) {
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add_plain.png",
 		width: 70, 
 		height: 32,
-		top: 20, 
+		top: 10, 
 		right: 80,
 		backgroundImage: "images/button32.png",
 		backgroundLeftCap: 5, 

@@ -6,10 +6,10 @@ C.ui.createModuleSkillListView = function(o){
 		pb.pub("/navto","skillrational",{SkillId:skillid,ModuleId:moduleid});
 	}
 	
-	var table = C.ui.createSkillTable({top:30},tableclick);
+	var table = C.ui.createSkillTable({top:30,bottom:0},tableclick);
 	view.add(table);
 	view.render = function(arg){
-		table.height = table.render(arg.ModuleId,[]);
+		table.render(arg.ModuleId,[]);
 	}
 	
 	/*var table = K.create({

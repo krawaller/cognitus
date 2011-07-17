@@ -65,7 +65,8 @@ C.ui.createModuleTrainSessionListView = function(o){
 		table.setData(C.content.getModuleQuizSessions(args.ModuleId).map(function(q){
 			numrows++;
 			var row= C.ui.createTableViewRow({
-				hasChild: true,
+				//hasChild: true,
+				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto_button.png",
 				height: rowheight,
 				className: "session",
 				rowmainlabel: q.quizdate,
@@ -74,7 +75,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 			var mailbtn = C.ui.createButton({
 				top: 10,
 				btn: true,
-				right: 30,
+				right: 10,
 				width: 32,
 				backgroundImage: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png",
 				k_click: function(e){

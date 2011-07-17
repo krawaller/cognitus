@@ -7,6 +7,7 @@ C.ui.createSkillListView = function() {
 		editable: true,
 		moveable: true,
 		top: 80,
+		bottom: 0,
 		k_events: {
 			"delete": function(e) {
 				C.content.removeSkillFromList(e.row.ListItemId, e.row.priority);

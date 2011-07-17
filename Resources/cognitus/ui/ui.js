@@ -67,10 +67,10 @@
 
     function createPage(o) {
 		o = K.merge({
-			k_type:"ScrollView",
+			k_type:"View",//"ScrollView",
 			backgroundColor: "#FFF",
 			contentHeight:'auto',
-			showVerticalScrollIndicator:true
+			//showVerticalScrollIndicator:o.noscroll?false:true
 		},o||{});
 		var view = K.create(o);
         return view;
@@ -110,11 +110,11 @@
 		}));
 		if (o.adjustscroll){
 			textfield.addEventListener("focus",function(e){
-				o.containingTable && o.containingTable.scrollToIndex(o.rowIndex);
+				//o.containingTable && o.containingTable.scrollToIndex(o.rowIndex);
 			});
 			textfield.addEventListener("blur",function(e){
-				o.containingView && o.containingView.scrollTo(0,0);
-				o.containingTable && o.containingTable.scrollToIndex(0);
+				//o.containingView && o.containingView.scrollTo(0,0);
+				//o.containingTable && o.containingTable.scrollToIndex(0);
 			});
 		}
 		return textfield;
