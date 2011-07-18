@@ -39,7 +39,7 @@ C.ui.createSkillListView = function() {
 	view.add(listsbtn);
 	
 	var addbtn = C.ui.createButton({
-		width: 155,
+		width: 165,
 		top: 50,
 		left: 10,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
@@ -78,7 +78,7 @@ C.ui.createSkillListView = function() {
 	var crisisbtn = C.ui.createButton({
 		top: 10,
 		right: 10,
-		width: 155,
+		width: 165,
 		k_click: function(){
 			Ti.App.Properties.setString("crisislistid",listid === C.content.getCrisisList() ? "" : listid);
 			updateButtons();

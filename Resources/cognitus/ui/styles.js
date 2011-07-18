@@ -48,11 +48,12 @@
 		},
 		descriptionlabel: {
 			height: 15,
-			color: "blue",
+			color: "#113a6f",
 			textAlign: "center",
 			font: {
 				fontFamily: theme.fontFamily,
-				fontSize: 14
+				fontSize: 14,
+				fontWeight: "bold"
 			}
 		},
 		rowtoplabel: {
@@ -73,7 +74,12 @@
 			left: 10,
 			height: 20,
 			top: 5,
-			color: "green"	
+			color: "#113a6f",
+			font: {
+				fontFamily: theme.fontFamily,
+				fontSize: 12,
+				fontWeight: "bold"
+			}
 		},
 		rowmainlabel: {
 			top: 18,

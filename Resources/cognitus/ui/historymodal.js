@@ -28,7 +28,7 @@ C.ui.createHistoryModal = function(){
 	});
 	
 	var table = K.create({
-		top: 60,
+		top: 80,
 		k_type: "TableView",
 		k_click: function(e){
 			Ti.API.log([e.row.args,e.row.historyposition,e.row.titles]);

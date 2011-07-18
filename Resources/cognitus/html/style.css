@@ -9,3 +9,7 @@ body {
 	font-size: 0.85em;
 	/*background: url(../../images/paper.png) top left repeat;*/
 }
+
+h1, h2, h3 {
+	margin-left: 15px;
+}
