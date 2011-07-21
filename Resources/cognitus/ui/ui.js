@@ -21,11 +21,11 @@
 		var modal = K.create({
 			k_class: "modalbackgroundview",
 			visible: false,
-			k_click: function(e){
+			/*k_click: function(e){
 				if (e.source === modal){
 					closefun();
 				}
-			},
+			},*/
 			zIndex: ((o.zIndex) || (500))
 		});
 		var panel = K.create({
@@ -90,10 +90,14 @@
 	function createTextField(o,area){
 		var donebtn = K.create({
 			k_class: "keyboardtoolbarbutton",
-			title: "!!!",
+			title: "↓",
+			font:{
+				fontWeight: "bold"
+			},
 			k_click: function(e){
 				textfield.blur();
-			}
+			},
+			style: Titanium.UI.iPhone.SystemButtonStyle.BORDERED
 		});
 		var toolbartitle = K.create({
 			k_class: "keyboardtoolbarlabel",

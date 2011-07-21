@@ -72,7 +72,10 @@ C.ui.createModuleTrainSessionView = function(o){
 					control = Ti.UI.createSwitch({height: 30, width: 40, value: false,k_class:"quizswitch"});
 					break;
 				case "textfield":
-					control = C.ui.createTextField({height: 35, left: 15, right: 50, adjustscroll:true,containingTable:table,containingView:view });
+					control = C.ui.createTextField({
+						height: 35, left: 15, right: 50, adjustscroll:true,containingTable:table,containingView:view,
+						hintText: C.content.getText("moduletrainsession_textfield_hint")
+					});
 			}
 			control.top = 35;
 			r.control = control;

@@ -147,6 +147,7 @@ C.ui.createSkillListView = function() {
 		addbtn.visible = !isprelist;
 		editbtn.visible = !isprelist;
 		var crisislist = C.content.getCrisisList();
+		crisisbtn.visible = !isprelist;
 		crisisbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(listid === crisislist ? "skull_plain":"noskull2_plain")+".png";
 		crisisbtn.title = C.content.getText("skillist_btn_"+(crisislist===listid?"dontuseforcrisis":"useforcrisis"));
 	}

@@ -28,17 +28,19 @@ C.ui.createHelpModal = function(){
 	var webviewmaster = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/master.html").read().text;
 	var webview = Ti.UI.createWebView({
 		scalesPageToFit:true,
-	   // contentWidth:'auto',
+	    contentWidth:'auto',
 	    contentHeight:'auto',
-		top: 50
+		showVerticalScrollIndicator: true,
+		top: 50,
+		bottom: 0
 	});
-	webview.addEventListener("load",function(e){
+/*	webview.addEventListener("load",function(e){
 		var newheight = Math.max(webview.evalJS("document.height;"),200); // TODO - make this change!
 		//Ti.API.log("UPDATED WEBVIEW!! LOADDDD! "+newheight);
 		webview.height = newheight;
 		modal.contentHeight = newheight;
 		modal.contentHeight = "auto";
-	});
+	});*/
 	modal.panel.add(webview);
 
 

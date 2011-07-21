@@ -156,13 +156,13 @@
 		},
 		keyboardtoolbarlabel: { // used in ui.js for textfield and textarea
 			k_type: "Label",
-			width: 200,
+			//width: 200,
 			height: 20,
 			font: {
 				fontSize: 14,
 				fontWeight: "bold"
 			},
-			backgroundColor: "#12BC0F",
+			//backgroundColor: "#12BC0F",
 			color: "#FFF"
 		},
 		modalbackgroundview: { // the transparent background view in the modal panels
