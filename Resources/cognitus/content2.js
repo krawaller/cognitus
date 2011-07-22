@@ -8,7 +8,7 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00116';
+		DBNAME = 'COGNITUS_00125';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
@@ -149,6 +149,7 @@
 		storeQuizSession: function(quizdate,answers){
 			dbOperation("DELETE FROM quizanswers WHERE quizdate = ?",[quizdate]);
 			answers.forEach(function(a){
+				Ti.API.log([quizdate,a.quizquestionid,a.value]);
 				dbOperation("INSERT INTO quizanswers (quizdate,quizquestionid,value) VALUES (?,?,?)",[quizdate,a.quizquestionid,a.value]);
 			});
 		},

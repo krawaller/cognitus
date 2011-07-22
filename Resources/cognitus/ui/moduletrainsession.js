@@ -66,7 +66,7 @@ C.ui.createModuleTrainSessionView = function(o){
 			}
 			switch(q.type){
 				case "slider": 
-					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 50,k_class:"quizslider"});
+					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 50,k_class:"quizslider",value:5});
 					break;
 				case "switch":
 					control = Ti.UI.createSwitch({height: 30, width: 40, value: false,k_class:"quizswitch"});

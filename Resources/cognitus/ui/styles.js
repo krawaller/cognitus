@@ -94,7 +94,7 @@
 		rowmainwrittenlabel: {
 			top: 20,
 			left: 25,
-			height: 30,
+			//height: 30,
 			textAlign: "left",
 			font: {
 				fontSize: 14,

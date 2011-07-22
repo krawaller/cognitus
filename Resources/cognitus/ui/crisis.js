@@ -80,7 +80,7 @@ C.ui.createCrisisView = function(){
 	
 	var editbtn = C.ui.createButton({
 		top: 230,
-		width: 60,
+		width: 70,
 		zIndex: 100,
 		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
 		k_click: function(){

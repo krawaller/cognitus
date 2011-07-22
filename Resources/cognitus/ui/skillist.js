@@ -159,7 +159,7 @@ C.ui.createSkillListView = function() {
 			ModuleId: r.ModuleId,
 			ListItemId: r.ListItemId,
 			priority: r.priority,
-			height: 60
+			height: 80
 		});
 		var toplabelcontainer = Ti.UI.createView({top: 0,height: 22,layout:"horizontal",width:"auto",left: 5});
 		toplabelcontainer.add(C.ui.createLabel(undefined,{
@@ -174,6 +174,8 @@ C.ui.createSkillListView = function() {
 		row.toplabelcontainer = toplabelcontainer;
 		var usagelabel = C.ui.createLabel(undefined,{
 			k_class: "rowmainwrittenlabel",
+			//width: 240,
+			//height: "50",
 			text: r.usagetext
 		});
 		row.add(usagelabel);
