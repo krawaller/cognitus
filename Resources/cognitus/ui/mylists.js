@@ -143,7 +143,7 @@ C.ui.createMyListsView = function(o) {
 			if (!editing){
 				C.content.addNewList();
 				renderTable();
-				startEditing(true);
+				setTimeout(function(){startEditing(true)},200);
 			}
 		}
 	});
@@ -181,6 +181,7 @@ C.ui.createMyListsView = function(o) {
 				r.crisisbutton.visible = true;
 				r.crisisbutton.enabled = true;
 				if (added && !i){
+					r.textfield.value = "";
 					r.textfield.focus();
 				}
 			},300);

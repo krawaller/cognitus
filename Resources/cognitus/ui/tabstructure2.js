@@ -109,6 +109,12 @@ C.ui.createTabStructure = function(lists, pages) {
 		var start = Date.now();
 				var bgcolours = ["#666","#777","#888","#999","#AAA","#BBB","#CCC","#DDD","#EEE","#FFF"],
 					//bgcolours = ["#024D9E","#005ABA","#1C70C9","#2D7ACC","#4187D1","#639AD6","#84B2E3","#A4C6EB","#D6E1F2","#FFF"],
+					//bgcolours = ["#152750","#152750","#152750","#152750","#152750","#152750","#152750","#152750","#152750","#FFF"],
+					/*tabrowbg = "#FFF",//"#0E366B",
+					tabbg = "#DDD", //"#0E366B",// "#16264F",
+					labelcolor = "#000",
+					labelselectedcolor = "#113a6f",
+					labeltopcolor = "#113a6f",*/
 					numrows = page.listhistory.length;
 				//Ti.API.log(["going to show these tabs",page.listhistory,"with these positions",page.listpositions]);
 				tabrows.forEach(function(tabrow,i){
@@ -117,6 +123,7 @@ C.ui.createTabStructure = function(lists, pages) {
 						//Ti.API.log("Tabrow "+i+" set to listid "+page.listhistory[i]+", which has "+list.length+" tabs");
 						tabrow.listid = page.listhistory[i];
 						tabrow.backgroundColor = (i === 0 ? "transparent" : bgcolours[bgcolours.length - 1 - numrows*2 + i*2]);
+						//tabrow.backgroundColor = (i === 0 ? "transparent" : tabrowbg);
 						tabrow.buttons.forEach(function(btn,j){
 							//var label = btn.k_children.label;
 							var label = btn.k_child_label;
@@ -132,9 +139,11 @@ C.ui.createTabStructure = function(lists, pages) {
 										fontWeight: "bold",
 										fontSize: 10
 									};
+									//label.color = i+1==numrows ? labeltopcolor : labelselectedcolor;
 									btn.selected = true;
 									label.selected = true;
 									btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 2];
+									//btn.backgroundColor = i+1==numrows ? "#FFF" : tabrowbg;
 									btn.top = 0;
 								} else {
 									btn.selected = false;
@@ -143,8 +152,10 @@ C.ui.createTabStructure = function(lists, pages) {
 										fontWeight: "normal",
 										fontSize: 10
 									};
+									//label.color = labelcolor;
 									btn.top = 1;
 									btn.backgroundColor = bgcolours[bgcolours.length - 1 - numrows*2 + i*2 + 1];
+									//btn.backgroundColor = tabbg;
 								}
 							} else {
 								btn.visible = false;
