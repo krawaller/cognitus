@@ -1,6 +1,18 @@
 // Version with centralised DB handling
 
 (function() {
+	xhr = {
+		get: function(url,callback){
+			var c = Titanium.Network.createHTTPClient();
+			c.open("GET",url);
+			c.onload = function(){
+				callback(this.responseData);
+			};
+			c.send();
+		}
+	};	
+	
+	
 	var USEVIEWS = true;
 	
 	var notes = JSON.parse(Ti.App.Properties.getString("notes")||JSON.stringify({})),
@@ -8,7 +20,7 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00126';
+		DBNAME = 'COGNITUS_00133';
 	
 	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
 	res.close();
@@ -76,12 +88,12 @@
 			rows.next();
 		}
 		rows.close();
-		rows = db.execute("SELECT skillid, moduleid, submoduleid FROM skills ORDER BY moduleid, submoduleid DESC, priority ASC");
+		rows = db.execute("SELECT skillid, moduleid, coalesce(submoduleid, '9NONE') as submoduleid FROM skills ORDER BY moduleid, submoduleid ASC, priority ASC");
 		var prevsub, prevmodule;
 		while (rows.isValidRow()){
 			var skill = rows.field(0),
 				module = rows.field(1),
-				sub = (rows.field(2) || "NONE");
+				sub = (rows.field(2) || "9NONE");
 			skilltomodule[skill] = module;
 			moduleskills[module].push(skill);
 			if ((sub !== prevsub) || (prevmodule !== module)){
@@ -107,9 +119,18 @@
 		date: "2011-04-12"
 	}];
 
-
-
     C.content = {
+		loadTextsFromServer: function(){
+			var maxlast = C.content.getMaxLastUpdated();
+			Ti.API.log("LOADING FROM SERVER!");
+			xhr.get("http://cognitus.krawaller.se/api/texts?lastupdated="+maxlast,function(data){
+				data = JSON.parse(data);
+				//Ti.API.log([data,typeof data,data.length,data[0]]);
+				Ti.API.log("Hämtade "+data.length+" nya poster");
+				C.content.receiveTextsFromServer(data);
+				pb.pub("/updatetext");
+			});
+		},
 		getHelpForPageId: function(pageid,lang){
 			return dbSinglePropQuery("SELECT "+lang+"  FROM texts WHERE textid = ?",lang,[pageid+"_help_html"]);
 		},
@@ -259,7 +280,7 @@
 			return dbQuery(sql,mould);
 		},
 		getPreListSkills: function(listid,lang){
-			var sql = "SELECT listid, skillid, moduleid, priority, listitemid, "+lang+" as usagetext FROM prelistitemswithdetails",
+			var sql = "SELECT listid, skillid, moduleid, priority, listitemid, "+lang+" as usagetext FROM prelistitemswithdetails WHERE listid = '"+listid+"'",
 				mould = {ListId:"listid",priority:"priority",usagetext:"usagetext",SkillId:"skillid",ModuleId:"moduleid",ListItemId:"listitemid"};
 			return dbQuery(sql,mould);
 		},

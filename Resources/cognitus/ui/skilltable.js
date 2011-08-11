@@ -33,7 +33,7 @@ C.ui.createSkillTable = function(o, callback) {
 				var section = Ti.UI.createTableViewSection();
 				if (numberofsubmodules > 1) { //submoduleid !== "NONE") {
 					headers++;
-					section.headerView = C.ui.createTableSectionHeader(C.content.getText(submoduleid === "NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid + "_title"));
+					section.headerView = C.ui.createTableSectionHeader(C.content.getText(submoduleid === "9NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid.substr(1) + "_title"));
 				}
 				submodules[submoduleid].forEach(function(skillid) {
 					//Ti.API.log("---- --- ---- " + skillid);

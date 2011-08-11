@@ -14,7 +14,7 @@ C.ui.createModuleTrainSessionView = function(o){
 			quizdate = old ? C.state.lastArgs.quizdate : K.dateFormat(Date(),"yyyy-mm-dd HH:MM:ss");
 		table.data[0].rows.forEach(function(r){
 			answers.push({
-				value: r.control.value,
+				value: (r.controltype == "slider" ? Math.round(r.control.value) : r.control.value),
 				quizquestionid: r.quizquestionid
 			});
 		});
@@ -46,7 +46,8 @@ C.ui.createModuleTrainSessionView = function(o){
 			var control, r = Ti.UI.createTableViewRow({
 				className: q.type + q["help"+C.state.lang] ? "withhelp" : "",
 				height: rowheight,
-				quizquestionid: q.quizquestionid
+				quizquestionid: q.quizquestionid,
+				controltype: q.type
 			});
 			r.add(C.ui.createLabel(undefined,{
 				text: q[C.state.lang],
@@ -65,25 +66,41 @@ C.ui.createModuleTrainSessionView = function(o){
 				r.add(helpbtn);
 			}
 			switch(q.type){
-				case "slider": 
-					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 15, right: 50,k_class:"quizslider",value:5});
+				case "slider":
+					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 10, right: 80,k_class:"quizslider",value:old?q.value:5});
+					var l = Ti.UI.createLabel({
+						height:15,width:20,right:55,top:39,text:(old?q.value:5),
+						color: "#113a6f",
+						textAlign: "center",
+						font: {
+							fontFamily: K.os({
+								iphone:'Helvetica Neue',
+								android:'Droid Sans'
+							}),
+							fontSize: 14,
+							fontWeight: "bold"
+						}
+					});
+					control.addEventListener("change",function(e){l.text=Math.round(e.value)});
+					r.add(l);
 					break;
 				case "switch":
-					control = Ti.UI.createSwitch({height: 30, width: 40, value: false,k_class:"quizswitch"});
+					control = Ti.UI.createSwitch({height: 30, width: 40, value: old ? q.value : false,k_class:"quizswitch"});
 					break;
 				case "textfield":
 					control = C.ui.createTextField({
 						height: 35, left: 15, right: 50, adjustscroll:true,containingTable:table,containingView:view,
-						hintText: C.content.getText("moduletrainsession_textfield_hint")
+						hintText: C.content.getText("moduletrainsession_textfield_hint"),
+						value: old?q.value:""
 					});
 			}
 			control.top = 35;
 			r.control = control;
 			r.add(control);
-			if (old){
+			/*if (old){
 				control.value = q.value;
 				//control.enabled = false;
-			}
+			}*/
 			return r;
 		}));
 	};

@@ -37,7 +37,7 @@ C.ui.createTestView = function(o){
 				btn.opacity = 1;
 				btn.enabled = true;
 				data = JSON.parse(data);
-				Ti.API.log([data,typeof data,data.length,data[0]]);
+				//Ti.API.log([data,typeof data,data.length,data[0]]);
 				label.text = "Hämtade "+data.length+" nya poster";
 				spinner.hide();
 				C.content.receiveTextsFromServer(data);

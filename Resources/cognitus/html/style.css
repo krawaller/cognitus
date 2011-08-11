@@ -10,6 +10,16 @@ body {
 	/*background: url(../../images/paper.png) top left repeat;*/
 }
 
+.iconimg {
+	display: block;
+	margin-left: 2em;
+}
+
+.iconimg > img {
+	margin-right: 1em;
+}
+
+
 h1, h2, h3 {
 	margin-left: 15px;
 }

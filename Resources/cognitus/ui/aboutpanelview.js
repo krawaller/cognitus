@@ -12,7 +12,7 @@
 			width: 140,
 			k_click: function(e){
 				Titanium.UI.createEmailDialog({
-					toRecipients: ["andreas@cognitus.se"],
+					toRecipients: ["developer@dbt-app.com"],
 					subject: "Cognitus Application feedback",
 					html: true,
 				}).open();
@@ -27,7 +27,7 @@
 			width: 140,
 			image: Ti.Filesystem.resourcesDirectory+"/images/icons/rate.png",
 			k_click: function(e){
-				alert("Rating! Woo!");
+				Ti.Platform.openURL("itms://itunes.apple.com/app/id?mt=8");
 			},
 			textid: "about_btn_rate"
 		});

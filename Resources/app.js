@@ -1,7 +1,7 @@
 /*global Ti: true, Ti.UI: true */
 
 var C = {
-	state: {lang:"sv",history:[],historyposition:-1,showingTabs:true}
+	state: {lang:Ti.App.Properties.getString("chosenlanguage")||"en",history:[],historyposition:-1,showingTabs:true}
 };
 
 Ti.include("/assets/kralib.js",
@@ -84,12 +84,6 @@ appstructure = [{
 {
 	pageid: "crisis",
 	view: C.ui.createCrisisView()
-	/*navtextid: "tab_crisis",
-	navto: "crisis",
-	sub: [{
-		pageid: "crisis",
-		view: C.ui.createCrisisView()
-	}]*/
 },
 {
 	navtextid: "tab_about",
@@ -105,13 +99,22 @@ appstructure = [{
 			pageid: "newsitem"
 			//, view: C.ui.createNewsItemView()
 		}]
-	},{
+	}/*,{
 		pageid: "test",
 		view: C.ui.createTestView()
-	}]
+	}*/]
 }];
 
 C.state.mainWindow = C.ui.createAppWindow(appstructure);
+
+C.state.mainWindow.addEventListener("focus",function(){
+	C.content.loadTextsFromServer();
+});
+
+Ti.App.addEventListener("resume",function(){
+	C.content.loadTextsFromServer();
+});
+
 C.state.mainWindow.open();
 
 pb.pub("/appstart");

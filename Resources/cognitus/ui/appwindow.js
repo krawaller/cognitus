@@ -66,7 +66,7 @@ C.ui.createAppWindow = function(appstructure) {
         k_type: "Window",
         exitOnClose: true,
         orientationModes: [
-			Titanium.UI.PORTRAIT,
+			Titanium.UI.PORTRAIT
 			/*Titanium.UI.UPSIDE_PORTRAIT,
 			Titanium.UI.LANDSCAPE_LEFT,
 			Titanium.UI.LANDSCAPE_RIGHT*/
@@ -319,6 +319,7 @@ C.ui.createAppWindow = function(appstructure) {
 	// ******************* Navigation logic
 	
 	pb.sub("/navto",function(pageid,args){
+		Ti.API.log("Navigating to "+pageid);
 		titleview.visible = true;
 		// arguments
 		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
@@ -386,7 +387,13 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/navto","home"); // TODO - fix dynamically!
 		frame.animate({opacity:1,duration:1000},function(){
 		//	pb.pub("/navto","home");
+			if (!Ti.App.Properties.getString("chosenlanguage")){
+				var lm = C.ui.createLanguageSelectModal();
+				win.add(lm);
+				lm.show();
+			}
 		});
+		
 	});
 
     // ******************* All done, returning the window!
