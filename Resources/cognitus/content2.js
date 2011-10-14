@@ -111,14 +111,6 @@
 	// initial loading of skills and modules from database
 	loadSkillsAndModules();
 
-	var newsitems = [{
-		newsid: "news00001",
-		date: "2011-04-01"
-	},{
-		newsid: "news00002",
-		date: "2011-04-12"
-	}];
-
     C.content = {
 		loadTextsFromServer: function(){
 			var maxlast = C.content.getMaxLastUpdated();
