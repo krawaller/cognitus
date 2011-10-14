@@ -1,5 +1,10 @@
 /*global Ti: true, Ti.UI: true */
 
+if (!Ti.App.Properties.getBool("hassetdefault")){
+	Ti.App.Properties.setBool("usingbigtabs",Ti.Platform.osname === "ipad");
+	Ti.App.Properties.setBool("hassetdefault",true);
+}
+
 var C = {
 	state: {lang:Ti.App.Properties.getString("chosenlanguage")||"en",history:[],historyposition:-1,showingTabs:true}
 };
