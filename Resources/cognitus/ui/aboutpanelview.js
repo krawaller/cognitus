@@ -27,7 +27,10 @@
 			width: 140,
 			image: Ti.Filesystem.resourcesDirectory+"/images/icons/rate.png",
 			k_click: function(e){
-				Ti.Platform.openURL("itms://itunes.apple.com/app/id?mt=8");
+				Ti.Platform.openURL("itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=458300012");
+				// itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=458300012
+				// http://itunes.apple.com/app/dbt-self-help/id458300012?mt=8
+				// http://itunes.com/apps/dbt-self-help
 			},
 			textid: "about_btn_rate"
 		});
