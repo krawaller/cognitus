@@ -9,10 +9,6 @@
 			top: 60
 		}));
 		
-		if (!Ti.App.Properties.getBool("hassetdefault")){
-			
-		}
-		
 		var bigswitch = Ti.UI.createSwitch({
 			top: 85,
 			width: 50,

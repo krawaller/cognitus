@@ -19,16 +19,26 @@ C.ui.createTabStructure = function(lists, pages) {
 	var tabrows = [],
 		rowbigheight = 40,
 		rowdefaultheight = 25,
-		rowheight, btnwidth = 90,
-		firstrowbtnwidth = 68,
-		btnspace = 10;
+		rowheight,
+		btnwidth = Ti.Platform.osname === "ipad" ? 110 : 90,
+		firstrowbtnwidth = Ti.Platform.osname === "ipad" ? 110 : 68,
+		btnspace = Ti.Platform.osname === "ipad" ? 30 : 10,
+		leftbtnmargin = Ti.Platform.osname === "ipad" ? 60 : 0,
+		rowoff = Ti.Platform.osname === "ipad" ? 60 : 15,
+		HEIGHT = Ti.Platform.displayCaps.platformHeight,
+		WIDTH = Ti.Platform.displayCaps.platformWidth;
 	rowheight = Ti.App.Properties.getBool("usingbigtabs") ? rowbigheight : rowdefaultheight;
+	if (HEIGHT<WIDTH){ // prevent startappinwrongorientation bug
+		temp = HEIGHT;
+		HEIGHT = WIDTH;
+		WIDTH = temp;
+	}
 	
 	var container = K.create({
 		k_type: "View",
 		bottom: 0,
-		width: Ti.Platform.displayCaps.platformWidth,
-		height: Ti.Platform.displayCaps.platformWidth,
+		width: WIDTH,
+		height: WIDTH,
 		k_click: function(e){
 			//Ti.API.log(["clicked the button woo!",e.source,e.source && e.source.navto, e.source && e.source.selected]);
 			if (e.source && e.source.navto){ // && !e.source.selected){
@@ -42,6 +52,8 @@ C.ui.createTabStructure = function(lists, pages) {
 		var tabrow = K.create({
 			k_type: "View",
 			height: rowheight,
+			width: WIDTH,
+			left: 0,
 			//backgroundColor: ["#AAA", "#BBB", "#CCC", "#DDD", "#EEE"][row],
 			bottom: row * rowheight,
 			k_children: [{
@@ -87,7 +99,7 @@ C.ui.createTabStructure = function(lists, pages) {
 				height: rowheight - 5,
 				width: row ? btnwidth : firstrowbtnwidth,
 				top: 0,
-				left: btnspace + ((row ? btnwidth : firstrowbtnwidth) + btnspace) * col + 15 * ((row) % 2)
+				left: leftbtnmargin+btnspace + ((row ? btnwidth : firstrowbtnwidth) + btnspace) * col + rowoff * ((row) % 2)
 			});
 			pb.sub("/updatetext",function(){
 				var label = btn.k_children.label;

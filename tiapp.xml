@@ -14,7 +14,7 @@
 <url>http://blog.krawaller.se</url>
 <description>No description provided</description>
 <copyright>2011 by KungD</copyright>
-<icon>Logo.png</icon>
+<icon>default_app_logo.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>

@@ -3,7 +3,7 @@
 		
 		var controlpanel = K.create({
 			k_type: "View",
-			width: Ti.Platform.displayCaps.platformWidth,
+			width: Math.min(Ti.Platform.displayCaps.platformWidth, Ti.Platform.displayCaps.platformHeight),
 			top: 0
 		});
 
