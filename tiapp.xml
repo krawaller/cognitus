@@ -1,5 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
+    <sdk-version>1.7.5</sdk-version>
     <deployment-targets>
         <target device="mobileweb">true</target>
         <target device="blackberry">false</target>
@@ -7,14 +8,14 @@
         <target device="ipad">true</target>
         <target device="android">false</target>
     </deployment-targets>
-<id>se.krawaller.cognitus</id>
-<name>Cognitus DBT</name>
-<version>1.0</version>
-<publisher>KungD</publisher>
-<url>http://blog.krawaller.se</url>
-<description>No description provided</description>
-<copyright>2011 by KungD</copyright>
-<icon>default_app_logo.png</icon>
+    <id>se.krawaller.cognitus</id>
+    <name>Cognitus DBT</name>
+    <version>1.0</version>
+    <publisher>KungD</publisher>
+    <url>http://blog.krawaller.se</url>
+    <description>No description provided</description>
+    <copyright>2011 by KungD</copyright>
+    <icon>default_app_logo.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
@@ -22,19 +23,17 @@
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>true</analytics>
-<guid>4359f954-9b57-4b38-baa8-241029b630b1</guid>
-	<iphone>
-		<orientations device="iphone">
-			<orientation>Ti.UI.PORTRAIT</orientation>
-			<orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
-		</orientations>
-		<orientations device="ipad">
-			<orientation>Ti.UI.PORTRAIT</orientation>
-			<orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
-		</orientations>
-	</iphone>
-	<android xmlns:android="http://schemas.android.com/apk/res/android">
-	</android>
-	<modules>
-	</modules>
+    <guid>4359f954-9b57-4b38-baa8-241029b630b1</guid>
+    <iphone>
+        <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+        </orientations>
+        <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+        </orientations>
+    </iphone>
+    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <modules/>
 </ti:app>
