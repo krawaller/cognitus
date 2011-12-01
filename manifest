@@ -1,8 +1,8 @@
 #appname:Cognitus DBT
-#publisher:KungD
-#url:http://blog.krawaller.se
+#publisher:Andreas Nordlund
+#url:http://dbt-app.se
 #image:appicon.png
-#appid:se.krawaller.cognitus
-#desc:No description provided
-#type:mobile
+#appid:se.cognitus.dbt-app
+#desc:DBT self help app
+#type:ipad
 #guid:4359f954-9b57-4b38-baa8-241029b630b1

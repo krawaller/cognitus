@@ -12,69 +12,69 @@ Includes these files:
 */
 
 C.ui.createAppWindow = function(appstructure) {
-	var newlistid = (function(){
+	var newlistid = (function() {
 		var max = 0;
-		return function(){
+		return function() {
 			return max++;
 		};
 	})();
 
-    // ****************** Building the app structure from the tree
-    function processContent(o, lists, pages, listid, listhistory, listpositions, level) {
-        if (Array.isArray(o)) {
-            // processing a List
-            lists[listid] = [];
-            o.forEach(function(page,i) {
-                lists[listid].push({
-                    navtextid: (page.navtextid) || (page.pageid+"_nav"),
+	// ****************** Building the app structure from the tree
+	function processContent(o, lists, pages, listid, listhistory, listpositions, level) {
+		if (Array.isArray(o)) {
+			// processing a List
+			lists[listid] = [];
+			o.forEach(function(page, i) {
+				lists[listid].push({
+					navtextid: (page.navtextid) || (page.pageid + "_nav"),
 					suffix: page.sub ? !page.view ? " ↑" : " •" : "",
-                    navto: (page.navto) || (page.pageid),
+					navto: (page.navto) || (page.pageid),
 					level: level
-                });
+				});
 				processContent(page, lists, pages, listid, [].concat(listhistory).concat(listid), [].concat(listpositions).concat([i]), level);
-            });
-        } else {
-            // processing a Page
-			if (!o.navto){
-            	pages[o.pageid] = {
-                	view: o.view,
+			});
+		} else {
+			// processing a Page
+			if (!o.navto) {
+				pages[o.pageid] = {
+					view: o.view,
 					listid: listid,
-                	listhistory: [].concat(listhistory), // must be copy
-					listpositions: [].concat(listpositions), // copy
+					listhistory: [].concat(listhistory),
+					// must be copy
+					listpositions: [].concat(listpositions),
+					// copy
 					listhistorystring: [].concat(listhistory).join(","),
 					level: level,
 					using: (o.using) || (""),
 					pageid: o.pageid,
 					basic: !o.view
-            	};
+				};
 			}
-            if (o.sub) {
-                processContent(o.sub, lists, pages, newlistid(), listhistory, listpositions, level+1);
-            }
-        }
-    }
-    var lists = {},
-    	pages = {};
-	processContent(appstructure,lists,pages,newlistid(),[], [], 1);
+			if (o.sub) {
+				processContent(o.sub, lists, pages, newlistid(), listhistory, listpositions, level + 1);
+			}
+		}
+	}
+	var lists = {},
+		pages = {};
+	processContent(appstructure, lists, pages, newlistid(), [], [], 1);
 	C.state.pages = pages;
 	C.state.lists = lists;
-	
 
-
-    // ***************** Creating the window object and adding the pages
-    var win = K.create({
-        k_type: "Window",
-        exitOnClose: true,
-        orientationModes: [
-			Titanium.UI.PORTRAIT
-			/*Titanium.UI.UPSIDE_PORTRAIT,
+	// ***************** Creating the window object and adding the pages
+	var win = K.create({
+		k_type: "Window",
+		exitOnClose: true,
+		orientationModes: [
+		Titanium.UI.PORTRAIT
+		/*Titanium.UI.UPSIDE_PORTRAIT,
 			Titanium.UI.LANDSCAPE_LEFT,
 			Titanium.UI.LANDSCAPE_RIGHT*/
 		],
 		opacity: 1,
-        fullscreen: true,
+		fullscreen: true,
 		backgroundColor: "transparent"
-    });
+	});
 	win.backgroundColor = "transparent";
 	//win.backgroundImage = Ti.Filesystem.resourcesDirectory+'/iphone/Default.png';
 	var swipedir;
@@ -91,30 +91,35 @@ C.ui.createAppWindow = function(appstructure) {
 			height: 1,
 			top: 0,
 			backgroundColor: "#000"
-		},{
+		},
+		{
 			k_type: "View",
 			top: 60,
 			k_id: "pagecontainer"
-		},/*{
+		},
+		/*{
 			k_type: "View",
 			width: 1,
 			left: 0,
 			backgroundColor: "#000"
-		},*/{
+		},*/
+		{
 			k_type: "View",
 			k_id: "gradientportrait",
 			height: GRADIENTBREDTH,
 			bottom: 0,
 			zIndex: 1337,
 			backgroundImage: "images/gradient_bottom.png"
-		},{
+		},
+		{
 			k_type: "View",
 			k_id: "gradientportraittop",
 			height: GRADIENTBREDTH,
 			top: 60,
 			zIndex: 1337,
 			backgroundImage: "images/gradient_top.png"
-		},{
+		},
+		{
 			visible: false,
 			k_type: "View",
 			k_id: "gradientlandscape",
@@ -125,7 +130,8 @@ C.ui.createAppWindow = function(appstructure) {
 				colors: [{
 					color: 'transparent',
 					position: 0.0
-				}, {
+				},
+				{
 					color: '#ffffff',
 					position: 1.0
 				}]
@@ -154,31 +160,28 @@ C.ui.createAppWindow = function(appstructure) {
 		gradientlandscape = frame.k_children.gradientlandscape,
 		pagecontainer = frame.k_children.pagecontainer;
 
-    for (var pid in pages) {
-        var page = pages[pid];
-		if (page.view){
-        	page.view.visible = false;
-        	pagecontainer.add(page.view);
+	for (var pid in pages) {
+		var page = pages[pid];
+		if (page.view) {
+			page.view.visible = false;
+			pagecontainer.add(page.view);
 		}
-    }
+	}
 	C.state.frame = frame;
 
-
 	// ******************* Basic text view
-	
 	Ti.include("/cognitus/ui/htmlview.js");
 	var textview = C.ui.createHtmlView({});
 	pagecontainer.add(textview);
 
 	// controls
-	
-	
-	function toggleControls(){
+
+	function toggleControls() {
 		C.state.showingTabs = !C.state.showingTabs;
-		anchor.backgroundImage = "images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation")+".png";
+		anchor.backgroundImage = "images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation") + ".png";
 		pb.pub("/adjustframe");
 	}
-	
+
 	var anchor = C.ui.createButton({
 		zIndex: 100,
 		height: 34,
@@ -189,33 +192,34 @@ C.ui.createAppWindow = function(appstructure) {
 		backgroundImage: "/images/icons/fullscreen.png",
 		k_click: toggleControls
 	});
-	
+
 	win.add(anchor);
 
 	Ti.include("/cognitus/ui/title.js");
 	var titleview = C.ui.createTitleView();
 	frame.add(titleview);
-	
-	win.showPageTitle = function(){titleview.visible = true;};
-	win.hidePageTitle = function(){titleview.visible = false;};
-	
+
+	win.showPageTitle = function() {
+		titleview.visible = true;
+	};
+	win.hidePageTitle = function() {
+		titleview.visible = false;
+	};
+
 	// ******************** Notes modal
-	
 	Ti.include("/cognitus/ui/notesmodal.js");
 	var notesmodal = C.ui.createNotesModal();
 	win.add(notesmodal);
 
 	// ******************** Help modal
-	
 	Ti.include("/cognitus/ui/helpmodal.js");
 	var helpmodal = C.ui.createHelpModal();
-	win.add(helpmodal);	
+	win.add(helpmodal);
 
 	// ******************** Top-screen Control panel
-
 	Ti.include("/cognitus/ui/controlpanelview.js");
 	var controlpanel = C.ui.createControlPanelView();
-	
+
 	K.create({
 		k_type: "View",
 		width: Ti.Platform.displayCaps.platformWidth,
@@ -223,27 +227,21 @@ C.ui.createAppWindow = function(appstructure) {
 	});
 	win.add(controlpanel);
 
-
-
-
 	// ******************* Tabs
 	Ti.include("/cognitus/ui/tabstructure2.js"); // <------ OBSERVE! choice of tabstructure file
-	win.add(C.ui.createTabStructure(lists,pages));
-
-
+	win.add(C.ui.createTabStructure(lists, pages));
 
 	// ******************* Frame adjustment
-	
 	/*Ti.Gesture.addEventListener('orientationchange', function(e){
 		pb.pub("/adjustframe");
 	});*/
-	
-	pb.sub("/adjustframe",function(){
-		if (C.state.showingTabs){
+
+	pb.sub("/adjustframe", function() {
+		if (C.state.showingTabs) {
 			var tabheight = C.state.currentPage.listhistory.length * (Ti.App.Properties.getBool("usingbigtabs") ? 40 : 25),
 				platformheight = Ti.Platform.displayCaps.platformHeight,
 				platformwidth = Ti.Platform.displayCaps.platformWidth;
-			if (C.state.orientation === "landscape"){
+			if (C.state.orientation === "landscape") {
 				/*gradientlandscape.visible = true;
 				gradientportrait.visible = false;
 				
@@ -259,15 +257,16 @@ C.ui.createAppWindow = function(appstructure) {
 			} else {
 				gradientportrait.visible = true;
 				gradientlandscape.visible = false;
-				
+
 				frame.top = 40;
 				frame.left = 0;
 				frame.right = 0;
-			//Ti.API.log("Adjusting the frame! depth="+C.state.currentPage.listhistory.length+", tabheight="+tabheight+", prev bottom="+frame.bottom);
+				//Ti.API.log("Adjusting the frame! depth="+C.state.currentPage.listhistory.length+", tabheight="+tabheight+", prev bottom="+frame.bottom);
 				frame.bottom = tabheight;
-			//Ti.API.log("After adjustment, frame.bottom="+frame.bottom);
-
-				controlpanel.transform = Ti.UI.create2DMatrix({rotate:0});
+				//Ti.API.log("After adjustment, frame.bottom="+frame.bottom);
+				controlpanel.transform = Ti.UI.create2DMatrix({
+					rotate: 0
+				});
 				//controlpanel.width = Ti.Platform.displayCaps.platformWidth;
 				controlpanel.bottom = undefined;
 				controlpanel.left = undefined;
@@ -276,7 +275,7 @@ C.ui.createAppWindow = function(appstructure) {
 		} else {
 			gradientportrait.visible = false;
 			gradientlandscape.visible = false;
-			
+
 			frame.right = 0;
 			frame.left = 0;
 			frame.top = 0;
@@ -285,13 +284,11 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/frameadjustmentfinished");
 	});
 
-	
 	// ********************* Skill selection panel logic *********************
-	Ti.include("/cognitus/ui/selectskillmodal.js"); 
+	Ti.include("/cognitus/ui/selectskillmodal.js");
 	var selectskillmodal = C.ui.createSelectSkillModal();
 	win.add(selectskillmodal);
-	
-	
+
 	// ********************* List selection panel logic *********************
 	Ti.include("/cognitus/ui/selectlistmodal.js");
 	var selectlistmodal = C.ui.createSelectListModal();
@@ -307,96 +304,100 @@ C.ui.createAppWindow = function(appstructure) {
 	var historymodal = C.ui.createHistoryModal();
 	win.add(historymodal);
 
-
 	// ******************* Stuff
-
-	pb.sub("/updatetext",function(){
-		if (C.state.currentPageView.render){
-			C.state.currentPageView.render(C.state.lastArgs,C.state.currentPage);
+	pb.sub("/updatetext", function() {
+		if (C.state.currentPageView.render) {
+			C.state.currentPageView.render(C.state.lastArgs, C.state.currentPage);
 		}
 	});
 
 	// ******************* Navigation logic
-	
-	pb.sub("/navto",function(pageid,args){
-		Ti.API.log("Navigating to "+pageid);
+	pb.sub("/navto", function(pageid, args) {
+		Ti.API.log("Navigating to " + pageid);
 		titleview.visible = true;
 		// arguments
 		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
 		args = args || {};
-		var argstouse = K.merge(args || {},C.state.lastArgs || {});
-		if (argstouse.SkillId && !argstouse.ModuleId){
+		var argstouse = K.merge(args || {},
+		C.state.lastArgs || {});
+		if (argstouse.SkillId && !argstouse.ModuleId) {
 			argstouse.ModuleId = C.content.getModuleForSkill(argstouse.SkillId);
 		}
-		if (!pages[pageid]){
-			throw "WTF, couldn't find "+pageid+" in tree!";
+		if (!pages[pageid]) {
+			throw "WTF, couldn't find " + pageid + " in tree!";
 		}
 		var lastpage = pages[C.state.currentPageId],
 			topage = pages[pageid],
 			historymax = 25;
-			
+
 		// HISTORY
-		if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)){
+		if (!args.dontadjusthistory && !(lastpage && topage.view === lastpage.view)) {
 			C.state.historyposition++;
 			C.state.history.splice(C.state.historyposition);
-			C.state.history.push({pageid:pageid,args:args,titles:C.utils.getPageTitle(topage,args),historyposition:C.state.historyposition});
-			if (C.state.history.length>historymax){
-				C.state.history = C.state.history.splice(C.state.history.length-historymax);
+			C.state.history.push({
+				pageid: pageid,
+				args: args,
+				titles: C.utils.getPageTitle(topage, args),
+				historyposition: C.state.historyposition
+			});
+			if (C.state.history.length > historymax) {
+				C.state.history = C.state.history.splice(C.state.history.length - historymax);
 				C.state.historyposition = C.state.history.length - 1; // since we'll only truncate after normal move, thus we're at the front!
 			}
 		}
 		pb.pub("/changedhistoryposition");
 		delete args.dontadjusthistory;
-		
+
 		// textview
-		if (topage.basic){
+		if (topage.basic) {
 			topage.view = textview;
 		}
-		
+
 		// animation
-		if (lastpage && topage.view !== lastpage.view){
+		if (lastpage && topage.view !== lastpage.view) {
 			lastpage.view.visible = false;
 			topage.view.visible = true;
 		} else {
 			topage.view.visible = true;
 		}
 		// render stuff
-
 		C.state.currentPageView = topage.view;
 		C.state.currentPage = topage;
 		C.state.currentPageId = pageid;
 		C.state.currentBack = topage.back;
 		C.state.lastArgs = argstouse;
-		
-		C.state.currentTitle = C.content.getText(pageid+"_title"); // TODO - not using this?
+
+		C.state.currentTitle = C.content.getText(pageid + "_title"); // TODO - not using this?
 		pb.pub("/updatetitle");
-		pb.pub("/updatetabs",pageid);
+		pb.pub("/updatetabs", pageid);
 		pb.pub("/adjustframe");
-		
-		if (topage.view.render){
-			topage.view.render(argstouse,topage);
+
+		if (topage.view.render) {
+			topage.view.render(argstouse, topage);
 		}
-		pb.pub("/hasnote",C.content.testIfPageHasNote(C.utils.currentPageName()));
-		pb.pub("/arrivedatnewpage",topage,argstouse);
+		pb.pub("/hasnote", C.content.testIfPageHasNote(C.utils.currentPageName()));
+		pb.pub("/arrivedatnewpage", topage, argstouse);
 	});
 
-
 	// ******************** Start logic
-
-	pb.sub("/appstart",function(){
-		pb.pub("/navto","home"); // TODO - fix dynamically!
-		frame.animate({opacity:1,duration:1000},function(){
-		//	pb.pub("/navto","home");
-			if (!Ti.App.Properties.getString("chosenlanguage")){
+	pb.sub("/appstart", function() {
+		pb.pub("/navto", "home"); // TODO - fix dynamically!
+		frame.animate({
+			opacity: 1,
+			duration: 1000
+		},
+		function() {
+			//	pb.pub("/navto","home");
+			if (!Ti.App.Properties.getString("chosenlanguage")) {
 				var lm = C.ui.createLanguageSelectModal();
 				win.add(lm);
 				lm.show();
 			}
 		});
-		
+
 	});
 
-    // ******************* All done, returning the window!
-    return win;
+	// ******************* All done, returning the window!
+	return win;
 
 };

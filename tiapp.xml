@@ -8,13 +8,13 @@
         <target device="ipad">true</target>
         <target device="android">false</target>
     </deployment-targets>
-    <id>se.krawaller.cognitus</id>
+    <id>se.cognitus.dbt-app</id>
     <name>Cognitus DBT</name>
-    <version>1.0</version>
-    <publisher>KungD</publisher>
-    <url>http://blog.krawaller.se</url>
-    <description>No description provided</description>
-    <copyright>2011 by KungD</copyright>
+    <version>1.1</version>
+    <publisher>Andreas Nordlund</publisher>
+    <url>http://dbt-app.se</url>
+    <description>DBT self help app</description>
+    <copyright>2011 by Andreas Nordlund</copyright>
     <icon>default_app_logo.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
