@@ -35,7 +35,7 @@ appstructure = [{
 	},
 	{
 		pageid: "modulelist",
-		view: C.ui.createModuleListView(),
+		view: C.ui.createModuleListView,
 		sub: [{
 			pageid: "moduleexplanation",
 			using: "module"
@@ -43,7 +43,7 @@ appstructure = [{
 		{
 			pageid: "moduleskillist",
 			using: "module",
-			view: C.ui.createModuleSkillListView(),
+			view: C.ui.createModuleSkillListView,
 			sub: [{
 				using: "skill",
 				pageid: "skillrational"
@@ -67,10 +67,10 @@ appstructure = [{
 			{
 				using: "module",
 				pageid: "moduletrainsessionlist",
-				view: C.ui.createModuleTrainSessionListView(),
+				view: C.ui.createModuleTrainSessionListView,
 				sub: [{
 					pageid: "moduletrainsession",
-					view: C.ui.createModuleTrainSessionView(),
+					view: C.ui.createModuleTrainSessionView,
 					using: ["trainsession","module"]
 				}]
 			}]
@@ -78,17 +78,17 @@ appstructure = [{
 	},
 	{
 		pageid: "mylists",
-		view: C.ui.createMyListsView(),
+		view: C.ui.createMyListsView,
 		sub: [{
 			pageid: "skillist",
-			view: C.ui.createSkillListView(),
+			view: C.ui.createSkillListView,
 			using: "list"
 		}]
 	}]
 },
 {
 	pageid: "crisis",
-	view: C.ui.createCrisisView()
+	view: C.ui.createCrisisView
 },
 {
 	navtextid: "tab_about",
@@ -98,7 +98,7 @@ appstructure = [{
 	},
 	{
 		pageid: "newslist",
-		view: C.ui.createNewsListView(),
+		view: C.ui.createNewsListView,
 		sub: [{
 			using: "news",
 			pageid: "newsitem"

@@ -37,7 +37,7 @@ C.ui.createAppWindow = function(appstructure) {
 			// processing a Page
 			if (!o.navto) {
 				pages[o.pageid] = {
-					view: o.view,
+					view: o.view || C.ui.createHtmlView,
 					listid: listid,
 					listhistory: [].concat(listhistory),
 					// must be copy
@@ -46,8 +46,7 @@ C.ui.createAppWindow = function(appstructure) {
 					listhistorystring: [].concat(listhistory).join(","),
 					level: level,
 					using: (o.using) || (""),
-					pageid: o.pageid,
-					basic: !o.view
+					pageid: o.pageid
 				};
 			}
 			if (o.sub) {
@@ -160,13 +159,6 @@ C.ui.createAppWindow = function(appstructure) {
 		gradientlandscape = frame.k_children.gradientlandscape,
 		pagecontainer = frame.k_children.pagecontainer;
 
-	for (var pid in pages) {
-		var page = pages[pid];
-		if (page.view) {
-			page.view.visible = false;
-			pagecontainer.add(page.view);
-		}
-	}
 	C.state.frame = frame;
 
 	// ******************* Basic text view
@@ -313,7 +305,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	// ******************* Navigation logic
 	pb.sub("/navto", function(pageid, args) {
-		Ti.API.log("Navigating to " + pageid);
+		Ti.API.log("Navigating to " + pageid + " using new tech woo! :)");
 		titleview.visible = true;
 		// arguments
 		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
@@ -348,20 +340,17 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/changedhistoryposition");
 		delete args.dontadjusthistory;
 
-		// textview
-		if (topage.basic) {
-			topage.view = textview;
+		// instantiate new view
+		var newview = topage.view();
+		C.state.prevView = C.state.currentPageView;
+		if (C.state.prevView){
+			pagecontainer.remove(C.state.prevView);
 		}
+		C.state.currentPageView = newview;
+		newview.visible = true;
+		pagecontainer.add(newview);
 
-		// animation
-		if (lastpage && topage.view !== lastpage.view) {
-			lastpage.view.visible = false;
-			topage.view.visible = true;
-		} else {
-			topage.view.visible = true;
-		}
 		// render stuff
-		C.state.currentPageView = topage.view;
 		C.state.currentPage = topage;
 		C.state.currentPageId = pageid;
 		C.state.currentBack = topage.back;
@@ -372,8 +361,8 @@ C.ui.createAppWindow = function(appstructure) {
 		pb.pub("/updatetabs", pageid);
 		pb.pub("/adjustframe");
 
-		if (topage.view.render) {
-			topage.view.render(argstouse, topage);
+		if (newview.render) {
+			newview.render(argstouse, topage);
 		}
 		pb.pub("/hasnote", C.content.testIfPageHasNote(C.utils.currentPageName()));
 		pb.pub("/arrivedatnewpage", topage, argstouse);

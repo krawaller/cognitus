@@ -2,6 +2,8 @@
 
 var webviewmaster = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/master.html").read().text;
 
+Ti.include("/cognitus/ui/skillpanelview.js", "/cognitus/ui/aboutpanelview.js");
+
 C.ui.createHtmlView = function(){
 	var view = C.ui.createPage({});
 	var webview =  Ti.UI.createWebView({
@@ -13,20 +15,18 @@ C.ui.createHtmlView = function(){
 	});
 	view.add(webview);
 
-	// ******************** Skill-related controls
-	Ti.include("/cognitus/ui/skillpanelview.js");
-	var skillpanel = C.ui.createSkillPanelView();
-	view.add(skillpanel);
-
-	// ******************** About-app page controls
-	Ti.include("/cognitus/ui/aboutpanelview.js");
-	var aboutpanel = C.ui.createAboutPanelView();
-	view.add(aboutpanel);
-
 	view.render = function(argstouse,topage){
 		webview.top = (topage.using === "skill" || topage.pageid === "about") ? 45 : 0;
-		skillpanel.visible = topage.using === "skill";
-		aboutpanel.visible = topage.pageid === "about";
+		if (topage.using === "skill"){
+			var skillpanel = C.ui.createSkillPanelView();
+			view.add(skillpanel);
+			skillpanel.visible = true;
+		}
+		if (topage.pageid === "about"){
+			var aboutpanel = C.ui.createAboutPanelView();
+			view.add(aboutpanel);
+			aboutpanel.visible = true;
+		}
 		var id = (topage.using === "module" ? topage.pageid+"_"+argstouse.ModuleId :
 				  topage.using === "skill" ? topage.pageid+"_"+argstouse.SkillId : 
 				  topage.using === "news" ? "news_html_"+argstouse.NewsId : 

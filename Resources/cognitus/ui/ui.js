@@ -263,4 +263,21 @@
 
 })();
 
-Ti.include("/cognitus/ui/appwindow.js", "/cognitus/ui/styles.js", "/cognitus/ui/tab-skills.js", "/cognitus/ui/modulelist.js", "/cognitus/ui/moduleskillist.js", "/cognitus/ui/moduletrainsession.js", "/cognitus/ui/moduletrainsessionlist.js", "/cognitus/ui/crisis.js", "/cognitus/ui/newslist.js", "/cognitus/ui/newsitem.js", "/cognitus/ui/mylists.js", "/cognitus/ui/skillist.js", "/cognitus/ui/skilltable.js", "/cognitus/ui/test.js", "/cognitus/ui/languageselectmodal.js");
+Ti.include(
+	"/cognitus/ui/appwindow.js",
+	"/cognitus/ui/styles.js",
+	"/cognitus/ui/tab-skills.js",
+	"/cognitus/ui/modulelist.js",
+	"/cognitus/ui/moduleskillist.js",
+	"/cognitus/ui/moduletrainsession.js",
+	"/cognitus/ui/moduletrainsessionlist.js",
+	"/cognitus/ui/crisis.js",
+	"/cognitus/ui/newslist.js",
+	"/cognitus/ui/newsitem.js",
+	"/cognitus/ui/mylists.js",
+	"/cognitus/ui/skillist.js",
+	"/cognitus/ui/skilltable.js",
+	"/cognitus/ui/test.js",
+	"/cognitus/ui/languageselectmodal.js",
+	"/cognitus/ui/htmlview.js"
+);
