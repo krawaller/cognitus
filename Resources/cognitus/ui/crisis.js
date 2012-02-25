@@ -28,13 +28,13 @@ C.ui.createCrisisView = function(){
 		chosencrisislistid  = C.content.getCrisisList();
 		dialtextfield.value = C.content.getCrisisNumber() || "";
 		dialtextfield.hintText = C.content.getText("crisis_number_hinttext");
-		editbtn.title = C.content.getText("crisis_btn_"+(editing ? "stopedit" : "startedit"));
-		editbtn.image = "/images/icons/"+(editing?"save":"edit")+".png";
-		gotolistbtn.title = editing ? C.content.getText("crisis_btn_changelist") : chosencrisislistid ? C.content.getListTitle(chosencrisislistid) : C.content.getText("crisis_nolist");
-		gotolistbtn.image = "/images/icons/"+(editing ? "list" : "goto")+".png";
-		gotolistbtn.opacity = editing || chosencrisislistid ? 1 : 0.5;
-		dialbtn.title = dialtextfield.value || C.content.getText("crisis_nonumber");
-		dialbtn.opacity = dialtextfield.value ? 1 : 0.5;
+		C.utils.setButtonText(editbtn,C.content.getText("crisis_btn_"+(editing ? "stopedit" : "startedit")));
+		C.utils.setButtonIcon(editbtn,"/images/icons/"+(editing?"save":"edit")+".png");
+		C.utils.setButtonText(gotolistbtn, editing ? C.content.getText("crisis_btn_changelist") : chosencrisislistid ? C.content.getListTitle(chosencrisislistid) : C.content.getText("crisis_nolist"));
+		C.utils.setButtonIcon(gotolistbtn,"/images/icons/"+(editing ? "list" : "goto")+".png");
+		C.utils.setButtonState(gotolistbtn, editing || chosencrisislistid);
+		C.utils.setButtonText(dialbtn,dialtextfield.value || C.content.getText("crisis_nonumber"));
+		C.utils.setButtonState(dialbtn,dialtextfield.value);
 	}
 	
 	var gotolistbtn = C.ui.createButton({
@@ -80,7 +80,7 @@ C.ui.createCrisisView = function(){
 	
 	var editbtn = C.ui.createButton({
 		top: 230,
-		width: 70,
+		width: 100,
 		zIndex: 100,
 		image: "/images/icons/edit.png",
 		k_click: function(){
@@ -96,7 +96,6 @@ C.ui.createCrisisView = function(){
 	
 	var chosencrisislistid;
 	view.render = function(){
-		Ti.API.log("test","TESTING LOGGING");
 		stopEditing();
 	};
 	

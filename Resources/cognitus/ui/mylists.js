@@ -19,20 +19,23 @@ C.ui.createMyListsView = function(o) {
 		row.mainlabel = mainlabel;
 		
 		if (!locked){
-			var crisisbutton = C.ui.createButton({
+			var crisisbutton = K.create({
+				k_type: "Button",
 				width: 32,
+				height: 32,
 				right: 15,
 				top: 10,
+				zIndex: 1000,
 				visible: r.ListId === crisislistid,
-				enabled: false,
+//				enabled: false,
 				ListId: r.ListId,
-				image: "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png"),
+				backgroundImage: "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png"),
 				//title: r.ListId === crisislistid ? "K" : "-",
 				k_click: function(e){
 					crisislistid = e.source.ListId;
 					C.content.setCrisisList(e.source.ListId);
 					table.data[0].rows.forEach(function(r){
-						r.crisisbutton.image = "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png");
+						r.crisisbutton.backgroundImage = "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png");
 						//r.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
 					});
 				}
@@ -115,9 +118,9 @@ C.ui.createMyListsView = function(o) {
 	var editing = false;
 	var btn = C.ui.createButton({
 		height: 32,
-		width: 70,
+		width: 90,
 		top: 10,
-		left: 80,
+		left: 60,
 		zIndex: 5,
 		backgroundImage: "/images/button32.png",
 		backgroundLeftCap: 5,
@@ -133,10 +136,10 @@ C.ui.createMyListsView = function(o) {
 
 	var addbtn = C.ui.createButton({
 		image: "/images/icons/add_plain.png",
-		width: 70, 
+		width: 90, 
 		height: 32,
 		top: 10, 
-		right: 80,
+		right: 60,
 		backgroundImage: "/images/button32.png",
 		backgroundLeftCap: 5, 
 		k_click: function(){
@@ -167,7 +170,7 @@ C.ui.createMyListsView = function(o) {
 	
 	function startEditing(added){
 		var mylistsection = table.data[0];
-		if ((!mylistsection.rows) || (mylistsection.rows.length == 0)){
+		if ((!mylistsection.rows) || (mylistsection.rows.length == 0)){
 			C.ui.showMessage("mylists_msg_mustaddrowsfirst");
 			return;
 		}
@@ -179,7 +182,6 @@ C.ui.createMyListsView = function(o) {
 				r.mainlabel.visible = false;
 				r.textfield.visible = true;
 				r.crisisbutton.visible = true;
-				r.crisisbutton.enabled = true;
 				if (added && !i){
 					r.textfield.value = "";
 					r.textfield.focus();
@@ -190,11 +192,11 @@ C.ui.createMyListsView = function(o) {
 	}
 
 	function updateButtons(){
-		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
-		btn.image = "/images/icons/"+ (editing ? "done" : "edit") +"_plain.png";
-		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
-		addbtn.title = C.content.getText("mylists_btn_newlist");
-		addbtn.opacity = (editing ? 0.5 : 1);
+		C.utils.setButtonText(btn,C.content.getText("mylists_btn_" + (editing ? "done" : "edit")));
+		C.utils.setButtonIcon(btn,"/images/icons/"+ (editing ? "done" : "edit") +"_plain.png");
+		C.utils.setButtonState(btn,table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length);
+		C.utils.setButtonText(addbtn,C.content.getText("mylists_btn_newlist"));
+		C.utils.setButtonState(addbtn,!editing);
 		// TODO - also update hinttext?
 	}
 

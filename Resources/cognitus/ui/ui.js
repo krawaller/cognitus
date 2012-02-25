@@ -38,7 +38,7 @@
 		modal.add(panel);
 			var modalbackground = Ti.UI.createView({
 			backgroundColor: "#000",
-			opacity: 0.5,
+			opacity: 0.5
 //			backgroundColor: "rgba(0,0,0,0.8)",
 //			k_class: "modalbackgroundview",
 		});
@@ -236,21 +236,133 @@
 		*/
 	}
 
-
+	C.utils = C.utils || {};
+	if (C.state.platform == "android"){
+		C.utils.setButtonText = function(btn,txt){
+			btn.setButtonText(txt);
+		};
+		C.utils.setButtonIcon = function(btn,img){
+			if (!btn.setLeftIcon){
+				btn.backgroundImage = img;
+			} else {
+				btn.setLeftIcon(img);
+			}
+		};
+		C.utils.setButtonState = function(btn,bool){
+			btn.setActiveState(bool);
+		};
+	} else {
+		C.utils.setButtonText = function(btn,txt){
+			btn.title = txt;
+		};
+		C.utils.setButtonIcon = function(btn,img){
+			btn.image = img;
+		};
+		C.utils.setButtonState = function(btn,bool){
+			btn.opacity = bool?1:0.5;
+			btn.enabled = bool;
+		};
+	};
 
 	function createButton(o) {
-		var btn = K.create(K.merge(o || {},
-		{
-			k_type: "Button",
+		o = K.merge(o || {},{
 			font: {
 				fontSize: 11
 			},
+			k_type: "Button",
 			height: 32,
 			backgroundImage: "/images/button32.png",
 			backgroundLeftCap: 5
-		}));
-		if (o.textid) {
-			C.content.setObjectText(btn, o.textid, "title");
+		});
+		if (C.state.platform != "android"){
+			btn = K.create(o);
+			if (o.textid) {
+				C.content.setObjectText(btn, o.textid, "title");
+			}
+		} else {
+			var setActiveState = function(state){
+				if (label){
+					label.color = !!state?"#FFF":"#999";
+				}
+				btn.opacity = state ? 1 : 0.5;
+				btn.touchEnabled = !!state;
+			}
+			if (o.width < 36){ // icon button!
+				btn = K.create(o);
+				btn.setActiveState = setActiveState;
+				return btn;
+			}
+			// normal button
+			delete o.backgroundImage;
+			delete o.backgroundLeftCap;
+			var img = o.image;
+			delete o.image;
+			o.k_type = "View";
+			if (o.width%10){
+				o.width = Math.ceil(o/10)*10;
+			}
+			btn = K.create(o);
+
+			var label = C.ui.createLabel(o.textid,{
+				color:"#FFF",
+				zIndex:100,
+				touchEnabled:false,
+				font:{fontSize:11},
+				height: 28,
+				top: 10,
+				width: o.width-20
+			});
+			btn.add(label);
+
+			btn.setButtonText = function(txt){ label.text = txt; };
+			if (o.title){
+				label.text = o.title;
+			}
+			
+			btn.setLeftIcon = function(img){
+				if (btn.width < 36) {
+					btn.backgroundImage = img;
+				} else {
+					icon.image = img;
+				}
+			}
+			btn.setActiveState = setActiveState;
+			btn.add(Ti.UI.createImageView({
+				height: 32,
+				width: 5,
+				left: 0,
+				touchEnabled: false,
+				image: "/images/button32_left.png",
+				canScale: false
+			}));
+			btn.add(Ti.UI.createImageView({
+				height: 32,
+				width: 5,
+				right: 0,
+				touchEnabled: false,
+				image: "/images/button32_right.png",
+				canScale: false
+			}));
+			for(i=0;i*10<o.width-10;i++){
+				btn.add(Ti.UI.createImageView({
+					height: 32,
+					left: 5+i*10,
+					width: 10,
+					touchEnabled: false,
+					image: "/images/button32_center.png",
+					canScale: false,
+					zIndex: 0
+				}));
+			}
+			var icon = Ti.UI.createImageView({
+				height: 15,
+				width: 25,
+				image: img,
+				left: 5,
+				top: 8,
+				touchEnabled: false
+			});
+			btn.add(icon);
 		}
 		return btn;
 	}

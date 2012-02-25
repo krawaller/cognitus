@@ -32,12 +32,12 @@
 		pb.sub("/arrivedatnewpage",function(topage,args){
 			if (topage.using === "skill"){
 				var moduleid = args.ModuleId || C.content.getModuleForSkill(args.SkillId);
-				modulebutton.title = C.content.getText("module_"+moduleid+"_title");
+				C.utils.setButtonText(modulebutton,C.content.getText("module_"+moduleid+"_title"));
 			}
 		});
 		pb.sub("/updatetext",function(){
 			var moduleid = C.state.lastArgs.ModuleId || C.content.getModuleForSkill(C.state.lastArgs.SkillId);
-			modulebutton.title = C.content.getText("module_"+moduleid+"_title");
+			C.utils.setButtonText(modulebutton,C.content.getText("module_"+moduleid+"_title"));
 		});
 		return panel;
 	};

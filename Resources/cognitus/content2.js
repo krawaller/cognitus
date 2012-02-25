@@ -360,7 +360,7 @@
 			return moduleskills[moduleid];
 		},
         setObjectText: function(object, textid, textpropname) {
-			textpropname = (textpropname) || ("text");
+			textpropname = (textpropname) || ("text");
             pb.sub("/updatetext",updateMe,object,textid,textpropname);
 			updateMe(object,textid,textpropname);
         },

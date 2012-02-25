@@ -12,14 +12,15 @@
 		// ********************* Back functionality
 		var backbtnsx = 70;
 		
-		var backbtn = C.ui.createButton({
+		var backbtn = K.create({
+			k_type: "View",
 			top: 3,
 			left: backbtnsx,
 			backgroundImage: "/images/icons/back.png",
 			width: btnwidth,
 			height: btnwidth,
-			enabled: false,
 			k_click: function(){
+				Ti.API.log("BACK!",["BACK",C.state.historyposition,C.state.history.length,C.state.history]);
 				if (C.state.historyposition>0){
 					var to = C.state.history[--C.state.historyposition];
 					pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
@@ -28,14 +29,15 @@
 		});
 		controlpanel.add(backbtn);
 		
-		var historybtn = C.ui.createButton({
+		var historybtn = K.create({
+			k_type: "View",
 			top: 3,
 			left: backbtnsx+btnspace+btnwidth,
 			backgroundImage: "/images/icons/history.png",
 			width: btnwidth,
 			height: btnwidth,
-			enabled: false,
 			k_click: function(){
+				Ti.API.log("HIST",["HIST",C.state.historyposition,C.state.history.length,C.state.history]);
 				if (C.state.history.length > 1){
 					pb.pub("/showhistorymodal");
 				}
@@ -43,14 +45,15 @@
 		});
 		controlpanel.add(historybtn);
 		
-		var forwardbtn = C.ui.createButton({
+		var forwardbtn = K.create({
+			k_type: "View",
 			top: 3,
 			left: backbtnsx+btnspace*2+btnwidth*2,
 			backgroundImage: "/images/icons/forward.png",
 			width: btnwidth,
 			height: btnwidth,
-			enabled: false,
 			k_click: function(){
+				Ti.API.log("FOWR",["FORW",C.state.historyposition,C.state.history.length,C.state.history]);
 				if (C.state.historyposition < C.state.history.length-1){
 					var to = C.state.history[++C.state.historyposition];
 					pb.pub("/navto",to.pageid,K.merge({dontadjusthistory:true},to.args));
@@ -60,12 +63,16 @@
 		controlpanel.add(forwardbtn);
 
 		pb.sub("/changedhistoryposition",function(){
-			backbtn.opacity = C.state.historyposition ? 1 : 0.5;
-			backbtn.enabled = !!(C.state.historyposition > 0);
-			forwardbtn.opacity = C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5;
-			forwardbtn.enabled = !!(C.state.historyposition < C.state.history.length - 1);
-			historybtn.opacity = C.state.history.length > 1 ? 1 : 0.5;
-			historybtn.enabled = !!(C.state.history.length > 1);
+			Ti.API.log("History changed",["WOO",C.state.historyposition,C.state.history.length,C.state.historyposition > 0,C.state.historyposition < C.state.history.length - 1,C.state.history.length > 1]);
+			if (C.state.platform == "android"){
+				backbtn.visible = (C.state.historyposition > 0)
+				forwardbtn.visible = (C.state.historyposition < C.state.history.length - 1);
+				historybtn.visible = (C.state.history.length > 1);
+			} else {
+				backbtn.opacity = (C.state.historyposition > 0 ? 1 : 0.5)
+				forwardbtn.opacity = (C.state.historyposition < C.state.history.length - 1 ? 1 : 0.5);
+				historybtn.opacity = (C.state.history.length > 1 ? 1 : 0.5);
+			}
 		});
 
 

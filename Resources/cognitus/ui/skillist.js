@@ -38,53 +38,7 @@ C.ui.createSkillListView = function() {
 	});
 	view.add(listsbtn);
 	
-	var addbtn = C.ui.createButton({
-		width: 165,
-		top: 50,
-		left: 10,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png",
-		k_click: function(){
-			if (!editing){
-				pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
-					C.content.addSkillToList(listid,skillid);
-					renderTable();
-					startEditing(true);
-				});
-			}
-		}
-	});
-	view.add(addbtn);
-	
 	var editing = false;
-	
-	var editbtn = C.ui.createButton({
-		height: 32,
-		width: 120,
-		top: 50,
-		right: 10,
-		zIndex: 5,
-		//backgroundImage: "images/button32.png",
-		//backgroundLeftCap: 5,
-		k_click: function() {
-			if (editing) {
-				stopEditing();
-			} else {
-				startEditing();
-			}
-		}
-	});
-	view.add(editbtn);
-	
-	var crisisbtn = C.ui.createButton({
-		top: 10,
-		right: 10,
-		width: 165,
-		k_click: function(){
-			Ti.App.Properties.setString("crisislistid",listid === C.content.getCrisisList() ? "" : listid);
-			updateButtons();
-		}
-	});
-	view.add(crisisbtn);
 	
 	var newtitleval,prevtitleval;
 	pb.sub("/newtitleeditvalue",function(v){
@@ -138,18 +92,18 @@ C.ui.createSkillListView = function() {
 	}
 	
 	function updateButtons(){
-		editbtn.title = C.content.getText("skillist_btn_" + (editing ? "done" : "edit"));
-		editbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing?"save":"edit")+".png";
-		listsbtn.title = C.content.getText("skillist_btn_backtolists");
-		//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
-		addbtn.title = C.content.getText("skillist_btn_addskill");
-		addbtn.opacity = (editing ? 0.5 : 1);
-		addbtn.visible = !isprelist;
-		editbtn.visible = !isprelist;
-		var crisislist = C.content.getCrisisList();
-		crisisbtn.visible = !isprelist;
-		crisisbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(listid === crisislist ? "skull_plain":"noskull2_plain")+".png";
-		crisisbtn.title = C.content.getText("skillist_btn_"+(crisislist===listid?"dontuseforcrisis":"useforcrisis"));
+		if (!isprelist){
+			C.utils.setButtonText(editbtn,C.content.getText("skillist_btn_" + (editing ? "done" : "edit")));
+			C.utils.setButtonIcon(editbtn,"/images/icons/"+(editing?"save":"edit")+".png");
+			C.utils.setButtonText(listsbtn,C.content.getText("skillist_btn_backtolists"));
+			//editbtn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
+			C.utils.setButtonText(addbtn,C.content.getText("skillist_btn_addskill"));
+			C.utils.setButtonState(addbtn,!editing);
+			var crisislist = C.content.getCrisisList();
+			C.utils.setButtonIcon(crisisbtn,"/images/icons/"+(listid === crisislist ? "skull_plain":"noskull2_plain")+".png");
+			C.utils.setButtonText(crisisbtn,C.content.getText("skillist_btn_"+(crisislist===listid?"dontuseforcrisis":"useforcrisis")));
+			Ti.API.log("updatebuttons","Ok. isprelist "+isprelist+","+addbtn.visible+","+crisisbtn.visible+","+editbtn.visible+","+listsbtn.visible);
+		}
 	}
 	
 	function createRow(r,i){
@@ -207,9 +161,65 @@ C.ui.createSkillListView = function() {
 	var listid, 
 		isprelist;
 		
+	var editbtn,
+		addbtn,
+		crisisbtn;
+	
+		
 	view.render = function(args){
 		listid = args.ListId;
 		isprelist = !!(listid.match(/PRELIST/));
+		if (!isprelist){
+			if (!editbtn){
+				editbtn = C.ui.createButton({
+					width: 120,
+					top: 50,
+					right: 10,
+					zIndex: 5,
+					//backgroundImage: "images/button32.png",
+					//backgroundLeftCap: 5,
+					k_click: function() {
+						if (editing) {
+							stopEditing();
+						} else {
+							startEditing();
+						}
+					}
+				});
+				view.add(editbtn);
+			}
+			if (!addbtn){
+				addbtn = C.ui.createButton({
+					width: 170,
+					top: 50,
+					left: 10,
+					image: "/images/icons/add.png",
+					k_click: function(){
+						if (!editing){
+							pb.pub("/showselectskillmodal",C.content.getListSkills(listid),function(skillid){
+								C.content.addSkillToList(listid,skillid);
+								renderTable();
+								startEditing(true);
+							});
+						}
+					}
+				});
+				view.add(addbtn);
+			}
+			if (!crisisbtn){
+				crisisbtn = C.ui.createButton({
+					top: 10,
+					right: 10,
+					width: 170,
+					k_click: function(){
+						Ti.App.Properties.setString("crisislistid",listid === C.content.getCrisisList() ? "" : listid);
+						updateButtons();
+					}
+				});
+				view.add(crisisbtn);
+			}
+			
+		}
 		table.top = isprelist ? 50 : 90;
 		if (editing){
 			stopEditing();
