@@ -29,9 +29,9 @@ C.ui.createCrisisView = function(){
 		dialtextfield.value = C.content.getCrisisNumber() || "";
 		dialtextfield.hintText = C.content.getText("crisis_number_hinttext");
 		editbtn.title = C.content.getText("crisis_btn_"+(editing ? "stopedit" : "startedit"));
-		editbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing?"save":"edit")+".png";
+		editbtn.image = "/images/icons/"+(editing?"save":"edit")+".png";
 		gotolistbtn.title = editing ? C.content.getText("crisis_btn_changelist") : chosencrisislistid ? C.content.getListTitle(chosencrisislistid) : C.content.getText("crisis_nolist");
-		gotolistbtn.image = Ti.Filesystem.resourcesDirectory+"/images/icons/"+(editing ? "list" : "goto")+".png";
+		gotolistbtn.image = "/images/icons/"+(editing ? "list" : "goto")+".png";
 		gotolistbtn.opacity = editing || chosencrisislistid ? 1 : 0.5;
 		dialbtn.title = dialtextfield.value || C.content.getText("crisis_nonumber");
 		dialbtn.opacity = dialtextfield.value ? 1 : 0.5;
@@ -40,7 +40,7 @@ C.ui.createCrisisView = function(){
 	var gotolistbtn = C.ui.createButton({
 		top: 50,
 		width: 180,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+		image: "/images/icons/goto.png",
 		k_click: function(){
 			if (!editing && chosencrisislistid){
 				pb.pub("/navto","skillist",{ListId:chosencrisislistid});
@@ -61,7 +61,7 @@ C.ui.createCrisisView = function(){
 	var dialbtn = C.ui.createButton({
 		top: 150,
 		width: 180,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/dial_plain.png",
+		image: "/images/icons/dial_plain.png",
 		k_click: function(){
 			if (dialtextfield.value){
 				Ti.Platform.openURL("tel:"+dialtextfield.value);
@@ -82,7 +82,7 @@ C.ui.createCrisisView = function(){
 		top: 230,
 		width: 70,
 		zIndex: 100,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		image: "/images/icons/edit.png",
 		k_click: function(){
 			if (editing){
 				C.content.setCrisisNumber(dialtextfield.value);
@@ -96,6 +96,7 @@ C.ui.createCrisisView = function(){
 	
 	var chosencrisislistid;
 	view.render = function(){
+		Ti.API.log("test","TESTING LOGGING");
 		stopEditing();
 	};
 	

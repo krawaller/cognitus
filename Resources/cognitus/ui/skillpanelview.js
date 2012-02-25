@@ -4,7 +4,7 @@
 			top: 0,
 			height: 50,
 			zIndex: 5,
-			visible: 0
+			visible: false
 			//, backgroundColor: "green"
 		});
 		var listitembutton = C.ui.createButton({
@@ -17,32 +17,28 @@
 			},
 			//title: "+"
 			textid: "sys_addskilltolist_instruction",
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png"
+			image: "/images/icons/add.png"
 		});
 		panel.add(listitembutton);
-		
 		var modulebutton = C.ui.createButton({
 			left: 10,
 			width: 140,
-			image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+			image: "/images/icons/goto.png",
 			k_click: function(e){
 				pb.pub("/navto","moduleskillist",{ModuleId:C.state.lastArgs.ModuleId});
 			}
 		});
 		panel.add(modulebutton);
-		
 		pb.sub("/arrivedatnewpage",function(topage,args){
 			if (topage.using === "skill"){
 				var moduleid = args.ModuleId || C.content.getModuleForSkill(args.SkillId);
 				modulebutton.title = C.content.getText("module_"+moduleid+"_title");
 			}
 		});
-		
 		pb.sub("/updatetext",function(){
 			var moduleid = C.state.lastArgs.ModuleId || C.content.getModuleForSkill(C.state.lastArgs.SkillId);
 			modulebutton.title = C.content.getText("module_"+moduleid+"_title");
 		});
-		
 		return panel;
 	};
 })();

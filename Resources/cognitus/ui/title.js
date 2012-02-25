@@ -9,7 +9,7 @@
 			zIndex: 5,
 	        k_children: [{
 				k_type: "ImageView",
-				image: "images/headline5.png",
+				image: "/images/headline5.png",
 				height: 16,
 				width: 130,
 				bottom: 6

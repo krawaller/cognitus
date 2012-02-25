@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <sdk-version>1.7.5</sdk-version>
+    <sdk-version>1.8.0.1</sdk-version>
     <deployment-targets>
-        <target device="mobileweb">true</target>
+        <target device="mobileweb">false</target>
         <target device="blackberry">false</target>
         <target device="iphone">true</target>
         <target device="ipad">true</target>
-        <target device="android">false</target>
+        <target device="android">true</target>
     </deployment-targets>
-    <id>se.cognitus.dbt-app</id>
+    <id>se.cognitus.dbtapp</id>
     <name>Cognitus DBT</name>
-    <version>1.1</version>
+    <version>1.0.5</version>
     <publisher>Andreas Nordlund</publisher>
     <url>http://dbt-app.se</url>
     <description>DBT self help app</description>
     <copyright>2011 by Andreas Nordlund</copyright>
-    <icon>default_app_logo.png</icon>
+    <icon>Icon.png</icon>
     <persistent-wifi>false</persistent-wifi>
     <prerendered-icon>false</prerendered-icon>
     <statusbar-style>default</statusbar-style>
@@ -34,6 +34,11 @@
             <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
         </orientations>
     </iphone>
-    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <android xmlns:android="http://schemas.android.com/apk/res/android">
+        <manifest>
+            <supports-screens android:anyDensity="false"/>
+        </manifest>
+    </android>
     <modules/>
+    <property name="ti.android.threadstacksize" type="int">32768</property>
 </ti:app>

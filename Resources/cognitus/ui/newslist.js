@@ -11,10 +11,11 @@ C.ui.createNewsListView = function(o){
 	});
 	view.add(table);
 	view.render = function(arg){
-		//var news = C.content.getNewsList();
-		table.setData(C.content.getNewsList().map(function(n){
+		Ti.API.log("test"," ******* beginning render of newslist");
+		var news = C.content.getNewsList();
+		table.setData(news.map(function(n){
 			return C.ui.createTableViewRow({
-				rightImage: "images/icons/goto_button.png",
+				rightImage: "/images/icons/goto_button.png",
 				NewsId: n.created,
 				rowtoplabel: K.dateFormat(Date(n.created*1000),"yyyy-mm-dd"),
 				rowmainlabel: C.content.getText("news_title_"+n.created)

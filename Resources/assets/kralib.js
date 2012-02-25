@@ -151,14 +151,15 @@
         }*/
         
         // Delegate to correct Ti Factory
-        o.k_module = o.k_module || (['MapView', 'Annotation'].indexOf(o.k_type) != -1 ? 'Map' : 'UI');
+        o.k_module = o.k_module || (['MapView', 'Annotation'].indexOf(o.k_type) != -1 ? 'Map' : 'UI');
         // Point MapView to Ti.Map.createView
         o.k_type = o.k_type == 'MapView' ? 'View' : o.k_type;
         
-        if (!typeof Ti[o.k_module]["create"+o.k_type] == "function"){
-            throw "No constructor found for "+o.k_type+"!";
+        if (!(typeof Ti[o.k_module]["create"+o.k_type] == "function")){
+            //throw "No constructor found for "+o.k_type+"!";
         }
-        o = K.merge(o, (styles[o.k_type]) || ({}), (styles.all || {}));
+        o = K.merge(o, (styles[o.k_type]) || ({}), (styles.all || {}));
+		//Ti.API.info([o.k_module,o.k_type]);
 		var e = Ti[o.k_module]["create"+o.k_type](o);
         e.k_def = o;
         /*if (o.k_templateview){

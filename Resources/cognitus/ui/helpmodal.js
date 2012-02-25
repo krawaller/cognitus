@@ -15,6 +15,14 @@ C.ui.createHelpModal = function(){
 			panel.left = 10;
 			panel.right = 10;
 		}
+		helptext = helptext.replace(/\/images/g,'images'); // trying to get shit to woyk
+/*		helptext += 'Woo:<img src="/images/pic4.png"/><br/>';
+		helptext += 'Wuu:<img src="images/pic4.png"/><br/>';
+		helptext += 'GAAH:<img src="/images/icons/add.png"/><br/>';
+		helptext += 'GAAH:<img src="images/icons/add.png"/><br/>';
+		helptext += 'Prutt:<img src="/pic4.png"/><br/>';
+		helptext += 'Skrutt:<img src="pic4.png"/><br/>'; */
+
 		webview.html = webviewmaster.replace(/XXXCONTENTXXX/,helptext);
 		modal.show();
 	}
@@ -27,6 +35,7 @@ C.ui.createHelpModal = function(){
 
 	var webviewmaster = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory+"/cognitus/html/master.html").read().text;
 	var webview = Ti.UI.createWebView({
+		enableZoomControls:false,
 		scalesPageToFit:true,
 	    contentWidth:'auto',
 	    contentHeight:'auto',

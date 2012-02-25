@@ -5,7 +5,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		width: 120,
 		left: 20,
 		textid: "moduletrainsessionlist_btn_new",
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add.png"
+		image: "/images/icons/add.png"
 	});
 	function startEditing(){
 		savebtn.visible = true;
@@ -21,7 +21,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		top: 30,
 		width: 120,
 		right: 20,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/edit.png",
+		image: "/images/icons/edit.png",
 		textid: "moduletrainsessionlist_btn_delete"
 	});
 	var savebtn = C.ui.createButton({
@@ -29,7 +29,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 		width: 120,
 		right: 20,
 		visible: false,
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/save.png",
+		image: "/images/icons/save.png",
 		textid: "moduletrainsessionlist_btn_done"
 	});
 	newbtn.addEventListener("click",function(){
@@ -66,7 +66,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 			numrows++;
 			var row= C.ui.createTableViewRow({
 				//hasChild: true,
-				rightImage: Ti.Filesystem.resourcesDirectory+"/images/icons/goto_button.png",
+				rightImage: "/images/icons/goto_button.png",
 				height: rowheight,
 				className: "session",
 				rowmainlabel: q.quizdate,
@@ -77,7 +77,7 @@ C.ui.createModuleTrainSessionListView = function(o){
 				btn: true,
 				right: 10,
 				width: 32,
-				backgroundImage: Ti.Filesystem.resourcesDirectory+"/images/icons/mail.png",
+				backgroundImage: "/images/icons/mail.png",
 				k_click: function(e){
 					var headline = C.content.getText("moduletrainsession_training")+" "+C.content.getText("module_"+args.ModuleId+"_title")+" "+q.quizdate,
 						html = "<h2>"+headline+"</h2><dl>",

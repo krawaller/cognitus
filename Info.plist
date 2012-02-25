@@ -11,11 +11,12 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>Logo.png</string>
+	<string>Icon.png</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>Logo.png</string>
-		<string>Logo@2x.png</string>
+		<string>Icon.png</string>
+		<string>Icon@2x.png</string>
+		<string>Icon-72.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
 	<string>se.krawaller.cognitus</string>
@@ -44,7 +45,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.3</string>
+	<string>1.3.1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIStatusBarStyle</key>
@@ -53,6 +54,8 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -61,5 +64,7 @@
 	<array/>
 	<key>UTImportedTypeDeclarations</key>
 	<array/>
+	<key>UILaunchImageFile~ipad</key>
+	<string>Default_iPad</string>
 </dict>
 </plist>

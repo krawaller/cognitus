@@ -9,6 +9,12 @@ Includes these files:
   selectskillmodal.js
   selectlistmodal.js
   controlpanel.js
+
+This file is included by ui.js, and the constructor is called from app.js as the app initializes.
+
+The constructor is called with the appstructure tree. From this tree, it compiles the structure into
+pages and lists objects, which are stored on C.state.
+
 */
 
 C.ui.createAppWindow = function(appstructure) {
@@ -108,7 +114,7 @@ C.ui.createAppWindow = function(appstructure) {
 			height: GRADIENTBREDTH,
 			bottom: 0,
 			zIndex: 1337,
-			backgroundImage: "images/gradient_bottom.png"
+			backgroundImage: "/images/gradient_bottom.png"
 		},
 		{
 			k_type: "View",
@@ -116,9 +122,9 @@ C.ui.createAppWindow = function(appstructure) {
 			height: GRADIENTBREDTH,
 			top: 60,
 			zIndex: 1337,
-			backgroundImage: "images/gradient_top.png"
+			backgroundImage: "/images/gradient_top.png"
 		},
-		{
+		/*{
 			visible: false,
 			k_type: "View",
 			k_id: "gradientlandscape",
@@ -135,7 +141,7 @@ C.ui.createAppWindow = function(appstructure) {
 					position: 1.0
 				}]
 			}
-		}],
+		}*/],
 		k_events: {
 			//doubletap: toggleControls
 			/*, TODO - decide if we want Back-forward!
@@ -170,7 +176,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	function toggleControls() {
 		C.state.showingTabs = !C.state.showingTabs;
-		anchor.backgroundImage = "images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation") + ".png";
+		anchor.backgroundImage = "/images/icons/" + (C.state.showingTabs ? "fullscreen" : "navigation") + ".png";
 		pb.pub("/adjustframe");
 	}
 
@@ -212,11 +218,12 @@ C.ui.createAppWindow = function(appstructure) {
 	Ti.include("/cognitus/ui/controlpanelview.js");
 	var controlpanel = C.ui.createControlPanelView();
 
-	K.create({
+	/*K.create({
 		k_type: "View",
 		width: Ti.Platform.displayCaps.platformWidth,
 		top: 0
-	});
+	});*/
+	
 	win.add(controlpanel);
 
 	// ******************* Tabs
@@ -231,8 +238,8 @@ C.ui.createAppWindow = function(appstructure) {
 	pb.sub("/adjustframe", function() {
 		if (C.state.showingTabs) {
 			var tabheight = C.state.currentPage.listhistory.length * (Ti.App.Properties.getBool("usingbigtabs") ? 40 : 25),
-				platformheight = Ti.Platform.displayCaps.platformHeight,
-				platformwidth = Ti.Platform.displayCaps.platformWidth;
+				platformheight = C.state.height, //Ti.Platform.displayCaps.platformHeight,
+				platformwidth = C.state.width; // Ti.Platform.displayCaps.platformWidth;
 			if (C.state.orientation === "landscape") {
 				/*gradientlandscape.visible = true;
 				gradientportrait.visible = false;
@@ -248,7 +255,7 @@ C.ui.createAppWindow = function(appstructure) {
 				controlpanel.left = 0;*/
 			} else {
 				gradientportrait.visible = true;
-				gradientlandscape.visible = false;
+				//gradientlandscape.visible = false;
 
 				frame.top = 40;
 				frame.left = 0;
@@ -266,7 +273,7 @@ C.ui.createAppWindow = function(appstructure) {
 			}
 		} else {
 			gradientportrait.visible = false;
-			gradientlandscape.visible = false;
+			//gradientlandscape.visible = false;
 
 			frame.right = 0;
 			frame.left = 0;
@@ -305,7 +312,7 @@ C.ui.createAppWindow = function(appstructure) {
 
 	// ******************* Navigation logic
 	pb.sub("/navto", function(pageid, args) {
-		Ti.API.log("Navigating to " + pageid + " using new tech woo! :)");
+		Ti.API.log("test","Navigating to " + pageid + " using new tech woo! :)");
 		titleview.visible = true;
 		// arguments
 		C.state.lastArgs && delete C.state.lastArgs.addSkillId;
@@ -366,6 +373,7 @@ C.ui.createAppWindow = function(appstructure) {
 		}
 		pb.pub("/hasnote", C.content.testIfPageHasNote(C.utils.currentPageName()));
 		pb.pub("/arrivedatnewpage", topage, argstouse);
+		Ti.API.log("test","Finished navigating to " + pageid);
 	});
 
 	// ******************** Start logic

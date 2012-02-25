@@ -52,7 +52,7 @@ C.ui.createSkillTable = function(o, callback) {
 					if (x){
 						rowdef.k_class = "blockedrow";
 					} else {
-						rowdef.rightImage = "images/icons/" + (adding ? "add_button.png" : "goto_button.png");
+						rowdef.rightImage = "/images/icons/" + (adding ? "add_button.png" : "goto_button.png");
 					}
 					section.add(C.ui.createTableViewRow(rowdef));
 				});

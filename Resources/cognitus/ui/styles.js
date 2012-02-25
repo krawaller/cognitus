@@ -35,7 +35,7 @@
 		},
 		TextField: {
 			borderStyle: Titanium.UI.INPUT_BORDERSTYLE_ROUNDED,
-			height: 30	
+			height: 30
 		},
 		// styleclasses
 		titlesuperlabel: {
@@ -139,11 +139,11 @@
 		},
 		tableheaderview: {
 			height: 20,
-			backgroundImage: "images/headerview.png"
+			backgroundImage: "/images/headerview.png"
 		},
 		tableheaderheavyview: { // used in skilltable.js, where we have double section levels
 			height: 30,
-			backgroundImage: "images/headerviewlarge.png"
+			backgroundImage: "/images/headerviewlarge.png"
 		},
 		inpagesuptitlelabel: { // used in notesmodal
 			textAlign: "center", height: 15, font: {fontSize: 10}, color: "#666"
@@ -181,10 +181,10 @@
 			bottom: 20,
 		},
 		markedrow: { // marking the current row in the history table and notes table
-			backgroundImage: "images/rowselectedbackground.png"
+			backgroundImage: "/images/rowselectedbackground.png"
 		},
 		blockedrow: { // marking unavailable rows in list- and skillselection
-			backgroundImage: "images/rowselectedbackground.png"
+			backgroundImage: "/images/rowselectedbackground.png"
 		}
 	};
 })();

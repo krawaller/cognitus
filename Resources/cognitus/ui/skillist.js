@@ -31,7 +31,7 @@ C.ui.createSkillListView = function() {
 		top: 10,
 		left: 10,
 		title: C.content.getText("skillist_btn_backtolists"),
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/goto.png",
+		image: "/images/icons/goto.png",
 		k_click: function(){
 			pb.pub("/navto","mylists");
 		}
@@ -154,7 +154,7 @@ C.ui.createSkillListView = function() {
 	
 	function createRow(r,i){
 		var row = C.ui.createTableViewRow({
-			rightImage: "images/icons/goto_button.png",
+			rightImage: "/images/icons/goto_button.png",
 			SkillId: r.SkillId,
 			ModuleId: r.ModuleId,
 			ListItemId: r.ListItemId,

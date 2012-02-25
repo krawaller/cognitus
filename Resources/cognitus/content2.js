@@ -22,11 +22,11 @@
 		moduleswithsubs = {},
 		DBNAME = 'COGNITUS_00135';
 	
-	var res = Titanium.Database.install(Ti.Filesystem.resourcesDirectory+"/cognitus/cognitus.sqlite",DBNAME);
-	res.close();
+	var db = Titanium.Database.install("/cognitus/cognitus.sqlite",DBNAME);
+//	res.close();
 	
 	function dbSinglePropQuery(sql,prop,varargs){
-		var db = Ti.Database.open(DBNAME);
+//		var db = Ti.Database.open(DBNAME);
 		if (!db || !db.execute || (typeof db.execute !== "function")){
 			throw "No DB available for: "+sql;
 		}
@@ -39,13 +39,13 @@
 			ret = res.fieldByName(prop);
 		}
 		res.close();
-		db.close();
+//		db.close();
 		return ret;
 	}
 	
 	function dbQuery(sql,mould,varargs){
-		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql,varargs || []),
+//		var db = Ti.Database.open(DBNAME),
+		var	res = db.execute(sql,varargs || []),
 			ret = [],
 			i = -1,p;
 		while(res.isValidRow()){
@@ -57,17 +57,17 @@
 			res.next();
 		}
 		res.close();
-		db.close();
+//		db.close();
 		return ret;
 	}
 	
 	function dbOperation(sql,varargs){
-		var db = Ti.Database.open(DBNAME),
-			res = db.execute(sql,varargs || []);
+//		var db = Ti.Database.open(DBNAME),
+		var	res = db.execute(sql,varargs || []);
 		if (res){
 			res.close();
 		}
-		db.close();
+//		db.close();
 	}
 	
 	function updateMe(o,textid,textpropname){
@@ -79,8 +79,8 @@
 	}
 	
 	function loadSkillsAndModules(){
-		var db = Ti.Database.open(DBNAME);
-			rows = db.execute("SELECT moduleid FROM modules ORDER BY priority ASC");
+//		var db = Ti.Database.open(DBNAME);
+		var rows = db.execute("SELECT moduleid FROM modules ORDER BY priority ASC");
 		while (rows.isValidRow()){
 			moduleskills[rows.field(0)] = [];
 			moduleswithsubs[rows.field(0)] = {};
@@ -105,7 +105,7 @@
 			rows.next();
 		}
 		rows.close();
-		db.close();
+//		db.close();
 	}
 
 	// initial loading of skills and modules from database

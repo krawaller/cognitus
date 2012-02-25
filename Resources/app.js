@@ -1,13 +1,27 @@
 /*global Ti: true, Ti.UI: true */
 
+var C = {
+	state: {
+		lang:Ti.App.Properties.getString("chosenlanguage")||"en",
+		history:[],
+		historyposition:-1,
+		showingTabs:true,
+		platform: Ti.Platform.osname
+	}
+};
+
+var height = Ti.Platform.displayCaps.platformHeight,
+	width = Ti.Platform.displayCaps.platformWidth;
+
+C.state.height = Math.max(height,width);
+C.state.width = Math.min(height,width);
+
+
 if (!Ti.App.Properties.getBool("hassetdefault")){
-	Ti.App.Properties.setBool("usingbigtabs",Ti.Platform.osname === "ipad");
+	Ti.App.Properties.setBool("usingbigtabs",C.state.platform === "ipad");
 	Ti.App.Properties.setBool("hassetdefault",true);
 }
 
-var C = {
-	state: {lang:Ti.App.Properties.getString("chosenlanguage")||"en",history:[],historyposition:-1,showingTabs:true}
-};
 
 Ti.include("/assets/kralib.js",
 		   "/assets/pubsubhottub.js",
@@ -18,7 +32,7 @@ Ti.include("/assets/kralib.js",
 K.setStyles(C.ui.properties);
 
 //Ti.UI.setBackgroundColor('#00F');
-Ti.UI.setBackgroundImage('Default.png');
+Ti.UI.setBackgroundImage('/Default.png');
 //Ti.API.log(Ti.Filesystem.resourcesDirectory+'/iphone/Default.png');
 
 

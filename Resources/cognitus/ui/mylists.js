@@ -5,7 +5,7 @@ C.ui.createMyListsView = function(o) {
 	
 	function createRow(r,i,locked){
 		var row = C.ui.createTableViewRow({
-			rightImage: "images/icons/goto_button.png",
+			rightImage: "/images/icons/goto_button.png",
 			list: r,
 			ListId: r.ListId,
 			locked: locked,
@@ -26,13 +26,13 @@ C.ui.createMyListsView = function(o) {
 				visible: r.ListId === crisislistid,
 				enabled: false,
 				ListId: r.ListId,
-				image: "images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png"),
+				image: "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png"),
 				//title: r.ListId === crisislistid ? "K" : "-",
 				k_click: function(e){
 					crisislistid = e.source.ListId;
 					C.content.setCrisisList(e.source.ListId);
 					table.data[0].rows.forEach(function(r){
-						r.crisisbutton.image = "images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png");
+						r.crisisbutton.image = "/images/icons/" + (r.ListId === crisislistid ? "skull_button.png" : "noskull2_button.png");
 						//r.crisisbutton.title = r.ListId === crisislistid ? "K" : "-";
 					});
 				}
@@ -77,7 +77,7 @@ C.ui.createMyListsView = function(o) {
 			prelists.add(createRow(r,i,true));
 		});
 		var mylists = Ti.UI.createTableViewSection({
-			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))			
+			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))
 		});
 		C.content.getMyListsWithSkillCount().forEach(function(r,i){
 			mylists.add(createRow(r,i));
@@ -119,7 +119,7 @@ C.ui.createMyListsView = function(o) {
 		top: 10,
 		left: 80,
 		zIndex: 5,
-		backgroundImage: "images/button32.png",
+		backgroundImage: "/images/button32.png",
 		backgroundLeftCap: 5,
 		k_click: function() {
 			if (editing) {
@@ -132,12 +132,12 @@ C.ui.createMyListsView = function(o) {
 	view.add(btn);
 
 	var addbtn = C.ui.createButton({
-		image: Ti.Filesystem.resourcesDirectory+"/images/icons/add_plain.png",
+		image: "/images/icons/add_plain.png",
 		width: 70, 
 		height: 32,
 		top: 10, 
 		right: 80,
-		backgroundImage: "images/button32.png",
+		backgroundImage: "/images/button32.png",
 		backgroundLeftCap: 5, 
 		k_click: function(){
 			if (!editing){
@@ -191,7 +191,7 @@ C.ui.createMyListsView = function(o) {
 
 	function updateButtons(){
 		btn.title = C.content.getText("mylists_btn_" + (editing ? "done" : "edit"));
-		btn.image = "images/icons/"+ (editing ? "done" : "edit") +"_plain.png";
+		btn.image = "/images/icons/"+ (editing ? "done" : "edit") +"_plain.png";
 		btn.opacity = (table.data && table.data[0] && table.data[0].rows && table.data[0].rows.length ? 1 : 0.5);
 		addbtn.title = C.content.getText("mylists_btn_newlist");
 		addbtn.opacity = (editing ? 0.5 : 1);

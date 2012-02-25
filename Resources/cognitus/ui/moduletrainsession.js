@@ -67,7 +67,7 @@ C.ui.createModuleTrainSessionView = function(o){
 			}
 			switch(q.type){
 				case "slider":
-					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 10, right: 80,k_class:"quizslider",value:old?q.value:5});
+					control = Ti.UI.createSlider({height: 20, min: 1, max: 10, left: 10, right: 80,k_class:"quizslider",value:old?parseInt(q.value):5});
 					var l = Ti.UI.createLabel({
 						height:15,width:20,right:55,top:39,text:(old?q.value:5),
 						color: "#113a6f",
@@ -85,7 +85,7 @@ C.ui.createModuleTrainSessionView = function(o){
 					r.add(l);
 					break;
 				case "switch":
-					control = Ti.UI.createSwitch({height: 30, width: 40, value: old ? q.value : false,k_class:"quizswitch"});
+					control = Ti.UI.createSwitch({height: 30, width: 40, value: old ? !!q.value : false,k_class:"quizswitch"});
 					break;
 				case "textfield":
 					control = C.ui.createTextField({

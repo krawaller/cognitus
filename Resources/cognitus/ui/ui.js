@@ -28,7 +28,7 @@
 					closefun();
 				}
 			},*/
-			zIndex: ((o.zIndex) ||   (500))
+			zIndex: ((o.zIndex) || (500))
 		});
 		var panel = K.create({
 			k_class: "modalpanelview"
@@ -42,7 +42,7 @@
 				width: 34,
 				height: 34,
 				zIndex: 1000,
-				backgroundImage: "images/icons/close.png",
+				backgroundImage: "/images/icons/close.png",
 				k_click: closefun
 			});
 			panel.add(closebtn);
@@ -58,7 +58,7 @@
 				width: 34,
 				top: 10,
 				right: 10,
-				backgroundImage: "images/icons/information.png",
+				backgroundImage: "/images/icons/information.png",
 				k_click: function() {
 					pb.pub("/showhelpmodal", C.content.getText(o.helptextid), true);
 				}
@@ -103,30 +103,36 @@
 
 
 	function createTextField(o, area) {
-		var donebtn = K.create({
-			k_class: "keyboardtoolbarbutton",
-			title: "↓",
-			font: {
-				fontWeight: "bold"
-			},
-			k_click: function(e) {
-				textfield.blur();
-			},
-			style: Titanium.UI.iPhone.SystemButtonStyle.BORDERED
-		});
-		var toolbartitle = K.create({
-			k_class: "keyboardtoolbarlabel",
-			text: o.hintText || o.toolbarTitle
-		});
-		var textfield = K.create(K.merge(o || {},
-		{
-			k_type: area ? "TextArea" : "TextField",
-			keyboardToolbar: [flexSpace, toolbartitle, flexSpace, donebtn],
-			k_events: {
-				focus: function(e) {
-					toolbartitle.text = ((textfield.hintText) ||   (textfield.toolbarTitle) || "");
+		o = o || {};
+		if (C.state.platform === "android"){
+			o.height = 40;
+		} else {
+			var donebtn = K.create({
+				k_class: "keyboardtoolbarbutton",
+				title: "↓",
+				font: {
+					fontWeight: "bold"
+				},
+				k_click: function(e) {
+					textfield.blur();
+				},
+				style: Titanium.UI.iPhone.SystemButtonStyle.BORDERED
+			});
+			var toolbartitle = K.create({
+				k_class: "keyboardtoolbarlabel",
+				text: o.hintText || o.toolbarTitle
+			});
+			o = K.merge(o, {
+				keyboardToolbar: [flexSpace, toolbartitle, flexSpace, donebtn],
+				k_events: {
+					focus: function(e) {
+						toolbartitle.text = ((textfield.hintText) || (textfield.toolbarTitle) || "");
+					}
 				}
-			}
+			});
+		}
+		var textfield = K.create(K.merge(o,{
+			k_type: area ? "TextArea" : "TextField"
 		}));
 		if (o.adjustscroll) {
 			textfield.addEventListener("focus", function(e) {
@@ -160,7 +166,7 @@
 		var row = K.create(K.merge(o || {},
 		{
 			k_type: "TableViewRow",
-			selectedBackgroundImage: "images/rowselectedbackground.png",
+			selectedBackgroundImage: "/images/rowselectedbackground.png",
 			height: 50
 		}));
 		if (o.rowtoplabel) {
@@ -231,7 +237,7 @@
 				fontSize: 11
 			},
 			height: 32,
-			backgroundImage: "images/button32.png",
+			backgroundImage: "/images/button32.png",
 			backgroundLeftCap: 5
 		}));
 		if (o.textid) {

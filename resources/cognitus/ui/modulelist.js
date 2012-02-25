@@ -11,7 +11,7 @@ C.ui.createModuleListView = function(o){
 	view.render = function(arg){
 		table.setData(C.content.getAllSkillModules().map(function(m){
 			return C.ui.createTableViewRow({	
-				rightImage: "images/icons/goto_button.png",
+				rightImage: "/images/icons/goto_button.png",
 				ModuleId: m,
 				rowmainlabel: C.content.getText("module_"+m+"_title")
 			});
