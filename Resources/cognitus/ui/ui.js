@@ -20,20 +20,29 @@
 			}
 			modal.visible = true;
 		};
-		var modal = K.create({
-			k_class: "modalbackgroundview",
-			visible: false,
-			/*k_click: function(e){
-				if (e.source === modal){
-					closefun();
-				}
-			},*/
-			zIndex: ((o.zIndex) || (500))
+		var modal = Ti.UI.createView({
+			zIndex: 500,
+			visible: false
 		});
-		var panel = K.create({
-			k_class: "modalpanelview"
+		var panel = Ti.UI.createView({
+			borderSize: 1,
+			borderColor: "#000",
+			backgroundColor: "#FFF",
+			opacity: 1,
+			top: 20,
+			left: 20,
+			right: 20,
+			bottom: 20,
+			zIndex: 501
 		});
 		modal.add(panel);
+			var modalbackground = Ti.UI.createView({
+			backgroundColor: "#000",
+			opacity: 0.5,
+//			backgroundColor: "rgba(0,0,0,0.8)",
+//			k_class: "modalbackgroundview",
+		});
+		modal.add(modalbackground);
 		if (!o.noclose) {
 			var closebtn = C.ui.createButton({
 				k_type: "Button",

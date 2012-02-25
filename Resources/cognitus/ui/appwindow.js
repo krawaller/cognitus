@@ -204,15 +204,15 @@ C.ui.createAppWindow = function(appstructure) {
 		titleview.visible = false;
 	};
 
-	// ******************** Notes modal
-	Ti.include("/cognitus/ui/notesmodal.js");
-	var notesmodal = C.ui.createNotesModal();
-	win.add(notesmodal);
-
 	// ******************** Help modal
 	Ti.include("/cognitus/ui/helpmodal.js");
 	var helpmodal = C.ui.createHelpModal();
 	win.add(helpmodal);
+
+	// ******************** Notes modal
+	Ti.include("/cognitus/ui/notesmodal.js");
+	var notesmodal = C.ui.createNotesModal();
+	win.add(notesmodal);
 
 	// ******************** Top-screen Control panel
 	Ti.include("/cognitus/ui/controlpanelview.js");

@@ -1,8 +1,8 @@
 C.ui.createHelpModal = function(){
 	
-	var modal = C.ui.createModal({zIndex:1000}),
+	var modal = C.ui.createModal({}),
 		panel = modal.panel;
-
+	modal.zIndex = 1000;
 	
 	
 	function show(helptext,fromanothermodal){

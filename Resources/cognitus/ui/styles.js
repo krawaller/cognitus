@@ -165,16 +165,21 @@
 			//backgroundColor: "#12BC0F",
 			color: "#FFF"
 		},
+		modalcontainer: {
+			zIndex: 150
+		},
 		modalbackgroundview: { // the transparent background view in the modal panels
 			k_type: "View",
-			backgroundColor: "rgba(0,0,0,0.8)",
-			zIndex: 150
+			backgroundColor: "#000",
+			opacity: 0.5,
+//			backgroundColor: "rgba(0,0,0,0.8)",
 		},
 		modalpanelview: { // the panel containing the modal stuff
 			k_type: "View",
 			borderSize: 1,
 			borderColor: "#000",
 			backgroundColor: "#FFF",
+			opacity: 1,
 			top: 20,
 			left: 20,
 			right: 20,
