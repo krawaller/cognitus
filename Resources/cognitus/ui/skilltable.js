@@ -1,7 +1,7 @@
 C.ui.createSkillTable = function(o, callback) {
 	var table = Ti.UI.createTableView(K.merge(o, {}));
 	table.addEventListener("click", function(e) {
-		if (e.row && !e.row.excluded && e.row.skillid) {
+		if (e.row && !e.row.iamaheader && !e.row.excluded && e.row.skillid) {
 			callback(e.row.skillid, e.row.moduleid);
 		}
 	});
@@ -16,10 +16,7 @@ C.ui.createSkillTable = function(o, callback) {
 		//Ti.API.log("RENDERING table!");
 		modules.forEach(function(moduleid) {
 			if (showmoduleheader){
-				var modulesection = Ti.UI.createTableViewSection({
-					headerView: C.ui.createTableSectionHeader(C.content.getText("module_"+moduleid+"_title"),true)
-				});
-				sections.push(modulesection);
+				sections.push(C.ui.createTableSection(C.content.getText("module_"+moduleid+"_title"),true));
 			}
 			//Ti.API.log("---- module "+moduleid);
 			var submodules = C.content.getModuleWithSubModules(moduleid),
@@ -30,10 +27,13 @@ C.ui.createSkillTable = function(o, callback) {
 			}
 			for (submoduleid in submodules) {
 				//Ti.API.log("---- ---- submodule " + submoduleid);
-				var section = Ti.UI.createTableViewSection();
+				var section;
 				if (numberofsubmodules > 1) { //submoduleid !== "NONE") {
 					headers++;
-					section.headerView = C.ui.createTableSectionHeader(C.content.getText(submoduleid === "9NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid.substr(1) + "_title"));
+					headertext = C.content.getText(submoduleid === "9NONE" ? "sys_nosubmodule_title" : "module_"+submoduleid.substr(1) + "_title");
+					section = C.ui.createTableSection(headertext);
+				} else {
+					section = Ti.UI.createTableViewSection();
 				}
 				submodules[submoduleid].forEach(function(skillid) {
 					//Ti.API.log("---- --- ---- " + skillid);

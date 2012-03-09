@@ -20,6 +20,11 @@ C.ui.createSkillListView = function() {
 					pb.pub("/navto", "skillrational", {
 						SkillId: e.row.SkillId
 					});
+				} else if (C.state.platform == "android" && e.source.iamadeletebutton){
+					C.ui.openConfirmDialogue(function(){
+						C.content.removeSkillFromList(e.row.ListItemId, e.row.priority);
+						table.deleteRow(e.index);
+					});
 				}
 			}
 		}
@@ -81,6 +86,7 @@ C.ui.createSkillListView = function() {
 				r.k_children.skillabel.visible = false;*/
 				r.visible = false; 
 				r.textfield.visible = true;
+				r.deletebutton.visible = true;
 				if (!i && focusfirst){
 					setTimeout(function(){
 						r.textfield.focus();
@@ -134,8 +140,19 @@ C.ui.createSkillListView = function() {
 		});
 		row.add(usagelabel);
 		row.usagelabel = usagelabel;
+		
+		if (C.state.platform == "android"){
+			var deletebutton = C.ui.createTableViewRowDeleteButton({
+				right: 5,
+				ListId: r.ListId,
+				top: 15
+			});
+			row.add(deletebutton);
+			row.deletebutton = deletebutton;
+		}
+		
 		var textfield = C.ui.createTextField({
-			width: 230,
+			right: 55,
 			k_id: "usagetextfield",
 			hintText: C.content.getText("skillist_field_usagehint"),
 			top: 20,

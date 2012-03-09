@@ -11,11 +11,25 @@ C.ui.createModuleTrainSessionListView = function(o){
 		savebtn.visible = true;
 		deletebtn.visible = false;
 		table.editing = true;
+		if (C.state.platform == "android"){
+			table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
+				setTimeout(function(){
+					r.deletebutton.visible = true;
+				},100);
+			});
+		}
 	}
 	function stopEditing(){
 		deletebtn.visible = true;
 		savebtn.visible = false;
 		table.editing = false;
+		if (C.state.platform == "android"){
+			table.data && table.data[0] && table.data[0].rows && table.data[0].rows.forEach(function(r,i){
+				setTimeout(function(){
+					r.deletebutton.visible = false;
+				},100);
+			});
+		}
 	}
 	var deletebtn = C.ui.createButton({
 		top: 30,
@@ -53,8 +67,13 @@ C.ui.createModuleTrainSessionListView = function(o){
 		C.content.deleteQuizSession(e.row.quizdate);
 	});
 	table.addEventListener("click",function(e){
-		if (e.row && !e.source.btn){
+		if (e.row && !e.source.btn && !e.source.iamadeletebutton){
 			pb.pub("/navto","moduletrainsession",{quizdate:e.row.quizdate,ModuleId:C.state.lastArgs.ModuleId});
+		} else if (C.state.platform == "android" && e.source.iamadeletebutton){
+			C.ui.openConfirmDialogue(function(){
+				C.content.deleteQuizSession(e.row.quizdate);
+				table.deleteRow(e.index);
+			});
 		}
 	});
 	view.add(table);
@@ -72,6 +91,15 @@ C.ui.createModuleTrainSessionListView = function(o){
 				rowmainlabel: q.quizdate,
 				quizdate: q.quizdate
 			});
+			if (C.state.platform == "android"){
+				var deletebutton = C.ui.createTableViewRowDeleteButton({
+					right: 49,
+					ListId: row.ListId,
+					top: 12
+				});
+				row.add(deletebutton);
+				row.deletebutton = deletebutton;
+			}
 			var mailbtn = C.ui.createButton({
 				top: 10,
 				btn: true,

@@ -20,7 +20,7 @@
 		allmodules = [],
 		moduleskills = {},
 		moduleswithsubs = {},
-		DBNAME = 'COGNITUS_00135';
+		DBNAME = 'COGNITUS_00136';
 	
 	var db = Titanium.Database.install("/cognitus/cognitus.sqlite",DBNAME);
 //	res.close();

@@ -155,7 +155,25 @@
 		return textfield;
 	}
 
-
+	function createTableSection(title,heavy){
+		if (title){
+			headerview = createTableSectionHeader(title,heavy);
+			if (C.state.platform == "android"){
+				sec = Ti.UI.createTableViewSection({});
+				r = Ti.UI.createTableViewRow({
+					height: headerview.height,
+					iamaheader: true
+				});
+				r.add(headerview);
+				sec.add(r);
+			} else {
+				sec = Ti.UI.createTableViewSection({headerView: headerview});
+			}
+		} else {
+			sec = Ti.UI.createTableViewSection({});
+		}
+		return sec;
+	}
 
 	function createTableSectionHeader(text, heavy) {
 		var header = K.create({
@@ -367,7 +385,32 @@
 		return btn;
 	}
 
+	function createTableViewRowDeleteButton(o){
+		return Ti.UI.createButton(K.merge(o||{},{
+			iamadeletebutton: true,
+			width: 32,
+			height: 32,
+			zIndex: 1000,
+			iamadeletebutton: true,
+			backgroundColor: "red",
+			visible: false
+		}));
+	}
 
+	function openConfirmDialogue(fun){
+		var d = Ti.UI.createOptionDialog({
+			destructive: 0,
+			cancel: 1,
+			options: [C.content.getText("sys_confirm"),C.content.getText("sys_cancel")],
+			title: C.content.getText("sys_confirmdelete")
+		});
+		d.addEventListener('click',function(e){
+			if (e.index === 0){
+				fun();
+			}
+		});
+		d.show();
+	};
 
 	function showMessage(textid, type) {
 		alert(C.content.getText(textid));
@@ -376,16 +419,19 @@
 	// expose
 	C.ui = {
 		showMessage: showMessage,
+		createTableViewRowDeleteButton: createTableViewRowDeleteButton,
 		createPage: createPage,
 		createLabel: createLabel,
 		createButton: createButton,
 		createTableView: createTableView,
 		createTableViewRow: createTableViewRow,
 		createTextField: createTextField,
+		createTableSection: createTableSection,
 		createTableSectionHeader: createTableSectionHeader,
 		createTextArea: createTextArea,
 		createModal: createModal,
-		createSlider: createSlider
+		createSlider: createSlider,
+		openConfirmDialogue: openConfirmDialogue
 	};
 
 })();

@@ -23,7 +23,7 @@ C.ui.createMyListsView = function(o) {
 				k_type: "Button",
 				width: 32,
 				height: 32,
-				right: 15,
+				right: 10,
 				top: 10,
 				zIndex: 1000,
 				visible: r.ListId === crisislistid,
@@ -43,8 +43,18 @@ C.ui.createMyListsView = function(o) {
 			row.add(crisisbutton);
 			row.crisisbutton = crisisbutton;
 
+			if (C.state.platform == "android"){
+				var deletebutton = C.ui.createTableViewRowDeleteButton({
+					right: 50,
+					ListId: r.ListId,
+					top: 12
+				});
+				row.add(deletebutton);
+				row.deletebutton = deletebutton;
+			}
+
 			var textfield = C.ui.createTextField({
-				width: 185,
+				right: 85,
 				left: 15,
 				bottom: 10,
 				visible: false,
@@ -71,17 +81,13 @@ C.ui.createMyListsView = function(o) {
 		return row;
 	}
 	function renderTable() {
-		var prelists = Ti.UI.createTableViewSection({
-			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_prelists")),
-			editable: false,
-			moveable: false
-		});
+		var prelists = C.ui.createTableSection(C.content.getText("skillist_header_prelists"));
+		prelists.editable = false;
+		prelists.movable = false;
 		C.content.getPreListsWithDetails(C.state.lang).forEach(function(r,i){
 			prelists.add(createRow(r,i,true));
 		});
-		var mylists = Ti.UI.createTableViewSection({
-			headerView: C.ui.createTableSectionHeader(C.content.getText("skillist_header_mylists"))
-		});
+		var mylists = C.ui.createTableSection(C.content.getText("skillist_header_mylists"));
 		C.content.getMyListsWithSkillCount().forEach(function(r,i){
 			mylists.add(createRow(r,i));
 		});
@@ -109,6 +115,11 @@ C.ui.createMyListsView = function(o) {
 			click: function(e){
 				if (!editing){
 					pb.pub("/navto","skillist",{ListId:e.row.ListId});
+				} else if (C.state.platform == "android" && e.source.iamadeletebutton){
+					C.ui.openConfirmDialogue(function(){
+						C.content.removeList(e.row.ListId, e.row.priority);
+						table.deleteRow(e.index);
+					});
 				}
 			}
 		}
@@ -156,10 +167,12 @@ C.ui.createMyListsView = function(o) {
 		table.editing = false;
 		editing = false;
 		table.data[0].rows.forEach(function(r,i){
-			if (r.locked) return;
-			if (r.textfield.oldvalue != r.textfield.value){
-				r.textfield.oldvalue = r.textfield.value;
-				C.content.updateListTitle(r.ListId,r.textfield.value);
+			if (!r.iamaheader){
+				if (r.locked) return;
+				if (r.textfield.oldvalue != r.textfield.value){
+					r.textfield.oldvalue = r.textfield.value;
+					C.content.updateListTitle(r.ListId,r.textfield.value);
+				}
 			}
 		});
 		setTimeout(function(){
@@ -185,6 +198,9 @@ C.ui.createMyListsView = function(o) {
 				if (added && !i){
 					r.textfield.value = "";
 					r.textfield.focus();
+				}
+				if (C.state.platform == "android"){
+					r.deletebutton.visible = true;
 				}
 			},300);
 		});
